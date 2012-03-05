@@ -1,0 +1,82 @@
+title,"MAD-X thin lens fodo cell";
+!
+! define beam line  
+
+cav:rfcavity,l:=0,volt:=1.,harmon:=50,shunt:=100.;
+mkick:multipole,lrad:=1.,knl:={0,0,(ksf),(kof),0.};
+
+kqd=-0.0004;
+kqf=0.0004;
+ksf=10.;
+kof=100.;
+
+mq: multipole,lrad:=3.;
+qd: mq,lrad:=1.,knl:={0,(kqd)*(1.e+00)};
+qf: mq,lrad:=1.,knl:={0,(kqf)*(1.e+00)};
+d:drift,l=500.;
+
+fodo : line = (qd,d,cav,qf,mkick,qf,d,qd);
+
+beam,particle=proton,energy=10,sigt=0.077,et=0.002;
+use,period=fodo;
+twiss;
+
+! match tunes 
+
+qx0 = 0.245;
+qy0 = 0.270;
+
+match,sequence=fodo;
+global,q1=QX0,q2=QY0;
+vary,name=kqf;
+vary,name=kqd;
+lmdif,calls=200,tolerance=1.0e-21;
+endmatch;
+
+! run dynap without nonlinear elements (except cavity)
+! tunes should be QX=0.245 and Qy=0.27 as set above 
+
+ksf=.0;
+kof=0.0;
+
+option,echo,warn,info;
+
+use,period=fodo;
+
+track;
+start,x=0.0000010,y=-0.00000010,pt=0.00;
+dynap,fastune,turns=1024,lyapunov=1.e-7;
+endtrack;
+
+! print out results 
+
+value,table(dynaptune,tunx),table(dynaptune,tuny),table(dynaptune,dtune);
+value,table(dynap,yapunov),table(dynap,smear);
+
+!
+! set nonlinear elements and track again with dynap 
+! 
+
+ksf=.026;
+! kof=4000.;
+kof:=0.;
+
+use,period=fodo;
+
+track;
+start,x=0.0010,y=0.0017,pt=0.0003;
+dynap,fastune,turns=1024,lyapunov=1.e-7;
+endtrack;
+
+! print out results 
+
+value,table(dynaptune,tunx),table(dynaptune,tuny),table(dynaptune,dtune);
+value,table(dynap,yapunov),table(dynap,smear);
+
+return;
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+!TITLE,'Test input for MAD-X';
+
+ eg   :=  100;
+ bg   :=  eg/pmass;
+ en   := 3.75e-06;
+ epsx := en/bg;
+ epsy := en/bg;
+beam, particle = proton, energy =   eg        , 
+                         sigt=      0.077     , 
+                         sige=      1.1e-4    , 
+                         npart=     1.05e11   , 
+                         exn=4*en,  eyn=4*en  , 
+                         kbunch = 10,
+                         et = 0.002, bv = -1,
+                         ex=epsx,   ey=epsy;
+value,epsx,epsy;
+option,-echo;
+
+sxfread, file = "fv9.sxf";
+
+select, flag=sxfread_table, class=quadrupole, column=s,betx,dx,dy;
+twiss,  table=sxfread_table, file = sxfread_twiss;
+
+plot, table=sxfread_table vaxis=betx,bety, haxis=s, colour=100, interpolate=true, title="fv9", file="sxfread_twiss.ps";
+plot, table=sxfread_table vaxis=dx,dy, haxis=s, colour=100, interpolate=true, title="fv9";
+
+// sxfwrite, file = "fv9.sxfread.sxf";
+
+stop;

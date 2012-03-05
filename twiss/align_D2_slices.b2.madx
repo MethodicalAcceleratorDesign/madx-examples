@@ -1,0 +1,56 @@
+! Introduce the transverse offset of all D2 modules and slices
+! Recipe: -survey data - nominal beam separation - magnet bore offset
+
+! saved on 24/05/07 18:15:25 by T.Risselada
+
+ select, flag=error, clear;
+
+! D2 right of IP1:
+ select, flag=error, range=mbrc.4r1.b2..1;   ealign, dx=+0.092732137-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r1.b2..2;   ealign, dx=+0.094866039-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r1.b2..3;   ealign, dx=+0.096288639-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r1.b2..4;   ealign, dx=+0.096999940-0.097+0.003;  select, flag=error, clear;
+
+! D2 left  of IP2:
+ select, flag=error, range=mbrc.4l2.b2..1;   ealign, dx=+0.097000   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l2.b2..2;   ealign, dx=+0.096034   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l2.b2..3;   ealign, dx=+0.094104   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l2.b2..4;   ealign, dx=+0.091207   -0.097+0.003;  select, flag=error, clear;
+
+! D2 right of IP2:
+ select, flag=error, range=mbrc.4r2.b2..1;   ealign, dx=-0.091207   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r2.b2..2;   ealign, dx=-0.094103   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r2.b2..3;   ealign, dx=-0.096034   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r2.b2..4;   ealign, dx=-0.097000   +0.097-0.003;  select, flag=error, clear;
+
+! D2 left  of IP5:
+ select, flag=error, range=mbrc.4l5.b2..1;   ealign, dx=-0.096999838+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l5.b2..2;   ealign, dx=-0.096288537+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l5.b2..3;   ealign, dx=-0.094865936+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l5.b2..4;   ealign, dx=-0.092732034+0.097-0.003;  select, flag=error, clear;
+
+! D2 right of IP5:
+ select, flag=error, range=mbrc.4r5.b2..1;   ealign, dx=+0.092732239-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r5.b2..2;   ealign, dx=+0.094866141-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r5.b2..3;   ealign, dx=+0.096288742-0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r5.b2..4;   ealign, dx=+0.097000043-0.097+0.003;  select, flag=error, clear;
+
+! D2 left  of IP8:
+ select, flag=error, range=mbrc.4l8.b2..1;   ealign, dx=+0.097000   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l8.b2..2;   ealign, dx=+0.096035   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l8.b2..3;   ealign, dx=+0.094103   -0.097+0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l8.b2..4;   ealign, dx=+0.091207   -0.097+0.003;  select, flag=error, clear;
+
+! D2 right of IP8:
+ select, flag=error, range=mbrc.4r8.b2..1;   ealign, dx=-0.091207   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r8.b2..2;   ealign, dx=-0.094103   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r8.b2..3;   ealign, dx=-0.096034   +0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4r8.b2..4;   ealign, dx=-0.097000   +0.097-0.003;  select, flag=error, clear;
+
+! D2 left  of IP1:
+ select, flag=error, range=mbrc.4l1.b2..1;   ealign, dx=-0.096999735+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l1.b2..2;   ealign, dx=-0.096288434+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l1.b2..3;   ealign, dx=-0.094865833+0.097-0.003;  select, flag=error, clear;
+ select, flag=error, range=mbrc.4l1.b2..4;   ealign, dx=-0.092731931+0.097-0.003;  select, flag=error, clear;
+
+return;

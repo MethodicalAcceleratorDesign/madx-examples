@@ -1,0 +1,106 @@
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8;
+Option,  warn,info;
+
+Title, "Matching simultaneously the orbit at IP8 for both rings of the LHC 6.4 lattice with MADX";
+
+
+!---------------------------------------------------------------;
+!           CALL IN SELECTION, SEQUENCE and OPTICS FILES;
+!---------------------------------------------------------------;
+call, file = "../V6.4.seq";
+call, file = "../V6.4.inj";
+
+Beam, particle = proton, sequence=lhcb1, energy = 450.0,
+          NPART=1.05E11, sige=      4.5e-4 ;
+Beam, particle = proton, sequence=lhcb2, energy = 450.0,
+          bv = -1, NPART=1.05E11, sige=      4.5e-4;         !<<<<
+! the 'bv' parameter indicates that beam2 rotates counter-clockwise
+
+! Select the two sequences:
+USE, period=lhcb1;
+USE, period=lhcb2;
+
+! select IR8 of beam1:
+call,file="../select.ir8.b1.madx";
+call,file="../twissini.ir8.b1.madx";
+
+! select IR8 of beam2:
+call,file="../select.ir8.b2.madx";
+call,file="../twissini.ir8.b2.madx";
+
+! Define the orbit at the IP:
+cross_rot = 180*pi/180;
+cross_sep = 0.002;
+cross_ksi = -0.000210;
+xc0 = cross_sep*sin(cross_rot);
+pxc0= cross_ksi*cos(cross_rot);
+yc0 = cross_sep*cos(cross_rot);
+pyc0 = cross_ksi*sin(cross_rot);
+xc0 = cross_sep*sin(cross_rot);
+pxc0= cross_ksi*cos(cross_rot);
+yc0 = cross_sep*cos(cross_rot);
+pyc0 = cross_ksi*sin(cross_rot);
+KQ1V1 := cos(cross_rot)^2 * KCV1.L8;
+KQ1V2 := sin(cross_rot)^2 * KCV1.L8;
+KQ1H1 := sin(cross_rot)^2 * KCH1.L8;
+KQ1H2 := cos(cross_rot)^2 * KCH1.L8;
+KCV1.R8 := KQ1V1 - KQ1V2;
+KCH1.R8 := KQ1H1 - KQ1H2;
+acbxh1.r8 := KCH1.R8;
+acbxv1.r8 := KCV1.R8;
+acbxh1.l8 :=  acbxh1.r8;
+acbxv1.l8 := -acbxv1.r8;
+
+
+USE, period=lhcb1;
+USE, period=lhcb2;
+
+
+MATCH,sequence=lhcb1,lhcb2,beta0=biR8b1,biR8b2;
+vary,name=ACBYHS5.L8B1, STEP=1.0E-07;
+vary,name=ACBYHS4.L8B1,   STEP=1.0E-07;
+vary,name=ACBYHS4.R8B1,   STEP=1.0E-07;
+vary,name=acbxh1.r8,      STEP=1.0E-07;
+vary,name=acbxh1.l8,      STEP=1.0E-07;
+vary,name=ACBYHS4.L8B2,   STEP=1.0E-07;
+vary,name=ACBYHS4.R8B2,   STEP=1.0E-07;
+vary,name=ACBYHS5.R8B2, STEP=1.0E-07;
+WEIGHT,     x = 1, px =  1, y = 1, py = 1;
+CONSTRAINT, sequence=lhcb1, range= ip8,
+            X = XC0,     PX = PXC0;
+CONSTRAINT, sequence=lhcb1, range= e.ds.R8.b1,
+            X = 0.0,     PX = 0.0;
+CONSTRAINT, sequence=lhcb2, range= ip8,
+            X = -XC0,    PX = -PXC0;
+CONSTRAINT, sequence=lhcb2, range= e.ds.R8.b2,
+            X = 0.0,     PX = 0.0;
+LMDIF,      CALLS = 1000, TOLERANCE = 1.0E-12;
+ENDMATCH;
+
+MATCH,sequence=lhcb1,lhcb2,beta0=biR8b1,biR8b2;
+vary,name=acbxv1.l8,      STEP=1.0E-07;
+vary,name=acbxv1.r8,      STEP=1.0E-07;
+vary,name=ACBYVS4.L8B1,   STEP=1.0E-07;
+vary,name=ACBYVS4.R8B1,   STEP=1.0E-07;
+vary,name=ACBYVS5.R8B1, STEP=1.0E-07;
+vary,name=ACBYVS4.L8B2,   STEP=1.0E-07;
+vary,name=ACBYVS4.R8B2,   STEP=1.0E-07;
+vary,name=ACBYVS5.L8B2, STEP=1.0E-07;
+WEIGHT,     x = 1, px =  1, y = 1, py = 1;
+CONSTRAINT,sequence=lhcb1, range= ip8,
+            Y = Yc0,     PY = pyc0;
+CONSTRAINT,sequence=lhcb1, range= e.ds.R8.b1,
+            Y = 0.0,     PY = 0.0;
+CONSTRAINT,sequence=lhcb2, range= ip8,
+            Y = -Yc0,    PY = -pyc0;
+CONSTRAINT,sequence=lhcb2, range= e.ds.R8.b2,
+            Y = 0.0,     PY = 0.0;
+LMDIF,      CALLS = 1000, TOLERANCE = 1.0E-12;
+ENDMATCH;
+
+call,file="../select.ir8.b1.madx";
+call,file="../twissini.ir8.b1.madx";
+call,file="../plot.orbit.madx";
+
+stop;
+

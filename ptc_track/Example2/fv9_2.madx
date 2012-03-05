@@ -1,0 +1,46 @@
+!TITLE,' Example 2 for for MAD-X with PTC_TRACK_RUN';
+
+ eg   :=  100;
+ bg   :=  eg/pmass;
+ en   := 3.75e-06;
+ epsx := en/bg;
+ epsy := en/bg;
+beam, particle = proton, energy =   eg        , 
+                         sigt=      0.077     , 
+                         sige=      1.1e-4    , 
+                         npart=     1.05e11   , 
+                         exn=4*en,  eyn=4*en  , 
+                         kbunch = 10,
+                         et = 0.002, bv = 1,
+                         ex=epsx,   ey=epsy;
+value,epsx,epsy;
+option,-echo;
+call file=fv9.opt;  // string without blanks does not need ".."
+call file="fv9.seq";
+option,echo;
+
+use,period=fivecell;
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10,exact;
+
+ptc_start, x= 3e-3, px=0, y= 3e-3, py=0;
+ptc_start, x= 6e-3, px=0, y= 6e-3, py=0;
+ptc_start, x= 9e-3, px=0, y= 9e-3, py=0;
+ptc_start, x=12e-3, px=0, y=12e-3, py=0;
+ptc_start, x=15e-3, px=0, y=15e-3, py=0;
+ptc_start, x=18e-3, px=0, y=18e-3, py=0; 
+
+ptc_track,icase=4,closed_orbit,dump,
+       turns=1000, norm_out, norm_no=1, ffile=1; 
+
+plot, file="fv9_2_START",table=track,haxis=x,vaxis=px,
+      particle=1,2,3,4,5,6, colour=1000, multiple, symbol=3;
+
+plot, file="fv9_2_START",table=track,haxis=y,vaxis=py,
+      particle=1,2,3,4,5,6, colour=1000, multiple, symbol=3;
+
+ptc_track_end;
+ptc_end;
+stop;
+

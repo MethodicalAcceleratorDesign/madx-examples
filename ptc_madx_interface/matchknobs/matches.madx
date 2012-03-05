@@ -1,0 +1,32 @@
+
+qf1_kn0 = 0;
+
+match, use_macro;
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+  m1: macro=
+   {
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+   };
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+endmatch;
+
+
+value, qf1_kn0;
+print, text="End of matches.madx";
+

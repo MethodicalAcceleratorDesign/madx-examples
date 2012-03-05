@@ -1,0 +1,89 @@
+! Select monitors and correctors required for LHC orbit correction
+! to be used with THIN sequence of V6.500
+
+! saved on 28/06/07 10:49:19 by T.Risselada
+
+ usemonitor, status=off;
+
+! enable all monitors for required beam
+ if (mylhcbeam < 2) { usemonitor, status=on,  pattern=^bpm.*b1$;}
+ if (mylhcbeam > 1) { usemonitor, status=on,  pattern=^bpm.*b2$;}
+
+ usemonitor, status=off, class=bpmwa;
+ usemonitor, status=off, class=bpmwb;
+ usemonitor, status=off, class=bpmse;
+ usemonitor, status=off, class=bpmsd;
+
+
+ usekick,    status=off;
+
+ usekick,    status=on,  class=mcbh ;
+ usekick,    status=on,  class=mcbch;
+ usekick,    status=on,  class=mcbwh;
+ usekick,    status=on,  class=mcbyh;
+
+ usekick,    status=on,  class=mcbv ;
+ usekick,    status=on,  class=mcbcv;
+ usekick,    status=on,  class=mcbwv;
+ usekick,    status=on,  class=mcbyv;
+
+
+! disable correctors reserved for crossing schemes
+
+ if (mylhcbeam < 2) {
+     usekick,    status=off, range=mcbch.5r2.b1;
+     usekick,    status=off, range=mcbch.b5l8.b1;
+     usekick,    status=off, range=mcbyh.4l2.b1;
+     usekick,    status=off, range=mcbyh.4l8.b1;
+     usekick,    status=off, range=mcbyh.4r1.b1;
+     usekick,    status=off, range=mcbyh.4r5.b1;
+     usekick,    status=off, range=mcbyh.5r8.b1;
+     usekick,    status=off, range=mcbyh.a4l1.b1;
+     usekick,    status=off, range=mcbyh.a4l5.b1;
+     usekick,    status=off, range=mcbyh.a4r2.b1;
+     usekick,    status=off, range=mcbyh.a4r8.b1;
+     usekick,    status=off, range=mcbyh.b5l2.b1;
+
+     usekick,    status=off, range=mcbcv.5l8.b1;
+     usekick,    status=off, range=mcbcv.a5r2.b1;
+     usekick,    status=off, range=mcbyv.4l1.b1;
+     usekick,    status=off, range=mcbyv.4l5.b1;
+     usekick,    status=off, range=mcbyv.4r2.b1;
+     usekick,    status=off, range=mcbyv.4r8.b1;
+     usekick,    status=off, range=mcbyv.5l2.b1;
+     usekick,    status=off, range=mcbyv.a4l2.b1;
+     usekick,    status=off, range=mcbyv.a4l8.b1;
+     usekick,    status=off, range=mcbyv.a4r1.b1;
+     usekick,    status=off, range=mcbyv.a4r5.b1;
+     usekick,    status=off, range=mcbyv.b5r8.b1;
+ }
+
+ if (mylhcbeam > 1) {
+     usekick,    status=off, range=mcbch.5l8.b2;
+     usekick,    status=off, range=mcbch.a5r2.b2;
+     usekick,    status=off, range=mcbyh.4l1.b2;
+     usekick,    status=off, range=mcbyh.4l5.b2;
+     usekick,    status=off, range=mcbyh.4r2.b2;
+     usekick,    status=off, range=mcbyh.4r8.b2;
+     usekick,    status=off, range=mcbyh.5l2.b2;
+     usekick,    status=off, range=mcbyh.a4l2.b2;
+     usekick,    status=off, range=mcbyh.a4l8.b2;
+     usekick,    status=off, range=mcbyh.a4r1.b2;
+     usekick,    status=off, range=mcbyh.a4r5.b2;
+     usekick,    status=off, range=mcbyh.b5r8.b2;
+
+     usekick,    status=off, range=mcbcv.5r2.b2;
+     usekick,    status=off, range=mcbcv.b5l8.b2;
+     usekick,    status=off, range=mcbyv.4l2.b2;
+     usekick,    status=off, range=mcbyv.4l8.b2;
+     usekick,    status=off, range=mcbyv.4r1.b2;
+     usekick,    status=off, range=mcbyv.4r5.b2;
+     usekick,    status=off, range=mcbyv.5r8.b2;
+     usekick,    status=off, range=mcbyv.a4l1.b2;
+     usekick,    status=off, range=mcbyv.a4l5.b2;
+     usekick,    status=off, range=mcbyv.a4r2.b2;
+     usekick,    status=off, range=mcbyv.a4r8.b2;
+     usekick,    status=off, range=mcbyv.b5l2.b2;
+ }
+
+return;

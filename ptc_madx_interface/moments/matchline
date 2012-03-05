@@ -1,0 +1,43 @@
+Q1: QUADRUPOLE, L:=0.1, K1:=KQ1;
+Q2: QUADRUPOLE, L:=0.1, K1:=KQ2;
+L1: DRIFT, L:=0.3;
+B: SBEND, L:=0.1, ANGLE:=BANG, K1:=BK1;
+S: MARKER;
+ML: LINE:=(S,Q2,L1,B,L1,Q1,L1);
+MLinv: LINE :=(-(ML));
+beam, particle=electron, energy=1.3, sequence=ML;
+beam, particle=electron, energy=1.3, sequence=MLinv;
+use, sequence=ML;
+
+
+!match,betx=7.328756752062, bety=3.138666109153,dx=-0.0017843735153,alfx=-1.182561568783,alfy=1.770354080712, dpx=-0.00037646863;
+!vary, name=KQ1;
+!vary, name=KQ2;
+!vary, name=BANG;
+!vary, name=BK1;
+!constraint, range=#e,dx=0, dpx=0, alfx=0, alfy=0;
+!jacobian, calls=100;
+!endmatch;
+
+kq1 =                       2.54832846E+01;
+kq2  =                      2.84159142E+01;
+bang  =                    -4.28538725E-03;
+bk1    =                   -3.08961672E+01;
+
+
+
+
+savebeta, label=mline, place=#e, sequence=ML;
+
+select, flag=twiss,column=name,s,betx,mux,bety,muy,k2l,dx,alfx,alfy,dpx;
+twiss, betx=7.328756752062, bety=3.138666109153,dx=-0.0017843735153,alfx=-1.182561568783,alfy=1.770354080712, dpx=-0.000376468633842,file='mline.twiss';
+
+
+
+
+
+use, sequence=MLinv;
+twiss, beta0=mline,mux=0,muy=0,file='minvline.twiss';
+
+
+

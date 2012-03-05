@@ -1,0 +1,49 @@
+! apply measured errors to all MQM
+
+! written on 20/12/05 10:41:56 by T.Risselada
+
+ Rr = 0.017; ON_MQM = 1;
+
+ exec, Efcomp_Measured_Quad(MQM.A7R1);
+ exec, Efcomp_Measured_Quad(MQM.B7R1);
+ exec, Efcomp_Measured_Quad(MQM.9R1 );
+ exec, Efcomp_Measured_Quad(MQM.9L2 );
+ exec, Efcomp_Measured_Quad(MQM.B7L2);
+ exec, Efcomp_Measured_Quad(MQM.A7L2);
+ exec, Efcomp_Measured_Quad(MQM.6L2 );
+
+ exec, Efcomp_Measured_Quad(MQM.A5R2);
+ exec, Efcomp_Measured_Quad(MQM.B5R2);
+ exec, Efcomp_Measured_Quad(MQM.6R2 );
+ exec, Efcomp_Measured_Quad(MQM.A7R2);
+ exec, Efcomp_Measured_Quad(MQM.B7R2);
+ exec, Efcomp_Measured_Quad(MQM.9R2 );
+ exec, Efcomp_Measured_Quad(MQM.9L4 );
+ exec, Efcomp_Measured_Quad(MQM.7L4 );
+ exec, Efcomp_Measured_Quad(MQM.7R4 );
+ exec, Efcomp_Measured_Quad(MQM.9R4 );
+ exec, Efcomp_Measured_Quad(MQM.9L5 );
+ exec, Efcomp_Measured_Quad(MQM.B7L5);
+ exec, Efcomp_Measured_Quad(MQM.A7L5);
+
+ exec, Efcomp_Measured_Quad(MQM.A7R5);
+ exec, Efcomp_Measured_Quad(MQM.B7R5);
+ exec, Efcomp_Measured_Quad(MQM.9R5 );
+ exec, Efcomp_Measured_Quad(MQM.9L6 );
+ exec, Efcomp_Measured_Quad(MQM.9R6 );
+ exec, Efcomp_Measured_Quad(MQM.9L8 );
+ exec, Efcomp_Measured_Quad(MQM.B7L8);
+ exec, Efcomp_Measured_Quad(MQM.A7L8);
+ exec, Efcomp_Measured_Quad(MQM.6L8 );
+ exec, Efcomp_Measured_Quad(MQM.B5L8);
+ exec, Efcomp_Measured_Quad(MQM.A5L8);
+
+ exec, Efcomp_Measured_Quad(MQM.6R8 );
+ exec, Efcomp_Measured_Quad(MQM.A7R8);
+ exec, Efcomp_Measured_Quad(MQM.B7R8);
+ exec, Efcomp_Measured_Quad(MQM.9R8 );
+ exec, Efcomp_Measured_Quad(MQM.9L1 );
+ exec, Efcomp_Measured_Quad(MQM.B7L1);
+ exec, Efcomp_Measured_Quad(MQM.A7L1);
+
+return;

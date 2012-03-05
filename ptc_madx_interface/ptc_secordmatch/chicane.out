@@ -1,0 +1,656 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.00.07              +
+  +           Production Version            +
+  + Code Modification Date: 18.03.2009      +
+  + Execution Time Stamp: 23.03.09 11.47.13 +
+  +++++++++++++++++++++++++++++++++++++++++++
+ptc_enforce6d, flag=true;
+
+!
+
+! This example:
+
+! - matches quadrupole strengths in a chicane so the third order element T112 = -2.
+
+! - shows how to extract higher order map coefficients to user table
+
+! - shows how to link it to twiss table so later it can be plotted
+
+!  
+
+! Piotr Skowronski (CERN) 2006
+
+!
+
+
+
+dsel :=1.2;!length of starting and ending drift
+
+dmid1l:=1.5;!length of middle drift
+
+dmid2l:=0.6;!length of middle drift
+
+ql   :=0.2;!length of quads
+
+
+
+
+
+qfstr := 6.695198761;!strength of quads
+
+qdstr :=-6.712879942;!strength of quads
+
+qf3str := 0.1;!strength of quads
+
+
+
+lbend:=2.0;
+
+
+
+sedft: drift, L:=dsel;
+
+middft1: drift, L:=dmid1l;
+
+middft2: drift, L:=dmid2l;
+
+
+
+angb:= pi/6.;
+
+
+
+
+
+bend1: RBEND, L=lbend, ANGLE:=-angb, e1=angb/2, ptcrbend=true;             ! Deflection to the left
+
+qf1: quadrupole, l=ql, k1:=qfstr;
+
+qd:  quadrupole, l=ql, k1:=qdstr;
+
+qf2: quadrupole, l=ql, k1:=qfstr;
+
+bend2: RBEND, L=lbend, ANGLE=angb, e1=-angb/2, ptcrbend=true;              ! Deflection to the right
+
+theend: marker;
+
+
+
+chicane: line=(sedft,bend1,middft1,qf1,middft2,qd,middft2,qf2,middft1,bend2,sedft,theend);
+
+
+
+beam, PARTICLE=ELECTRON, ENERGY=0.11d0, SIGT=1, SIGE=0.001;
+
+use, period=chicane;
+
+
+
+
+
+
+
+
+
+!creates a table
+
+create, table=R1, column=_name,"c11","c12","c21","c22";
+
+!instructs ptc to store given monomials cofficients in the just created table
+
+ptc_select, table=R1, column="c11", polynomial=1, monomial="100000";
+
+ptc_select, table=R1, column="c12", polynomial=1, monomial="010000";
+
+ptc_select, table=R1, column="c21", polynomial=2, monomial="100000";
+
+ptc_select, table=R1, column="c22", polynomial=2, monomial="010000";
+
+
+
+
+
+create, table=R3, column=_name,"c51","c52","c55","c56","c66";
+
+ptc_select, table=R3, column="c51", polynomial=5, monomial="100000";
+
+ptc_select, table=R3, column="c52", polynomial=5, monomial="010000";
+
+ptc_select, table=R3, column="c55", polynomial=5, monomial="000010";
+
+ptc_select, table=R3, column="c56", polynomial=5, monomial="000001";
+
+ptc_select, table=R3, column="c66", polynomial=6, monomial="000001";
+
+
+
+
+
+create, table=T2, column=_name,"c111","c112","c113","c566","c556","c656","c666";
+
+!instructs ptc to store given monomials cofficients in the just created table
+
+ptc_select, table=T2, column="c111", polynomial=1, monomial="200000";
+
+ptc_select, table=T2, column="c112", polynomial=1, monomial="110000";
+
+ptc_select, table=T2, column="c113", polynomial=1, monomial="101000";
+
+ptc_select, table=T2, column="c566", polynomial=5, monomial="000002";
+
+ptc_select, table=T2, column="c556", polynomial=5, monomial="000011";
+
+ptc_select, table=T2, column="c666", polynomial=6, monomial="000002";
+
+ptc_select, table=T2, column="c656", polynomial=6, monomial="000011";
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+T111:=table(T2,c111);!we need that for plotting
+
+T112:=table(T2,c112);
+
+T566:=table(T2,c566);
+
+
+
+select, flag=twiss, column=name, s, beta11, alfa11, beta13,  T111, T112, T566, re12, re56;
+
+
+
+
+
+match, use_macro;
+
+  vary, name=qfstr, step=0.01;
+
+  vary, name=qdstr, step=0.01;
+
+  m1: macro=
+
+   {
+
+
+
+      ptc_create_universe;
+
+      ptc_create_layout, model=1, method=6, nst=100, exact=true, closed_layout=false;
+
+      ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=true;
+
+
+
+      ptc_twiss, rmatrix, table=twiss, icase=6, no=2, betx=10., alfx=0.0,  bety=10., alfy=0.0, betz=10., alfz=0.0;
+
+
+
+      value, table(twiss,qf1,beta11);
+
+      value, table(twiss,qf1,beta12);
+
+      value, table(twiss,theend,beta11);
+
+      value, table(twiss,theend,beta12);
+
+      value, table(twiss,theend,beta13);
+
+      
+
+      value, table(T2,theend,c111), table(T2,theend,c112), table(T2,theend,c113),
+
+             table(T2,theend,c566), table(T2,theend,c556),
+
+             table(T2,theend,c666), table(T2,theend,c656);
+
+      
+
+      value, qfstr,qdstr;
+
+      
+
+      ptc_end;
+
+      
+
+   };
+
+
+
+
+
+!   constraint, expr=table(R3,theend,c51) = 0;
+
+!   constraint, expr=table(R3,theend,c52) = 0;
+
+   constraint, expr=table(T2,theend,c112) = -2.0;
+
+
+
+   constraint, weight=10, expr=table(twiss,qf1,beta11)   <200.0;
+
+   constraint, weight=10, expr=table(twiss,qf1,beta12)   <200.0;
+
+   constraint, weight=10, expr=table(twiss,theend,beta11)<200.0;
+
+   constraint, weight=10, expr=table(twiss,theend,beta12)<200.0;
+
+
+
+!   constraint, weight=10, expr=table(twiss,theend,beta11) = 20.0;
+
+   
+
+
+
+   lmdif,  tolerance=1e-30 ,calls=200;
+
+number of variables:    2
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+ Now PTC
+ MAD-X Beam Parameters
+                  Energy : 0.110000E+00
+          Kinetic Energy : 0.109489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.109999E+00
+ Setting MADx with 
+     energy         0.1100000000000000
+     method         6
+     Num. of steps  100
+     charge         -1.000000000000000
+  Length of machine:  11.24606063970985
+ The machine is a LINE
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Before   end:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After  start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After    end:  3.435276180410082 0.000000000000000E+00 10.42062524332158
+ T
+table( twiss qf1 beta11 ) =        7.520403151 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        7.145690417 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =        1.444506248 ;
+table( t2 theend c111 ) =     -0.02673012729 ;
+table( t2 theend c112 ) =       0.7135515763 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        2.531302637 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        6.695198761 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+Initial Penalty Function =   0.73633622E+01
+
+
+ T
+table( twiss qf1 beta11 ) =        7.520183549 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        7.132494191 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =        1.444068772 ;
+table( t2 theend c111 ) =     -0.02684018268 ;
+table( t2 theend c112 ) =       0.7120099182 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        2.532189362 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        6.695868281 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.520403151 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        7.145722286 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =        1.444532342 ;
+table( t2 theend c111 ) =     -0.02673031579 ;
+table( t2 theend c112 ) =       0.7135409235 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        2.531436821 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        6.695198761 ;
+qdstr =       -6.712208654 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.140335968 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        19.53838704 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.4080399498 ;
+table( t2 theend c111 ) =      -0.1859496324 ;
+table( t2 theend c112 ) =       -2.321738613 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.996457435 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =         7.87365509 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+call:       4   Penalty function =   0.10351573E+00
+ T
+table( twiss qf1 beta11 ) =         7.14008633 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        19.58483542 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.4073554051 ;
+table( t2 theend c111 ) =      -0.1859953665 ;
+table( t2 theend c112 ) =       -2.323624907 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.998985546 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.874442455 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.140335968 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        19.53834055 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.4080359582 ;
+table( t2 theend c111 ) =      -0.1859441032 ;
+table( t2 theend c112 ) =       -2.321721286 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.996546775 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =         7.87365509 ;
+qdstr =       -6.712208654 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.182999312 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.63332131 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5287221885 ;
+table( t2 theend c111 ) =      -0.1762430859 ;
+table( t2 theend c112 ) =       -1.990243428 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.587839922 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.739356895 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+call:       7   Penalty function =   0.95190699E-04
+ T
+table( twiss qf1 beta11 ) =        7.182752975 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.66753394 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =        0.528007526 ;
+table( t2 theend c111 ) =      -0.1763093008 ;
+table( t2 theend c112 ) =       -1.992203653 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.590070379 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.740130831 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.182999312 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.63333517 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5287186134 ;
+table( t2 theend c111 ) =      -0.1762384671 ;
+table( t2 theend c112 ) =        -1.99023481 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.587936607 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.739356895 ;
+qdstr =       -6.712208654 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.181773281 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80422333 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251669752 ;
+table( t2 theend c111 ) =      -0.1765715397 ;
+table( t2 theend c112 ) =       -1.999994904 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.598955299 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743208984 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+call:      10   Penalty function =   0.25971519E-10
+ T
+table( twiss qf1 beta11 ) =        7.181526849 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.83876335 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5244528942 ;
+table( t2 theend c111 ) =      -0.1766372256 ;
+table( t2 theend c112 ) =       -2.001953534 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.601193807 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743983305 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =        7.181773281 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80423596 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251633796 ;
+table( t2 theend c111 ) =      -0.1765668948 ;
+table( t2 theend c112 ) =        -1.99998605 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.599051788 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743208984 ;
+qdstr =       -6.712208654 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =         7.18177264 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80431312 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251651169 ;
+table( t2 theend c111 ) =      -0.1765717107 ;
+table( t2 theend c112 ) =       -2.000000001 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.598961122 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743210999 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+call:      13   Penalty function =   0.45369906E-18
+ T
+table( twiss qf1 beta11 ) =        7.181526208 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.83885331 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5244510363 ;
+table( t2 theend c111 ) =      -0.1766373964 ;
+table( t2 theend c112 ) =       -2.001958631 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.601199633 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =         7.74398532 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =         7.18177264 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80432575 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251615214 ;
+table( t2 theend c111 ) =      -0.1765670659 ;
+table( t2 theend c112 ) =       -1.999991146 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =         4.59905761 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743210999 ;
+qdstr =       -6.712208654 ;
+  killing last layout 
+  killed last layout 
+ T
+table( twiss qf1 beta11 ) =         7.18177264 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80431311 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251651172 ;
+table( t2 theend c111 ) =      -0.1765717107 ;
+table( t2 theend c112 ) =                 -2 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.598961121 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743210998 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+call:      16   Penalty function =   0.71194697E-26
+ ++++++++++ LMDIF ended: converged without success
+ T
+table( twiss qf1 beta11 ) =         7.18177264 ;
+table( twiss qf1 beta12 ) =                  0 ;
+table( twiss theend beta11 ) =        12.80431311 ;
+table( twiss theend beta12 ) =                  0 ;
+table( twiss theend beta13 ) =       0.5251651172 ;
+table( t2 theend c111 ) =      -0.1765717107 ;
+table( t2 theend c112 ) =                 -2 ;
+table( t2 theend c113 ) =                  0 ;
+table( t2 theend c566 ) =        4.598961121 ;
+table( t2 theend c556 ) =                  0 ;
+table( t2 theend c666 ) =                  0 ;
+table( t2 theend c656 ) =                  0 ;
+qfstr =        7.743210998 ;
+qdstr =       -6.712879942 ;
+  killing last layout 
+  killed last layout 
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(t2,theend,c112)=-2.0              
+  values:     -2.00000e+00=-2.00000e+00
+  weight:     +1.00000e+00
+  penalty:    +8.43769e-14
+
+  constraint: table(twiss,qf1,beta11)<200.0           
+  values:     +7.18177e+00<+2.00000e+02
+  weight:     +1.00000e+01
+  penalty:    +0.00000e+00
+
+  constraint: table(twiss,qf1,beta12)<200.0           
+  values:     +0.00000e+00<+2.00000e+02
+  weight:     +1.00000e+01
+  penalty:    +0.00000e+00
+
+  constraint: table(twiss,theend,beta11)<200.0        
+  values:     +1.28043e+01<+2.00000e+02
+  weight:     +1.00000e+01
+  penalty:    +0.00000e+00
+
+  constraint: table(twiss,theend,beta12)<200.0        
+  values:     +0.00000e+00<+2.00000e+02
+  weight:     +1.00000e+01
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   7.11946967e-27
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qfstr                     7.74321e+00  6.69520e+00 -1.00000e+20  1.00000e+20
+qdstr                    -6.71288e+00 -6.71288e+00 -1.00000e+20  1.00000e+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   7.11946967e-27
+
+
+
+
+plot, noversion=true, vaxis1=T112, vaxis2=T566, haxis=s, colour=100,
+
+  title="Matched 3rd order map coefficients";
+
+call:      16   Penalty function =   0.71194697E-26
+
+ GXPLOT-X11  1.50 initialized
+
+ plot number =  1
+
+
+write, table=twiss, file=twiss.tbl;
+
+write, table=r1, file=r1.tbl;
+
+write, table=r3, file=r3.tbl;
+
+write, table=t2, file=t2.tbl;
+
+
+
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.00.07 finished normally +
+  +++++++++++++++++++++++++++++++++++

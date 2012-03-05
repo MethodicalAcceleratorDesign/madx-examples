@@ -1,0 +1,10 @@
+
+! saved on 07/04/06 11:20:48 by T.Risselada
+
+ Rr = 0.017; ON_MBRB = 1;
+
+ exec, Efcomp_Measured_Dip(MBRB.5L4);
+ exec, Efcomp_Measured_Dip(MBRB.5R4);
+
+
+return;

@@ -1,0 +1,25 @@
+
+Example 1:
+
+The input file: example1.mad assigns different
+types of alignment and field errors to a simplified
+lattice. Error tables are printed for different
+types of elements of the lattice.
+
+
+Example 2:
+
+For a simplified lattice relative field errors are
+assigned and time memory corrections for the normal 
+components are computed and added using a third
+order polynominal parametrization defined in the
+hcoeffn option.
+
+
+Example 2:
+
+The field and alignment errors for 1232 bending and
+392 quadrupole magnets are read from a TFS file,
+produced with ESAVE or any other program.
+Generic READTABLE and SETERR are used.
+

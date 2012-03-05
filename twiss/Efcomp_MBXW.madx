@@ -1,0 +1,32 @@
+
+! saved on 07/04/06 11:20:48 by T.Risselada
+
+ Rr = 0.017; ON_MBXW = 1;
+
+
+ exec, Efcomp_Measured_Dip(MBXW.A4R1);
+ exec, Efcomp_Measured_Dip(MBXW.B4R1);
+ exec, Efcomp_Measured_Dip(MBXW.C4R1);
+ exec, Efcomp_Measured_Dip(MBXW.D4R1);
+ exec, Efcomp_Measured_Dip(MBXW.E4R1);
+ exec, Efcomp_Measured_Dip(MBXW.F4R1);
+ exec, Efcomp_Measured_Dip(MBXW.F4L5);
+ exec, Efcomp_Measured_Dip(MBXW.E4L5);
+ exec, Efcomp_Measured_Dip(MBXW.D4L5);
+ exec, Efcomp_Measured_Dip(MBXW.C4L5);
+ exec, Efcomp_Measured_Dip(MBXW.B4L5);
+ exec, Efcomp_Measured_Dip(MBXW.A4L5);
+ exec, Efcomp_Measured_Dip(MBXW.A4R5);
+ exec, Efcomp_Measured_Dip(MBXW.B4R5);
+ exec, Efcomp_Measured_Dip(MBXW.C4R5);
+ exec, Efcomp_Measured_Dip(MBXW.D4R5);
+ exec, Efcomp_Measured_Dip(MBXW.E4R5);
+ exec, Efcomp_Measured_Dip(MBXW.F4R5);
+ exec, Efcomp_Measured_Dip(MBXW.F4L1);
+ exec, Efcomp_Measured_Dip(MBXW.E4L1);
+ exec, Efcomp_Measured_Dip(MBXW.D4L1);
+ exec, Efcomp_Measured_Dip(MBXW.C4L1);
+ exec, Efcomp_Measured_Dip(MBXW.B4L1);
+ exec, Efcomp_Measured_Dip(MBXW.A4L1);
+
+return;

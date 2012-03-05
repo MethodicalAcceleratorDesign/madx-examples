@@ -1,0 +1,57 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 25.02.08 10.58.12 +
+  +++++++++++++++++++++++++++++++++++++++++++
+TITLE;
+
+option,-echo;
+
+++++++ warning: ignored: attempt to redefine constant: pi
+beam;
+
+
+
+use, period=YELLOW;
+
+
+
+
+
+select, flag=twiss, clear;
+
+select, flag=twiss, columns=name, s, beta11, beta22, beta33, mux, muy;
+
+
+
+create, table=H3, withname, column="h0000";
+
+Value of withname 1
+We add <<name>> column
+!instructs ptc to store given monomials cofficients in the just created table
+
+ptc_select, table=H3, column="h0000", polynomial=3, monomial="400000";
+
+
+
+dQxdX:= table(normal_results,value,1);
+
+dQydX:= table(normal_results,value,2);
+
+dQxdX2:= table(normal_results,value,3);
+
+dQydX2:= table(normal_results,value,4);!4th row in table normal_results
+
+
+
+select_ptc_normal, dq1=1, dq2=1;
+
+The minimum required order is 2 
+select_ptc_normal, dq1=2, dq2=2;
+
+The minimum required order is 3 
+
+
+      ptc_create_universe;
+

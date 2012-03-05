@@ -1,0 +1,51 @@
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8;
+Option,  warn,info;
+
+
+Title, "Matching chromaticity for the LHC 6.4 lattice with MADX";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
+!                        TARGET CHROMATICITY ;
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
+QPRIME = 2.0;
+
+!---------------------------------------------------------------;
+!           CALL IN SELECTION, SEQUENCE and OPTICS FILES;
+!---------------------------------------------------------------;
+
+call, file = "../V6.4.seq";
+call, file = "../V6.4.inj";
+
+Beam, particle = proton, sequence=lhcb1, energy = 450.0,
+          NPART=1.05E11, sige=      4.5e-4 ;
+Beam, particle = proton, sequence=lhcb2, energy = 450.0,
+          bv = -1, NPART=1.05E11, sige=      4.5e-4;         !<<<<
+! the 'bv' parameter indicates that beam2 rotates counter-clockwise
+
+! Select a sequence:
+USE, period=lhcb1;
+
+! Generate a TWISS table:
+select, flag=twiss, clear;
+select, flag=twiss, pattern="IP\.*",column=name,s,betx,bety;
+TWISS,sequence=lhcb1,file=twiss.b1.data;
+System,"cat twiss.b1.data";
+
+! Match the chromaticity:
+match,sequence=lhcb1;
+    vary, name=KSF.B1, step=0.00001;
+    vary, name=KSD.B1, step=0.00001;
+    global,sequence=lhcb1,DQ1=QPRIME;
+    global,sequence=lhcb1,DQ2=QPRIME;
+    Lmdif, calls=10, tolerance=1.0e-21;
+endmatch;
+
+! Generate a TWISS table:
+select, flag=twiss, clear;
+select, flag=twiss, pattern="IP\.*",column=name,s,betx,bety;
+TWISS,sequence=lhcb1,file=twiss.b1.data;
+System,"cat twiss.b1.data";
+
+stop;
+

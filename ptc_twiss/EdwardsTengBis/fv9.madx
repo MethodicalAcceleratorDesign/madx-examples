@@ -1,0 +1,162 @@
+!TITLE,'Test input for MAD-X';
+
+ eg   :=  100000000000;
+ bg   :=  eg/pmass;
+ en   := 3.75e-06;
+ epsx := en/bg;
+ epsy := en/bg;
+beam, particle = proton, energy =   eg        , 
+                         sigt=      0.077     , 
+                         sige=      1.1e-4    , 
+                         npart=     1.05e11   , 
+                         exn=4*en,  eyn=4*en  , 
+                         kbunch = 10,
+                         et = 0.002, !bv = -1,
+                         ex=epsx,   ey=epsy;
+value,epsx,epsy;
+option,-echo;
+call file=fv9.opt;  // string without blanks does not need ".."
+call file="fv9.seq";
+option,echo;
+
+use,sequence=fivecell;
+select,flag=makethin,slice=200;
+makethin,sequence=fivecell;
+use,period=fivecell;
+// alignment errors
+
+/*
+select,flag=error,clear;
+select,flag=error,pattern="q.*",range=qf.1;
+ealign,dx=0.0001;
+select,flag=error,class=quadrupole,range=qf.4/qf.5;
+ealign,dy=0.0002,dtheta=0.0003;
+*/
+
+/*
+select,flag=error,clear;
+
+// field errors
+gcutr=3.0;
+b1r=1.e-4;
+b2r=2.e-4;
+b3r=3.e-4;
+b4r=4.e-4;
+b5r=5.e-4;
+a1r=1.e-4;
+a2r=2.e-4;
+a3r=3.e-4;
+a4r=4.e-4;
+a5r=5.e-4;
+
+Select, flag=error, clear = true;
+select, flag=error, pattern="q.*\..*";
+efcomp, order:=1, radius:=0.010, 
+dknr={0,1e-1*b2r},
+dksr={0,1e-1*a2r};
+esave;
+*/
+
+select,flag=sectormap,class=drift;
+
+!select,flag=my_table,class=quadrupole,
+!column=name,parent,keyword,s,betx,bety,dx,dy,k1l,
+!re11,re12,re13,re14;
+
+select,flag=sectormap,clear;
+select,flag=sectormap,pattern="bloed";
+select,flag=twiss,clear;
+!select,flag=twiss,column=name,parent,s,assembly_id,beam_sep;!betx,bety,dmux,dmuy;
+!select,flag=twiss,column=name,s,betx,bety,mux,muy;
+select,flag=twiss,column=name,s,betx,bety,r11,r12,r21,r22;
+!twiss,rmatrix,deltap=-0.001:0.001:0.001;!,
+twiss,chrom,file=twiss_fv9t;!,deltap=0.001;
+betx:=table(twiss,FIVECELL$START,BETX);
+bety:=table(twiss,FIVECELL$START,BETY);
+alfx:=table(twiss,FIVECELL$START,ALFX);
+alfy:=table(twiss,FIVECELL$START,ALFY);
+value, betx,bety;
+!stop;
+value,tabstring(twiss,48,0);
+value,tabstring(twiss,48,1);
+value,tabstring(twiss,148,0);
+value,tabstring(twiss,148,1);
+!stop;
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=1;
+ptc_align;
+!PTC_SETSWITCH,debuglevel =1,time=true;
+!ptc_enforce6d;
+!select,flag=ptc_twiss,column=name,s,mu1,mu2,beta11,beta12,beta21;
+select,flag=ptc_twiss,column=name,s,betx,bety,alfx,alfy,beta11,beta12,beta21,beta22,alfa11,alfa12,alfa21,alfa22;
+ptc_twiss,closed_orbit,icase=5,no=3,file=ptc_twiss2t;!,deltap=0.025;
+
+betx_ptc_twiss:=table(ptc_twiss,FIVECELL$START,BETX);
+bety_ptc_twiss:=table(ptc_twiss,FIVECELL$START,BETY);
+alfx_ptc_twiss:=table(ptc_twiss,FIVECELL$START,ALFX);
+alfy_ptc_twiss:=table(ptc_twiss,FIVECELL$START,ALFY);
+
+beta11:=table(ptc_twiss,FIVECELL$START,BETA11);
+beta12:=table(ptc_twiss,FIVECELL$START,BETA12);
+beta21:=table(ptc_twiss,FIVECELL$START,BETA21);
+beta22:=table(ptc_twiss,FIVECELL$START,BETA22);
+alfa11:=table(ptc_twiss,FIVECELL$START,ALFA11);
+alfa12:=table(ptc_twiss,FIVECELL$START,ALFA12);
+alfa21:=table(ptc_twiss,FIVECELL$START,ALFA21);
+alfa22:=table(ptc_twiss,FIVECELL$START,ALFA22);
+kx:=sqrt(beta12/beta11);
+ky:=sqrt(beta21/beta22);
+ax:=kx*alfa11-alfa12/kx;
+ay:=ky*alfa22-alfa21/ky;
+kxy2:=kx*kx*ky*ky;
+u1:=(-kxy2+sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+!u2:=(-kxy2-sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+value, betx,bety,alfx,alfy;
+value, beta11,beta22,beta12,beta21;
+value, alfa11,alfa22,alfa12,alfa21;
+value, u1;
+value, beta11/(1-u1);
+value, beta22/(1-u1);
+value, alfa11/(1-u1);
+value, alfa22/(1-u1);
+value, betx_ptc_twiss, bety_ptc_twiss, alfx_ptc_twiss, alfy_ptc_twiss;
+
+
+
+
+stop;
+select_ptc_normal, dq1=1,dq2=1;
+select_ptc_normal, dq1=2,dq2=2;
+select_ptc_normal, dq1=3,dq2=3;
+!PTC_SETSWITCH,debuglevel =1,time=false;
+PTC_SETSWITCH,debuglevel =2;
+ptc_normal,closed_orbit,normal,icase=5,no=4;
+write, table=normal_results,file=normal_results3;
+ptc_end;
+stop;
+sixtrack;
+beam, particle = proton, energy =   eg/50 ;
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=1;
+ptc_align;
+
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=-0.3;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=-0.2;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=-0.1;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=-0.0;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=0.1;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=0.2;
+ptc_twiss,icase=5,no=1,file=ptc_twiss4,deltap=0.3;
+select_ptc_normal, dq1=1,dq2=1;
+select_ptc_normal, dq1=2,dq2=2;
+select_ptc_normal, dq1=3,dq2=3;
+ptc_normal,closed_orbit,normal,icase=5,no=4;
+write, table=normal_results,file=normal_results3;
+ptc_twiss,deltap=0.001,icase=5,no=1,file=ptc_twiss5;
+select_ptc_normal, clear;
+select_ptc_normal, dq1=1,dq2=1;
+ptc_normal,closed_orbit,normal,icase=5,no=2;
+write, table=normal_results,file=normal_results4;
+ptc_end;
+
+stop;

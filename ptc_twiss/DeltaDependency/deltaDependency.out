@@ -1,0 +1,1292 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 03.02.11 18.55.44 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!TITLE,'Test input for PTC_TWISS';
+
+
+
+!=========== RING PARAMETERS ===========================================
+
+call, file = "../ring_lattice/ring.seq";
+
+ eg   :=  100;
+
+ bg   :=  eg/pmass;
+
+ en   := 3.75e-06;
+
+ epsx := en/bg;
+
+ epsy := en/bg;
+
+beam, particle = proton, energy =   eg        , 
+
+                         sigt=      0.077     , 
+
+                         sige=      1.1e-4    , 
+
+                         npart=     1.05e11   , 
+
+                         exn=4*en,  eyn=4*en  , 
+
+                         kbunch = 10,
+
+                         et = 0.002, bv = 1,
+
+                         ex=epsx,   ey=epsy;
+
+value,epsx,epsy;
+
+epsx =    3.518520049e-08 ;
+epsy =    3.518520049e-08 ;
+option,-echo;
+
+
+
+use,period=fivecell;
+
+// alignment errors
+
+
+
+select,flag=error,clear;
+
+select,flag=error,pattern="q.*",range=qf.1;
+
+ealign,dx=0.0001;
+
+Assigned alignment errors to 1 elements
+!select,flag=error,class=quadrupole,range=qf.4/qf.5;
+
+!ealign,dy=0.0002,dtheta=0.0003;
+
+
+
+/*
+
+select,flag=error,clear;
+
+
+
+// field errors
+
+gcutr=3.0;
+
+b1r=1.e-4;
+
+b2r=2.e-4;
+
+b3r=3.e-4;
+
+b4r=4.e-4;
+
+b5r=5.e-4;
+
+a1r=1.e-4;
+
+a2r=2.e-4;
+
+a3r=3.e-4;
+
+a4r=4.e-4;
+
+a5r=5.e-4;
+
+
+
+Select, flag=error, clear = true;
+
+select, flag=error, pattern="q.*\..*";
+
+efcomp, order:=1, radius:=0.010, 
+
+dknr={0,1e-1*b2r},
+
+dksr={0,1e-1*a2r};
+
+esave;
+
+*/
+
+
+
+acbh1=1e-6;
+
+acbh2=1e-6;
+
+acbh3=1e-6;
+
+acbh4=1e-6;
+
+acbh5=1e-6;
+
+
+
+/*	     
+
+acbv1=1e-6;
+
+acbv2=1e-6;
+
+acbv3=1e-6;
+
+acbv4=1e-6;
+
+acbv5=1e-6;
+
+*/
+
+
+
+!select,flag=sectormap,class=drift;
+
+
+
+!select,flag=my_table,class=quadrupole,
+
+!column=name,parent,keyword,s,betx,bety,dx,dy,k1l,
+
+!re11,re12,re13,re14;
+
+
+
+!twiss,centre,rmatrix,
+
+!sectormap,sectorfile=my_sectorfile,
+
+!table=my_table,file=twiss_fv9;
+
+
+
+beam, particle=electron, energy=1.0, exn = 1.e-4,eyn = 1.e-4; ! 1 Gev
+
+
+
+! At the end of the ring the data_block is produced
+
+
+
+SAVEBETA, label=TWSSip, place=#E,sequence=fivecell;
+
+
+
+!select,flag=my_sect_table,! added 16:10
+
+!column=name,pos,k1,r1,r36,t1,t216; ! added 16:10
+
+!sectormap,sectortable=my_sect_table,sectorfile=my_sect_file; ! added 16:10
+
+
+
+select,flag=twiss,column=name,s,betx,bety,dx,dy;
+
+TWISS,centre,file=twiss_madx_ring; ! jluc : centre
+
+enter Twiss module
+  
+iteration:   1 error:   6.606181E-04 deltap:   0.000000E+00
+orbit:   3.261640E-04  2.597068E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.896028E-07 deltap:   0.000000E+00
+orbit:   3.260716E-04  2.596347E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004430990996        47.50612052 
+
+                q1                dq1            betxmax              dxmax 
+       1.254675989        1.051023902        181.4719986         2.20032638 
+
+             dxrms             xcomax             xcorms                 q2 
+        1.65877465     0.000332287113     0.000213664876        1.254674956 
+
+               dq2            betymax              dymax              dyrms 
+       1.046718232        181.4881854                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+SHOW,TWSSip;     ! SHOW parameters (see "*.out" file)
+
+command: beta0  module: control
+parameter: betx   double value:        177.7010914
+parameter: alfx   double value:        -2.41257182
+parameter: mux   double value:        1.254675989
+parameter: bety   double value:         32.0344759
+parameter: alfy   double value:       0.4796139615
+parameter: muy   double value:        1.254674956
+parameter: x   double value:    0.0003260716242
+parameter: px   double value:    2.596346674e-06
+parameter: y   double value:                  0
+parameter: py   double value:                  0
+parameter: t   double value:   -1.662023238e-05
+parameter: pt   double value:                  0
+parameter: dx   double value:        2.174468754
+parameter: dpx   double value:      0.02962694391
+parameter: dy   double value:                  0
+parameter: dpy   double value:                  0
+parameter: wx   double value:                  0
+parameter: phix   double value:                  0
+parameter: dmux   double value:                  0
+parameter: wy   double value:                  0
+parameter: phiy   double value:                  0
+parameter: dmuy   double value:                  0
+parameter: ddx   double value:                  0
+parameter: ddpx   double value:                  0
+parameter: ddy   double value:                  0
+parameter: ddpy   double value:                  0
+parameter: r11   double value:                 -0
+parameter: r12   double value:                  0
+parameter: r21   double value:                 -0
+parameter: r22   double value:                  0
+parameter: energy   double value:                  1
+
+
+! Initialize PTC
+
+ptc_create_universe;
+
+ Now PTC
+!ptc_create_layout,model=2,method=6,nst=10,exact;
+
+!ptc_create_layout,model=2,method=6,nst=1,exact; ! steps pb more apparent
+
+ptc_create_layout,model=2,method=6,nst=4,exact; ! looks like 2 is minimum to split the element at the middle...
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+01
+          Kinetic Energy : 0.999489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.100000E+01
+ Setting MADx with 
+     energy           1.00000000000000     
+     method                   6
+     Num. of steps            4
+     charge          -1.00000000000000     
+  Length of machine:    534.600000000000     
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:   -40.5807584670258       0.000000000000000E+000   532.533460530797     
+ptc_align;
+
+
+
+select,flag=ptc_twiss,column=name,s,beta11,beta11p, alfa11, alfa11p, gama11, gama11p, disp1, disp1p, disp1p2, disp1p3, mu1; 
+
+!  mu1 ptc_twiss, mux twiss
+
+                              	! beta12,beta22,
+
+				!beta21p,disp1;
+
+
+
+! following to assess the deltap-dependency of the Twiss parameters (i.e. their derivative w.r.t deltap)
+
+! note that we need to set the map's order to no=2 in order to get coefficients of u*deltap (u=x,y...) for Twiss derivatives
+
+ptc_twiss,closed_orbit,icase=5,deltap_dependency,file=twiss_ptc_ring_ref,summary_file=twiss_ptc_summary,no=4;
+
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps      4
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   3.260716219856659E-004  2.596346649928762E-006  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999662        0.000000000000000        0.000000000000000    
+  -0.9999999999999662        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999969    
+    0.000000000000000        0.000000000000000      -0.9999999999999969        0.000000000000000    
+ Deviation from symplecticity  0.1842970220877760E-11 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :         146
+  NUMBER OF THIN OBJECTS :         880
+  TOTAL IDEAL LENGTH OF STRUCTURE :   534.600000000000     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   534.600000000000     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999662        0.000000000000000        0.000000000000000    
+  -0.9999999999999662        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999969    
+    0.000000000000000        0.000000000000000      -0.9999999999999969        0.000000000000000    
+ Deviation from symplecticity  0.1842970220877760E-11 %                                                                  
+ sd=  0.112916868837141       disp=  -3.06387172797830     
+ sd=  5.617594365453553E-002  disp=  8.427222341929027E-003
+ sd=  3.715556923099080E-002  disp=  0.000000000000000E+000
+ sd=  3.715556923099080E-002  disp=  0.000000000000000E+000
+ sd=  3.715556923099080E-002
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+             534.6     0.000443099089     6.95016078e-05                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0004428379691        47.50612109       0.2546759882 
+
+                q2                dq1                dq2                 qs 
+      0.2546749559        1.051019527        1.046713505                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       32.03433146        177.7089538        32.03308004        177.7231017 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+                 0     0.000326071622     2.59634665e-06                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0                  0                  0    0.0002136648706 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0    3.396649671e-06                  0     0.000331582541 
+
+            ycomax            pxcomax            pycomax 
+                 0    5.310271225e-06                  0 
+ptc_twiss,closed_orbit,icase=5,deltap_dependency,deltap=1e-8,file=twiss_ptc_ring_plus_deltap,summary_file=twiss_ptc_summary_plus,no=4;
+
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps      4
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   3.260933363689400E-004  2.596642526280292E-006  0.000000000000000E+000  0.000000000000000E+000  9.999998829002266E-009
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999414        0.000000000000000        0.000000000000000    
+  -0.9999999999999414        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999990    
+    0.000000000000000        0.000000000000000      -0.9999999999999990        0.000000000000000    
+ Deviation from symplecticity  0.2980948821118545E-11 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :         146
+  NUMBER OF THIN OBJECTS :         880
+  TOTAL IDEAL LENGTH OF STRUCTURE :   534.600000000000     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   534.600000000000     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999414        0.000000000000000        0.000000000000000    
+  -0.9999999999999414        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999990    
+    0.000000000000000        0.000000000000000      -0.9999999999999990        0.000000000000000    
+ Deviation from symplecticity  0.2980948821118545E-11 %                                                                  
+ sd=  0.112916866400521       disp=  -3.06387155264624     
+ sd=  5.617593798195423E-002  disp=  8.427222749559291E-003
+ sd=  3.715556171241526E-002  disp=  0.000000000000000E+000
+ sd=  3.715556171241526E-002  disp=  0.000000000000000E+000
+ sd=  3.715556171241526E-002
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+             534.6    0.0004430990883    6.950159373e-05                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0004428379684        47.50612113       0.2546759987 
+
+                q2                dq1                dq2                 qs 
+      0.2546749664        1.051019483        1.046713466                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       32.03433066        177.7089527        32.03307919        177.7231003 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+             1e-08    0.0003260933364    2.596642526e-06                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0    9.999998829e-09                  0    0.0002136648706 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0    3.396649671e-06                  0     0.000331582541 
+
+            ycomax            pxcomax            pycomax 
+                 0    5.310271225e-06                  0 
+ptc_twiss,closed_orbit,icase=5,deltap_dependency,deltap=-1e-8,file=twiss_ptc_ring_minus_deltap,summary_file=twiss_ptc_summary_minus,no=4;
+
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps      4
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   3.260498909921703E-004  2.596050512523902E-006  0.000000000000000E+000  0.000000000000000E+000 -9.999998606957661E-009
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999467        0.000000000000000        0.000000000000000    
+  -0.9999999999999467        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999937    
+    0.000000000000000        0.000000000000000      -0.9999999999999937        0.000000000000000    
+ Deviation from symplecticity  0.2980948821118545E-11 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :         146
+  NUMBER OF THIN OBJECTS :         880
+  TOTAL IDEAL LENGTH OF STRUCTURE :   534.600000000000     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   534.600000000000     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999467        0.000000000000000        0.000000000000000    
+  -0.9999999999999467        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000       0.9999999999999937    
+    0.000000000000000        0.000000000000000      -0.9999999999999937        0.000000000000000    
+ Deviation from symplecticity  0.2980948821118545E-11 %                                                                  
+ sd=  0.112916871307388       disp=  -3.06387190482587     
+ sd=  5.617594932407501E-002  disp=  8.427221919005161E-003
+ sd=  3.715557677896041E-002  disp=  0.000000000000000E+000
+ sd=  3.715557677896041E-002  disp=  0.000000000000000E+000
+ sd=  3.715557677896041E-002
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+             534.6    0.0004430990897    6.950162192e-05                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0004428379698        47.50612106       0.2546759777 
+
+                q2                dq1                dq2                 qs 
+      0.2546749455        1.051019571        1.046713544                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       32.03433226         177.708955        32.03308089        177.7231031 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+            -1e-08     0.000326049891    2.596050513e-06                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0   -9.999998607e-09                  0    0.0002136648706 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0    3.396649671e-06                  0     0.000331582541 
+
+            ycomax            pxcomax            pycomax 
+                 0    5.310271225e-06                  0 
+system,"python checkTwissDerivatives.py" ! displays relative errors (%) between calculated and approximated derivatives
+
+
+
+
+
+!PTC_NORMAL,closed_orbit,maptable,icase=5,no=1;
+
+
+
+ptc_end;
+
+deriv=-140.4635509, approx=-140.000000215, error=-0.330560376341%, for beta11=177.7010915(-dp=177.7010929+dp=177.7010901)
+deriv=-2.276937064, approx=-2.24999998633, error=-1.19007962226%, for alfa11=-2.412571821(-dp=-2.412571798+dp=-2.412571843)
+null derivative or approximation for gama11
+deriv=-3.063871728, approx=-3.05000000811, error=-0.453778570754%, for disp1=2.174468765(-dp=2.174468795+dp=2.174468734)
+deriv=17.77331204, approx=17.6000000129, error=0.979902740235%, for disp1p=-3.063871728(-dp=-3.063871905+dp=-3.063871553)
+deriv=-155.1403619, approx=-152.500000006, error=-1.71652502154%, for disp1p2=17.77331204(-dp=17.77331358+dp=17.77331053)
+deriv=-140.4635509, approx=-140.000000215, error=-0.330560376341%, for beta11=177.7010915(-dp=177.7010929+dp=177.7010901)
+deriv=-2.276937064, approx=-2.24999998633, error=-1.19007962226%, for alfa11=-2.412571821(-dp=-2.412571798+dp=-2.412571843)
+null derivative or approximation for gama11
+deriv=-3.063871728, approx=-3.05000000811, error=-0.453778570754%, for disp1=2.174468765(-dp=2.174468795+dp=2.174468734)
+deriv=17.77331204, approx=17.6000000129, error=0.979902740235%, for disp1p=-3.063871728(-dp=-3.063871905+dp=-3.063871553)
+deriv=-155.1403619, approx=-152.500000006, error=-1.71652502154%, for disp1p2=17.77331204(-dp=17.77331358+dp=17.77331053)
+deriv=-112.060294, approx=-115.000000278, error=-2.58936181461%, for beta11=176.9102503(-dp=176.9102514+dp=176.9102491)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.884582079, approx=-2.8999999957, error=-0.533069338421%, for disp1=2.169608077(-dp=2.169608106+dp=2.169608048)
+deriv=16.55483704, approx=16.4000000025, error=0.93969232699%, for disp1p=-2.884582079(-dp=-2.884582243+dp=-2.884581915)
+deriv=-144.1359044, approx=-141.499999984, error=-1.84563941419%, for disp1p2=16.55483704(-dp=16.55483847+dp=16.55483564)
+deriv=-103.3494168, approx=-104.999999451, error=-1.58443702928%, for beta11=171.6642348(-dp=171.6642359+dp=171.6642338)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.775690744, approx=-2.75000000549, error=-0.929865230368%, for disp1=2.13703034(-dp=2.137030368+dp=2.137030313)
+deriv=15.97465024, approx=15.7999999972, error=1.09930552476%, for disp1p=-2.775690744(-dp=-2.775690903+dp=-2.775690587)
+deriv=-139.5989214, approx=-136.999999967, error=-1.87919853079%, for disp1p2=15.97465024(-dp=15.97465162+dp=15.97464888)
+deriv=-103.6481884, approx=-104.999999451, error=-1.29578029372%, for beta11=166.254465(-dp=166.2544661+dp=166.254464)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.719496539, approx=-2.70000000135, error=-0.719496266874%, for disp1=2.102813858(-dp=2.102813885+dp=2.102813831)
+deriv=15.76749654, approx=15.650000007, error=0.747968781001%, for disp1p=-2.719496539(-dp=-2.719496696+dp=-2.719496383)
+deriv=-138.4850544, approx=-135.999999973, error=-1.81070290538%, for disp1p2=15.76749654(-dp=15.76749791+dp=15.76749519)
+deriv=-104.059205, approx=-105.000000161, error=-0.900027492691%, for beta11=108.1102689(-dp=108.1102699+dp=108.1102678)
+deriv=1.677868195, approx=1.65000000329, error=1.67483746619%, for alfa11=1.774899267(-dp=1.77489925+dp=1.774899283)
+null derivative or approximation for gama11
+deriv=-2.101516024, approx=-2.05000000308, error=-2.48179318493%, for disp1=1.718327935(-dp=1.718327956+dp=1.718327915)
+deriv=13.44014921, approx=13.3499999944, error=0.67300271418%, for disp1p=-2.101516024(-dp=-2.101516158+dp=-2.101515891)
+deriv=-125.6775181, approx=-123.500000004, error=-1.74776449511%, for disp1p2=13.44014921(-dp=13.44015045+dp=13.44014798)
+deriv=-103.7433356, approx=-105.000000161, error=-1.20402843678%, for beta11=103.0093934(-dp=103.0093945+dp=103.0093924)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.045363499, approx=-1.99999999895, error=-2.24274036564%, for disp1=1.682516822(-dp=1.682516842+dp=1.682516802)
+deriv=13.22295543, approx=13.0999999959, error=0.934206908992%, for disp1p=-2.045363499(-dp=-2.045363631+dp=-2.045363369)
+deriv=-124.4481982, approx=-122.50000001, error=-1.57781931891%, for disp1p2=13.22295543(-dp=13.22295666+dp=13.22295421)
+deriv=-97.30811037, approx=-96.9999998546, error=-0.317136032119%, for beta11=61.93291881(-dp=61.93291978+dp=61.93291784)
+deriv=0.8371010546, approx=0.850000003716, error=1.52912584013%, for alfa11=1.173832955(-dp=1.173832947+dp=1.173832964)
+null derivative or approximation for gama11
+deriv=-1.571938143, approx=-1.54999999502, error=-1.40541849385%, for disp1=1.370406375(-dp=1.370406391+dp=1.37040636)
+deriv=11.3290678, approx=11.2499999982, error=0.700363739236%, for disp1p=-1.571938143(-dp=-1.571938256+dp=-1.571938031)
+deriv=-113.3716582, approx=-112.00000003, error=-1.21724105055%, for disp1p2=11.3290678(-dp=11.32906893+dp=11.32906669)
+deriv=-96.29230901, approx=-95.9999997718, error=-0.304025928044%, for beta11=58.58716831(-dp=58.58716927+dp=58.58716735)
+deriv=0.758754479, approx=0.799999999579, error=5.29211253545%, for alfa11=1.117776977(-dp=1.117776969+dp=1.117776985)
+null derivative or approximation for gama11
+deriv=-1.530668264, approx=-1.50000000199, error=-2.02386136141%, for disp1=1.34203718(-dp=1.342037195+dp=1.342037165)
+deriv=11.15652737, approx=11.0999999969, error=0.507962200347%, for disp1p=-1.530668264(-dp=-1.530668376+dp=-1.530668154)
+deriv=-112.3208787, approx=-110.999999947, error=-1.18294246456%, for disp1p2=11.15652737(-dp=11.15652849+dp=11.15652627)
+deriv=-83.02870827, approx=-83.0000001173, error=-0.0345821550791%, for beta11=34.58312741(-dp=34.58312824+dp=34.58312658)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.696299836, approx=9.64999999908, error=0.478642813465%, for disp1p=-1.201867001(-dp=-1.201867097+dp=-1.201866904)
+deriv=-102.9758825, approx=-102.249999934, error=-0.707398655279%, for disp1p2=9.696299836(-dp=9.696300864+dp=9.696298819)
+deriv=-81.65921377, approx=-81.4999999932, error=-0.195163697034%, for beta11=33.29572735(-dp=33.29572816+dp=33.29572653)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.180722138, approx=-1.19999999937, error=-1.61949696403%, for disp1=1.08554132(-dp=1.085541332+dp=1.085541308)
+deriv=9.593808961, approx=9.55000000191, error=0.457682785831%, for disp1p=-1.180722138(-dp=-1.180722234+dp=-1.180722043)
+deriv=-102.2768085, approx=-101.549999965, error=-0.713162847307%, for disp1p2=9.593808961(-dp=9.593809982+dp=9.593807951)
+deriv=-81.65921377, approx=-81.4999999932, error=-0.195163697034%, for beta11=33.29572735(-dp=33.29572816+dp=33.29572653)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.180722138, approx=-1.19999999937, error=-1.61949696403%, for disp1=1.08554132(-dp=1.085541332+dp=1.085541308)
+deriv=9.593808961, approx=9.55000000191, error=0.457682785831%, for disp1p=-1.180722138(-dp=-1.180722234+dp=-1.180722043)
+deriv=-102.2768085, approx=-101.549999965, error=-0.713162847307%, for disp1p2=9.593808961(-dp=9.593809982+dp=9.593807951)
+deriv=-81.54022375, approx=-81.4999999932, error=-0.0493421266142%, for beta11=33.19056965(-dp=33.19057047+dp=33.19056884)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.178914885, approx=-1.14999999523, error=-2.48312121788%, for disp1=1.084108001(-dp=1.084108012+dp=1.084107989)
+deriv=9.585049057, approx=9.54999999081, error=0.366333695853%, for disp1p=-1.178914885(-dp=-1.178914981+dp=-1.17891479)
+deriv=-102.2170586, approx=-101.549999965, error=-0.65472666692%, for disp1p2=9.585049057(-dp=9.585050078+dp=9.585048047)
+deriv=-80.14988889, approx=-79.9999998691, error=-0.1871859195%, for beta11=32.03645268(-dp=32.03645348+dp=32.03645188)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.484310163, approx=9.44999999364, error=0.362412668621%, for disp1p=-1.158131473(-dp=-1.158131568+dp=-1.158131379)
+deriv=-101.5299346, approx=-100.9, error=-0.622372972278%, for disp1p2=9.484310163(-dp=9.484311177+dp=9.484309159)
+deriv=-86.05393194, approx=-86.0000000102, error=-0.0626918886934%, for beta11=32.13181497(-dp=32.13181583+dp=32.13181411)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.06937987, approx=10.0000000058, error=0.691400178686%, for disp1p=-1.246873326(-dp=-1.246873426+dp=-1.246873226)
+deriv=-107.6430564, approx=-106.999999971, error=-0.599186798246%, for disp1p2=10.06937987(-dp=10.06938095+dp=10.06937881)
+deriv=-86.05393194, approx=-86.0000000102, error=-0.0626918886934%, for beta11=32.13181497(-dp=32.13181583+dp=32.13181411)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.06937987, approx=10.0000000058, error=0.691400178686%, for disp1p=-1.246873326(-dp=-1.246873426+dp=-1.246873226)
+deriv=-107.6430564, approx=-106.999999971, error=-0.599186798246%, for disp1p2=10.06937987(-dp=10.06938095+dp=10.06937881)
+deriv=-86.15050419, approx=-86.0000000102, error=-0.174851860533%, for beta11=32.15116035(-dp=32.15116121+dp=32.15115949)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.0781839, approx=10.0499999989, error=0.280044153692%, for disp1p=-1.248295439(-dp=-1.24829554+dp=-1.248295339)
+deriv=-107.7291299, approx=-106.999999971, error=-0.679115990458%, for disp1p2=10.0781839(-dp=10.07818498+dp=10.07818284)
+deriv=-86.15050419, approx=-86.0000000102, error=-0.174851860533%, for beta11=32.15116035(-dp=32.15116121+dp=32.15115949)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.0781839, approx=10.0499999989, error=0.280044153692%, for disp1p=-1.248295439(-dp=-1.24829554+dp=-1.248295339)
+deriv=-107.7291299, approx=-106.999999971, error=-0.679115990458%, for disp1p2=10.0781839(-dp=10.07818498+dp=10.07818284)
+deriv=-86.36788547, approx=-86.5000000516, error=-0.152850347207%, for beta11=32.19479975(-dp=32.19480061+dp=32.19479888)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+null derivative or approximation for disp1p
+deriv=-107.9227951, approx=-107.500000013, error=-0.392525857789%, for disp1p2=10.09799297(-dp=10.09799405+dp=10.0979919)
+deriv=-90.02594494, approx=-89.9999999859, error=-0.0288235721535%, for beta11=33.31020318(-dp=33.31020408+dp=33.31020228)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+null derivative or approximation for disp1p
+deriv=-110.7603621, approx=-110.000000042, error=-0.688857411359%, for disp1p2=10.40074321(-dp=10.40074431+dp=10.40074211)
+deriv=-92.05700293, approx=-92.0000001514, error=-0.0619403528584%, for beta11=34.58171072(-dp=34.58171164+dp=34.5817098)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.325683991, approx=-1.35000000068, error=-1.81755467034%, for disp1=1.1023833(-dp=1.102383313+dp=1.102383286)
+deriv=10.52531176, approx=10.5000000028, error=0.240774143904%, for disp1p=-1.325683991(-dp=-1.325684096+dp=-1.325683886)
+deriv=-111.717365, approx=-111.499999988, error=-0.194756363615%, for disp1p2=10.52531176(-dp=10.52531288+dp=10.52531065)
+deriv=-113.6087342, approx=-113.500000154, error=-0.0957550543644%, for beta11=58.58528655(-dp=58.58528769+dp=58.58528542)
+deriv=-0.4690136681, approx=-0.500000008063, error=-6.395439141%, for alfa11=-1.117766524(-dp=-1.117766519+dp=-1.117766529)
+null derivative or approximation for gama11
+deriv=-1.688889258, approx=-1.70000000743, error=-0.655716287056%, for disp1=1.342443107(-dp=1.342443124+dp=1.34244309)
+deriv=12.27303003, approx=12.2500000033, error=0.187823663733%, for disp1p=-1.688889258(-dp=-1.688889381+dp=-1.688889136)
+deriv=-124.3424811, approx=-124.000000046, error=-0.275813507754%, for disp1p2=12.27303003(-dp=12.27303127+dp=12.27302879)
+deriv=-115.4699193, approx=-115.499999964, error=-0.0260472569603%, for beta11=61.93100831(-dp=61.93100946+dp=61.93100715)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.733696289, approx=-1.69999999633, error=-1.96268335172%, for disp1=1.370846621(-dp=1.370846638+dp=1.370846604)
+deriv=12.47513638, approx=12.4499999976, error=0.201695043983%, for disp1p=-1.733696289(-dp=-1.733696414+dp=-1.733696165)
+deriv=-125.7306114, approx=-125.499999992, error=-0.183585436896%, for disp1p2=12.47513638(-dp=12.47513764+dp=12.47513513)
+deriv=-130.0611197, approx=-130.000000098, error=-0.0470040288531%, for beta11=103.0073892(-dp=103.0073905+dp=103.0073879)
+deriv=-1.314473808, approx=-1.30000000764, error=-1.10720560833%, for alfa11=-1.718853643(-dp=-1.71885363+dp=-1.718853656)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+null derivative or approximation for disp1p
+deriv=-140.0865695, approx=-140.49999999, error=-0.294690149023%, for disp1p2=14.65644829(-dp=14.6564497+dp=14.65644689)
+deriv=-131.2087384, approx=-130.000000098, error=-0.92549606789%, for beta11=108.108274(-dp=108.1082753+dp=108.1082727)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+null derivative or approximation for disp1p
+deriv=-141.653215, approx=-141.999999936, error=-0.244513312805%, for disp1p2=14.90320438(-dp=14.90320581+dp=14.90320297)
+deriv=-138.8205984, approx=-140.000000215, error=-0.845993316725%, for beta11=166.2527478(-dp=166.2527492+dp=166.2527464)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=17.51789215, approx=17.5500000088, error=0.183118270458%, for disp1p=-2.953585469(-dp=-2.953585645+dp=-2.953585294)
+deriv=-157.7392679, approx=-158.500000147, error=-0.481111818682%, for disp1p2=17.51789215(-dp=17.51789374+dp=17.51789057)
+deriv=-139.2014866, approx=-140.000000215, error=-0.57199811081%, for beta11=172.2067995(-dp=172.2068009+dp=172.2067981)
+deriv=-2.228411508, approx=-2.25000000853, error=-0.96411419319%, for alfa11=-2.368487756(-dp=-2.368487734+dp=-2.368487779)
+null derivative or approximation for gama11
+deriv=-3.018450693, approx=-3.00000000397, error=-0.613137498567%, for disp1=2.141609117(-dp=2.141609147+dp=2.141609087)
+deriv=17.7713828, approx=17.7999999851, error=0.160900042895%, for disp1p=-3.018450693(-dp=-3.018450872+dp=-3.018450516)
+deriv=-159.2574387, approx=-159.999999916, error=-0.46518021256%, for disp1p2=17.7713828(-dp=17.7713844+dp=17.7713812)
+deriv=-139.2841319, approx=-135.000000512, error=-3.12386381999%, for beta11=173.6313465(-dp=173.6313479+dp=173.6313452)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.033773187, approx=-3.00000000397, error=-1.11947141396%, for disp1=2.150503566(-dp=2.150503596+dp=2.150503536)
+deriv=17.83126248, approx=17.8500000114, error=0.105027289467%, for disp1p=-3.033773187(-dp=-3.033773366+dp=-3.033773009)
+deriv=-159.6160617, approx=-160.500000135, error=-0.552261220335%, for disp1p2=17.83126248(-dp=17.83126409+dp=17.83126088)
+deriv=-139.5030846, approx=-140.000000215, error=-0.355570755362%, for beta11=177.7050822(-dp=177.7050836+dp=177.7050808)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.07718692, approx=-3.0499999859, error=-0.887419773965%, for disp1=2.175704504(-dp=2.175704535+dp=2.175704474)
+deriv=18.00092158, approx=18.0499999836, error=0.272272671165%, for disp1p=-3.07718692(-dp=-3.077187101+dp=-3.07718674)
+deriv=-160.6321603, approx=-161.50000004, error=-0.538809747514%, for disp1p2=18.00092158(-dp=18.00092319+dp=18.00091996)
+deriv=-139.5030846, approx=-140.000000215, error=-0.355570755362%, for beta11=177.7050822(-dp=177.7050836+dp=177.7050808)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.07718692, approx=-3.0499999859, error=-0.887419773965%, for disp1=2.175704504(-dp=2.175704535+dp=2.175704474)
+deriv=18.00092158, approx=18.0499999836, error=0.272272671165%, for disp1p=-3.07718692(-dp=-3.077187101+dp=-3.07718674)
+deriv=-160.6321603, approx=-161.50000004, error=-0.538809747514%, for disp1p2=18.00092158(-dp=18.00092319+dp=18.00091996)
+deriv=-139.5030846, approx=-140.000000215, error=-0.355570755362%, for beta11=177.7050822(-dp=177.7050836+dp=177.7050808)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.07718692, approx=-3.0499999859, error=-0.887419773965%, for disp1=2.175704504(-dp=2.175704535+dp=2.175704474)
+deriv=18.00092158, approx=18.0499999836, error=0.272272671165%, for disp1p=-3.07718692(-dp=-3.077187101+dp=-3.07718674)
+deriv=-160.6321603, approx=-161.50000004, error=-0.538809747514%, for disp1p2=18.00092158(-dp=18.00092319+dp=18.00091996)
+deriv=-139.5030846, approx=-140.000000215, error=-0.355570755362%, for beta11=177.7050822(-dp=177.7050836+dp=177.7050808)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.07718692, approx=-3.0499999859, error=-0.887419773965%, for disp1=2.175704504(-dp=2.175704535+dp=2.175704474)
+deriv=18.00092158, approx=18.0499999836, error=0.272272671165%, for disp1p=-3.07718692(-dp=-3.077187101+dp=-3.07718674)
+deriv=-160.6321603, approx=-161.50000004, error=-0.538809747514%, for disp1p2=18.00092158(-dp=18.00092319+dp=18.00091996)
+deriv=-111.1017211, approx=-110.000000575, error=-0.996573447485%, for beta11=176.9142313(-dp=176.9142324+dp=176.9142302)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=16.78367209, approx=16.8499999953, error=0.394413700211%, for disp1p=-2.89799355(-dp=-2.897993719+dp=-2.897993382)
+deriv=-149.6585348, approx=-150.500000018, error=-0.560680520671%, for disp1p2=16.78367209(-dp=16.7836736+dp=16.78367059)
+deriv=-102.4240787, approx=-104.999999451, error=-2.48372394724%, for beta11=171.6680994(-dp=171.6681004+dp=171.6680983)
+deriv=2.519713526, approx=2.50000000701, error=0.785443984386%, for alfa11=2.364107893(-dp=2.364107868+dp=2.364107918)
+null derivative or approximation for gama11
+deriv=-2.788976275, approx=-2.80000000963, error=-0.394481352829%, for disp1=2.138282476(-dp=2.138282504+dp=2.138282448)
+deriv=16.20133091, approx=16.2500000123, error=0.299951347943%, for disp1p=-2.788976275(-dp=-2.788976438+dp=-2.788976113)
+deriv=-145.0703661, approx=-146.000000001, error=-0.638769183769%, for disp1p2=16.20133091(-dp=16.20133237+dp=16.20132945)
+deriv=-102.7628044, approx=-100.000001169, error=-2.72515782531%, for beta11=166.258213(-dp=166.258214+dp=166.258212)
+deriv=2.457438167, approx=2.50000000701, error=1.71709009843%, for alfa11=2.319776406(-dp=2.319776381+dp=2.319776431)
+null derivative or approximation for gama11
+deriv=-2.732717848, approx=-2.75000000549, error=-0.630423011113%, for disp1=2.104057508(-dp=2.104057535+dp=2.10405748)
+deriv=15.99333403, approx=16.0499999957, error=0.35368333189%, for disp1p=-2.732717848(-dp=-2.732718009+dp=-2.732717688)
+deriv=-143.936884, approx=-145.000000007, error=-0.735881132379%, for disp1p2=15.99333403(-dp=15.99333548+dp=15.99333258)
+deriv=-103.6053516, approx=-99.9999997475, error=-3.54150991476%, for beta11=108.1126967(-dp=108.1126977+dp=108.1126957)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.113948009, approx=-2.15000000026, error=-1.69101457981%, for disp1=1.71946722(-dp=1.719467242+dp=1.719467199)
+deriv=13.65562483, approx=13.7000000011, error=0.324431786074%, for disp1p=-2.113948009(-dp=-2.113948146+dp=-2.113947872)
+deriv=-130.8882906, approx=-131.999999997, error=-0.845765625094%, for disp1p2=13.65562483(-dp=13.65562615+dp=13.65562351)
+deriv=-103.3275849, approx=-99.9999997475, error=-3.27312711479%, for beta11=103.0116981(-dp=103.0116991+dp=103.0116971)
+deriv=1.612423288, approx=1.59999999916, error=0.773452794458%, for alfa11=1.718892816(-dp=1.7188928+dp=1.718892832)
+null derivative or approximation for gama11
+deriv=-2.057714262, approx=-2.09999999612, error=-2.03408562945%, for disp1=1.683645377(-dp=1.683645398+dp=1.683645356)
+deriv=13.43736454, approx=13.4999999846, error=0.465045082717%, for disp1p=-2.057714262(-dp=-2.057714397+dp=-2.057714127)
+deriv=-129.6341599, approx=-131.000000003, error=-1.04808986183%, for disp1p2=13.43736454(-dp=13.43736585+dp=13.43736323)
+deriv=-97.20204612, approx=-97.4999998959, error=-0.30606126853%, for beta11=61.93414325(-dp=61.93414423+dp=61.93414228)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.583499085, approx=-1.60000001026, error=-1.03665336577%, for disp1=1.371430539(-dp=1.371430555+dp=1.371430523)
+deriv=11.53310684, approx=11.5999999939, error=0.578332641392%, for disp1p=-1.583499085(-dp=-1.583499201+dp=-1.583498969)
+deriv=-118.3163705, approx=-119.49999994, error=-0.995414603029%, for disp1p2=11.53310684(-dp=11.53310803+dp=11.53310564)
+deriv=-96.21181924, approx=-96.4999998132, error=-0.299079293237%, for beta11=58.58829406(-dp=58.58829503+dp=58.5882931)
+deriv=0.7673460672, approx=0.799999999579, error=4.1667801478%, for alfa11=1.117810383(-dp=1.117810375+dp=1.117810391)
+null derivative or approximation for gama11
+deriv=-1.542147945, approx=-1.50000000199, error=-2.77093315305%, for disp1=1.34305061(-dp=1.343050625+dp=1.343050595)
+deriv=11.35949927, approx=11.3999999996, error=0.355901762785%, for disp1p=-1.542147945(-dp=-1.542148059+dp=-1.542147831)
+deriv=-117.240765, approx=-118.500000035, error=-1.06832183614%, for disp1p2=11.35949927(-dp=11.35950045+dp=11.35949808)
+deriv=-83.13603022, approx=-83.4999998034, error=-0.436843800638%, for beta11=34.58341214(-dp=34.58341298+dp=34.58341131)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.212556404, approx=-1.2499999924, error=-3.04103398061%, for disp1=1.10322017(-dp=1.103220183+dp=1.103220158)
+deriv=9.888893974, approx=9.9500000017, error=0.616022524003%, for disp1p=-1.212556404(-dp=-1.212556504+dp=-1.212556305)
+deriv=-107.6543375, approx=-108.899999951, error=-1.15043869882%, for disp1p2=9.888893974(-dp=9.888895062+dp=9.888892884)
+deriv=-81.65895787, approx=-82.0000000346, error=-0.41677176602%, for beta11=33.19078973(-dp=33.19079055+dp=33.19078891)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.189533571, approx=-1.19999999937, error=-0.876022709885%, for disp1=1.085007674(-dp=1.085007686+dp=1.085007662)
+deriv=9.776714397, approx=9.85000000453, error=0.746794456072%, for disp1p=-1.189533571(-dp=-1.18953367+dp=-1.189533473)
+deriv=-106.8739057, approx=-108.149999978, error=-1.18693247037%, for disp1p2=9.776714397(-dp=9.776715477+dp=9.776713314)
+deriv=-81.30272222, approx=-81.4999999932, error=-0.242351934295%, for beta11=32.87990933(-dp=32.87991015+dp=32.87990852)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.184095107, approx=-1.15000000633, error=-2.92148340242%, for disp1=1.080705509(-dp=1.080705521+dp=1.080705498)
+deriv=9.750215285, approx=9.80000000039, error=0.509300942891%, for disp1p=-1.184095107(-dp=-1.184095205+dp=-1.184095009)
+deriv=-106.6895517, approx=-107.899999957, error=-1.12815209104%, for disp1p2=9.750215285(-dp=9.750216362+dp=9.750214204)
+deriv=-80.27819423, approx=-80.5000002657, error=-0.275915569784%, for beta11=32.03661571(-dp=32.03661652+dp=32.03661491)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.168686124, approx=-1.19999999937, error=-2.64398689716%, for disp1=1.068516043(-dp=1.068516055+dp=1.068516031)
+deriv=9.675134465, approx=9.70000000322, error=0.256674742173%, for disp1p=-1.168686124(-dp=-1.168686221+dp=-1.168686027)
+deriv=-106.1672154, approx=-107.44999992, error=-1.20101230412%, for disp1p2=9.675134465(-dp=9.675135538+dp=9.675133389)
+deriv=-85.7343593, approx=-86.0000000102, error=-0.309362332979%, for beta11=32.03557066(-dp=32.03557152+dp=32.0355698)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.22354575, approx=10.2999999974, error=0.745039364009%, for disp1p=-1.250675068(-dp=-1.250675171+dp=-1.250674965)
+deriv=-112.0311082, approx=-113.499999976, error=-1.30260680065%, for disp1p2=10.22354575(-dp=10.22354689+dp=10.22354462)
+deriv=-86.5332542, approx=-86.9999997377, error=-0.537932099033%, for beta11=32.19481429(-dp=32.19481516+dp=32.19481342)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.262455082, approx=-1.25000000351, error=-0.991466758269%, for disp1=1.070929076(-dp=1.070929089+dp=1.070929064)
+deriv=10.29708977, approx=10.3500000015, error=0.512519992664%, for disp1p=-1.262455082(-dp=-1.262455185+dp=-1.262454978)
+deriv=-112.7634646, approx=-114.49999997, error=-1.52821340953%, for disp1p2=10.29708977(-dp=10.29709091+dp=10.29708862)
+deriv=-90.2054355, approx=-90.5000000273, error=-0.326016233486%, for beta11=33.30992628(-dp=33.30992718+dp=33.30992537)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.313228698, approx=-1.35000000068, error=-2.76140781266%, for disp1=1.086735112(-dp=1.086735125+dp=1.086735098)
+deriv=10.60475427, approx=10.6500000041, error=0.425746950779%, for disp1p=-1.313228698(-dp=-1.313228805+dp=-1.313228592)
+deriv=-115.7206707, approx=-116.999999999, error=-1.09945480617%, for disp1p2=10.60475427(-dp=10.60475544+dp=10.6047531)
+deriv=-92.24877721, approx=-92.4999998375, error=-0.271961342888%, for beta11=34.5808538(-dp=34.58085473+dp=34.58085288)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.337106979, approx=-1.35000000068, error=-0.959621018047%, for disp1=1.103332608(-dp=1.103332621+dp=1.103332594)
+deriv=10.73325038, approx=10.7999999943, error=0.619967846517%, for disp1p=-1.337106979(-dp=-1.337107087+dp=-1.337106871)
+deriv=-116.7727369, approx=-118.499999946, error=-1.46830701178%, for disp1p2=10.73325038(-dp=10.73325156+dp=10.73324919)
+deriv=-113.9448065, approx=-113.99999984, error=-0.0484269336613%, for beta11=58.57565721(-dp=58.57565835+dp=58.57565607)
+deriv=-0.4637888582, approx=-0.450000003926, error=-3.01795192413%, for alfa11=-1.11740452(-dp=-1.117404516+dp=-1.117404525)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=12.5292447, approx=12.649999992, error=0.95916532391%, for disp1p=-1.702844128(-dp=-1.702844254+dp=-1.702844001)
+deriv=-130.5663323, approx=-132.500000039, error=-1.47009898326%, for disp1p2=12.5292447(-dp=12.52924602+dp=12.52924337)
+deriv=-115.8201268, approx=-116.000000006, error=-0.155183424351%, for beta11=61.92030593(-dp=61.92030709+dp=61.92030477)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=12.73631514, approx=12.8499999974, error=0.88863798315%, for disp1p=-1.747911507(-dp=-1.747911635+dp=-1.747911378)
+deriv=-132.0746142, approx=-133.999999985, error=-1.44725252417%, for disp1p2=12.73631514(-dp=12.73631648+dp=12.7363138)
+deriv=-130.5419359, approx=-130.000000098, error=-0.416006582446%, for beta11=102.9845719(-dp=102.9845732+dp=102.9845706)
+deriv=-1.309613726, approx=-1.35000000068, error=-3.03700302582%, for alfa11=-1.718374159(-dp=-1.718374146+dp=-1.718374173)
+null derivative or approximation for gama11
+deriv=-2.258267941, approx=-2.30000000156, error=-1.83104903401%, for disp1=1.684640853(-dp=1.684640876+dp=1.68464083)
+deriv=14.96589329, approx=15.0999999837, error=0.892085211003%, for disp1p=-2.258267941(-dp=-2.258268092+dp=-2.25826779)
+deriv=-147.5988101, approx=-149.999999977, error=-1.61370932628%, for disp1p2=14.96589329(-dp=14.96589478+dp=14.96589178)
+deriv=-131.7022828, approx=-130.000000098, error=-1.30093072406%, for beta11=108.0840407(-dp=108.084042+dp=108.0840394)
+deriv=-1.388416383, approx=-1.40000000481, error=-0.830838741648%, for alfa11=-1.774412672(-dp=-1.774412658+dp=-1.774412686)
+null derivative or approximation for gama11
+deriv=-2.318217455, approx=-2.3500000057, error=-1.36165681953%, for disp1=1.720505879(-dp=1.720505903+dp=1.720505856)
+deriv=15.21761274, approx=15.3500000044, error=0.866193022775%, for disp1p=-2.318217455(-dp=-2.318217608+dp=-2.318217301)
+deriv=-149.2855893, approx=-152.000000053, error=-1.80188555254%, for disp1p2=15.21761274(-dp=15.21761425+dp=15.21761121)
+deriv=-139.4310538, approx=-139.999998794, error=-0.407216727419%, for beta11=166.2130566(-dp=166.213058+dp=166.2130552)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.973123087, approx=-3.00000000397, error=-0.899928448241%, for disp1=2.105516012(-dp=2.105516042+dp=2.105515982)
+deriv=17.88055487, approx=18.0500000058, error=0.943181291526%, for disp1p=-2.973123087(-dp=-2.973123268+dp=-2.973122907)
+deriv=-166.539588, approx=-169.499999991, error=-1.76194240028%, for disp1p2=17.88055487(-dp=17.88055656+dp=17.88055317)
+deriv=-139.8217968, approx=-140.000000215, error=-0.127369216315%, for beta11=172.1655801(-dp=172.1655815+dp=172.1655787)
+deriv=-2.223946129, approx=-2.20000000439, error=-1.08256854332%, for alfa11=-2.367881353(-dp=-2.367881331+dp=-2.367881375)
+null derivative or approximation for gama11
+deriv=-3.038214708, approx=-3.05000000811, error=-0.387151263831%, for disp1=2.143186222(-dp=2.143186253+dp=2.143186192)
+deriv=18.13836222, approx=18.3000000042, error=0.887184683278%, for disp1p=-3.038214708(-dp=-3.038214891+dp=-3.038214525)
+deriv=-168.1622404, approx=-170.999999938, error=-1.67339355638%, for disp1p2=18.13836222(-dp=18.13836392+dp=18.1383605)
+deriv=-139.9067555, approx=-135.000000512, error=-3.56975947727%, for beta11=173.5897627(-dp=173.589764+dp=173.5897613)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=18.19926159, approx=18.3499999862, error=0.824850569765%, for disp1p=-3.053590682(-dp=-3.053590865+dp=-3.053590498)
+deriv=-168.5455441, approx=-171.499999979, error=-1.73768245493%, for disp1p2=18.19926159(-dp=18.1992633+dp=18.19925987)
+deriv=-140.1322329, approx=-140.000000215, error=-0.0944073329666%, for beta11=177.6624582(-dp=177.6624596+dp=177.6624568)
+deriv=-2.286005667, approx=-2.30000001267, error=-0.610306512668%, for alfa11=-2.412012656(-dp=-2.412012633+dp=-2.412012679)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=18.37180982, approx=18.5500000027, error=0.965229947187%, for disp1p=-3.09715594(-dp=-3.097156125+dp=-3.097155754)
+deriv=-169.6315712, approx=-172.999999926, error=-1.9662103609%, for disp1p2=18.37180982(-dp=18.37181154+dp=18.37180808)
+deriv=-140.1322329, approx=-140.000000215, error=-0.0944073329666%, for beta11=177.6624582(-dp=177.6624596+dp=177.6624568)
+deriv=-2.286005667, approx=-2.30000001267, error=-0.610306512668%, for alfa11=-2.412012656(-dp=-2.412012633+dp=-2.412012679)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=18.37180982, approx=18.5500000027, error=0.965229947187%, for disp1p=-3.09715594(-dp=-3.097156125+dp=-3.097155754)
+deriv=-169.6315712, approx=-172.999999926, error=-1.9662103609%, for disp1p2=18.37180982(-dp=18.37181154+dp=18.37180808)
+deriv=-111.701363, approx=-114.999998857, error=-2.91011560758%, for beta11=176.8715918(-dp=176.871593+dp=176.8715907)
+deriv=-5.754548546, approx=-5.7999999914, error=-0.786728191914%, for alfa11=2.404534269(-dp=2.404534327+dp=2.404534211)
+null derivative or approximation for gama11
+deriv=-2.917425366, approx=-2.8999999957, error=-0.59907499344%, for disp1=2.172408487(-dp=2.172408516+dp=2.172408458)
+deriv=17.14507941, approx=17.2999999881, error=0.89952225877%, for disp1p=-2.917425366(-dp=-2.917425539+dp=-2.917425193)
+deriv=-158.4263999, approx=-161.499999862, error=-1.92144190948%, for disp1p2=17.14507941(-dp=17.14508101+dp=17.14507778)
+deriv=-103.0053265, approx=-104.999999451, error=-1.91790565128%, for beta11=171.6286461(-dp=171.6286471+dp=171.628645)
+deriv=2.512407911, approx=2.50000000701, error=0.495087558402%, for alfa11=2.361786053(-dp=2.361786028+dp=2.361786078)
+null derivative or approximation for gama11
+deriv=-2.808008971, approx=-2.84999999156, error=-1.48430378385%, for disp1=2.139788251(-dp=2.139788279+dp=2.139788222)
+deriv=16.55543543, approx=16.7500000092, error=1.16836532331%, for disp1p=-2.808008971(-dp=-2.808009138+dp=-2.808008803)
+deriv=-153.6607265, approx=-156.499999981, error=-1.8308401026%, for disp1p2=16.55543543(-dp=16.55543699+dp=16.55543386)
+deriv=-103.3325911, approx=-104.999999451, error=-1.60071772379%, for beta11=166.2240496(-dp=166.2240507+dp=166.2240486)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.751456063, approx=-2.80000000963, error=-1.74887258382%, for disp1=2.105539978(-dp=2.105540006+dp=2.10553995)
+deriv=16.3419616, approx=16.4999999885, error=0.962417473838%, for disp1p=-2.751456063(-dp=-2.751456228+dp=-2.751455898)
+deriv=-152.3944974, approx=-155.500000076, error=-2.01725117%, for disp1p2=16.3419616(-dp=16.34196314+dp=16.34196003)
+deriv=-104.0431765, approx=-105.000000161, error=-0.915431612271%, for beta11=108.1315697(-dp=108.1315708+dp=108.1315687)
+deriv=1.685327733, approx=1.69999999633, error=0.866814943943%, for alfa11=1.773466355(-dp=1.773466338+dp=1.773466372)
+null derivative or approximation for gama11
+deriv=-2.129066514, approx=-2.15000000026, error=-0.978413688423%, for disp1=1.720663281(-dp=1.720663302+dp=1.720663259)
+deriv=13.93693006, approx=14.0499999857, error=0.808019496824%, for disp1p=-2.129066514(-dp=-2.129066654+dp=-2.129066373)
+deriv=-137.7141928, approx=-139.999999949, error=-1.64615796254%, for disp1p2=13.93693006(-dp=13.93693145+dp=13.93692865)
+deriv=-103.7527749, approx=-105.000000161, error=-1.19493047301%, for beta11=103.0347621(-dp=103.0347631+dp=103.034761)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.072460486, approx=-2.05000000308, error=-1.0896639507%, for disp1=1.684811975(-dp=1.684811996+dp=1.684811955)
+deriv=13.71174581, approx=13.8500000135, error=1.00323255582%, for disp1p=-2.072460486(-dp=-2.072460624+dp=-2.072460347)
+deriv=-136.2922433, approx=-139.000000043, error=-1.96718709581%, for disp1p2=13.71174581(-dp=13.71174719+dp=13.71174441)
+deriv=-97.51348148, approx=-97.4999998959, error=-0.0138263098122%, for beta11=61.985719(-dp=61.98571998+dp=61.98571803)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=11.74015481, approx=11.8500000035, error=0.931279971205%, for disp1p=-1.594625011(-dp=-1.59462513+dp=-1.594624893)
+deriv=-123.3424742, approx=-125.499999992, error=-1.7340494618%, for disp1p2=11.74015481(-dp=11.74015606+dp=11.74015355)
+deriv=-96.5124912, approx=-96.5000001685, error=-0.0129432364048%, for beta11=58.64153973(-dp=58.6415407+dp=58.64153877)
+deriv=0.7631586434, approx=0.749999995442, error=1.73922913571%, for alfa11=1.117278734(-dp=1.117278726+dp=1.117278741)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=11.55962275, approx=11.6500000091, error=0.778791280422%, for disp1p=-1.552901563(-dp=-1.552901679+dp=-1.552901446)
+deriv=-122.0990369, approx=-124.000000046, error=-1.54487654186%, for disp1p2=11.55962275(-dp=11.55962399+dp=11.55962151)
+deriv=-83.34115118, approx=-83.4999998034, error=-0.190418997301%, for beta11=34.64064365(-dp=34.64064448+dp=34.64064281)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.219689294, approx=-1.19999999937, error=-1.62742337916%, for disp1=1.10378431(-dp=1.103784322+dp=1.103784298)
+deriv=10.0216761, approx=10.100000003, error=0.778502770937%, for disp1p=-1.219689294(-dp=-1.219689394+dp=-1.219689192)
+deriv=-110.8804316, approx=-112.00000003, error=-1.00463591324%, for disp1p2=10.0216761(-dp=10.02167721+dp=10.02167497)
+deriv=-81.85633476, approx=-82.0000000346, error=-0.17535516675%, for beta11=33.247294(-dp=33.24729482+dp=33.24729318)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.903472859, approx=9.9500000017, error=0.468705329572%, for disp1p=-1.196342588(-dp=-1.196342687+dp=-1.196342488)
+deriv=-109.9540017, approx=-111.299999972, error=-1.21669959574%, for disp1p2=9.903472859(-dp=9.903473966+dp=9.90347174)
+null derivative or approximation for beta11
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.875550834, approx=9.9499999906, error=0.751042503263%, for disp1p=-1.190827618(-dp=-1.190827717+dp=-1.190827518)
+deriv=-109.7351599, approx=-111.049999951, error=-1.19105835931%, for disp1p2=9.875550834(-dp=9.875551939+dp=9.875549718)
+deriv=-80.46867276, approx=-80.0000002243, error=-0.584129633453%, for beta11=32.09230804(-dp=32.09230884+dp=32.09230724)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.17520187, approx=-1.19999999937, error=-2.0880860434%, for disp1=1.069031342(-dp=1.069031354+dp=1.06903133)
+deriv=9.796438431, approx=9.85000000453, error=0.545254792166%, for disp1p=-1.17520187(-dp=-1.175201968+dp=-1.175201771)
+deriv=-109.1151084, approx=-110.399999986, error=-1.17066346435%, for disp1p2=9.796438431(-dp=9.796439529+dp=9.796437321)
+deriv=-86.72707179, approx=-86.5000000516, error=-0.262166572431%, for beta11=32.25256014(-dp=32.25256101+dp=32.25255928)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.268490178, approx=-1.25000000351, error=-1.46835390746%, for disp1=1.071408341(-dp=1.071408353+dp=1.071408328)
+deriv=10.40940443, approx=10.5000000028, error=0.86655335489%, for disp1p=-1.268490178(-dp=-1.268490283+dp=-1.268490073)
+deriv=-115.494241, approx=-116.999999999, error=-1.29530864335%, for disp1p2=10.40940443(-dp=10.4094056+dp=10.40940326)
+deriv=-90.40289668, approx=-89.9999999859, error=-0.446663220504%, for beta11=33.36950885(-dp=33.36950975+dp=33.36950795)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.31917065, approx=-1.29999999654, error=-1.46387204554%, for disp1=1.087207608(-dp=1.087207621+dp=1.087207595)
+deriv=10.71532033, approx=10.8000000054, error=0.787157003451%, for disp1p=-1.31917065(-dp=-1.319170758+dp=-1.319170542)
+deriv=-118.4092169, approx=-119.999999981, error=-1.33449797122%, for disp1p2=10.71532033(-dp=10.71532152+dp=10.71531912)
+deriv=-92.44515016, approx=-92.4999998375, error=-0.0593145346228%, for beta11=34.64202451(-dp=34.64202544+dp=34.64202359)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.84129643, approx=10.9000000026, error=0.540019062538%, for disp1p=-1.342913498(-dp=-1.342913606+dp=-1.342913388)
+deriv=-119.4000092, approx=-120.500000023, error=-0.917041084059%, for disp1p2=10.84129643(-dp=10.84129763+dp=10.84129522)
+deriv=-114.1167388, approx=-114.000000195, error=-0.1023498803%, for beta11=58.64633508(-dp=58.64633622+dp=58.64633394)
+deriv=-0.4650171437, approx=-0.450000003926, error=-3.28237340961%, for alfa11=-1.117413035(-dp=-1.11741303+dp=-1.117413039)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=12.60630805, approx=12.649999992, error=0.345988351752%, for disp1p=-1.706985528(-dp=-1.706985654+dp=-1.706985401)
+deriv=-132.4402615, approx=-133.500000032, error=-0.796974874222%, for disp1p2=12.60630805(-dp=12.60630938+dp=12.60630671)
+deriv=-115.9883888, approx=-116.000000006, error=-0.0100101609532%, for beta11=61.99091073(-dp=61.99091189+dp=61.99090957)
+deriv=-0.5438364943, approx=-0.500000008063, error=-8.39910965697%, for alfa11=-1.173392208(-dp=-1.173392203+dp=-1.173392213)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=12.81019266, approx=12.8499999974, error=0.310265304171%, for disp1p=-1.751881689(-dp=-1.751881817+dp=-1.75188156)
+deriv=-133.8710799, approx=-134.999999979, error=-0.839748238755%, for disp1p2=12.81019266(-dp=12.810194+dp=12.8101913)
+deriv=-130.6632307, approx=-134.999999801, error=-3.26486212871%, for beta11=103.0442498(-dp=103.0442511+dp=103.0442484)
+deriv=-1.310915887, approx=-1.30000000764, error=-0.83617242363%, for alfa11=-1.717663136(-dp=-1.717663123+dp=-1.717663149)
+null derivative or approximation for gama11
+deriv=-2.260572873, approx=-2.24999999743, error=-0.468804113171%, for disp1=1.684824129(-dp=1.684824151+dp=1.684824106)
+deriv=15.00878573, approx=15.0500000018, error=0.274224462429%, for disp1p=-2.260572873(-dp=-2.260573023+dp=-2.260572722)
+deriv=-148.6418751, approx=-149.999999977, error=-0.9095341209%, for disp1p2=15.00878573(-dp=15.00878722+dp=15.00878422)
+deriv=-131.8175901, approx=-129.999999388, error=-1.38844049095%, for beta11=108.1415444(-dp=108.1415457+dp=108.1415431)
+deriv=-1.389725444, approx=-1.39999999371, error=-0.736599349391%, for alfa11=-1.773634579(-dp=-1.773634565+dp=-1.773634593)
+null derivative or approximation for gama11
+deriv=-2.320351152, approx=-2.30000000156, error=-0.880935225859%, for disp1=1.720675538(-dp=1.720675561+dp=1.720675515)
+deriv=15.25731904, approx=15.3000000003, error=0.279350162998%, for disp1p=-2.320351152(-dp=-2.320351305+dp=-2.320350999)
+deriv=-150.2511835, approx=-151.499999923, error=-0.827712692866%, for disp1p2=15.25731904(-dp=15.25732055+dp=15.25731752)
+deriv=-139.4768834, approx=-140.000000215, error=-0.374354263724%, for beta11=166.2392013(-dp=166.2392027+dp=166.2391999)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.973591475, approx=-2.99999998177, error=-0.884175188702%, for disp1=2.105553247(-dp=2.105553277+dp=2.105553217)
+deriv=17.88927505, approx=17.9499999975, error=0.338873749038%, for disp1p=-2.973591475(-dp=-2.973591654+dp=-2.973591295)
+deriv=-166.7517565, approx=-167.500000003, error=-0.447712533365%, for disp1p2=17.88927505(-dp=17.88927672+dp=17.88927337)
+deriv=-139.860415, approx=-139.999998794, error=-0.0997524387179%, for beta11=172.1880173(-dp=172.1880187+dp=172.1880159)
+deriv=-2.225328074, approx=-2.20000000439, error=-1.14468663829%, for alfa11=-2.366392529(-dp=-2.366392507+dp=-2.366392551)
+null derivative or approximation for gama11
+deriv=-3.038534135, approx=-3.0499999859, error=-0.376637485376%, for disp1=2.143211611(-dp=2.143211642+dp=2.143211581)
+deriv=18.14431071, approx=18.199999996, error=0.306453939501%, for disp1p=-3.038534135(-dp=-3.038534316+dp=-3.038533952)
+deriv=-168.3070154, approx=-169.499999991, error=-0.706311317953%, for disp1p2=18.14431071(-dp=18.1443124+dp=18.14430901)
+deriv=-139.9436464, approx=-140.000000215, error=-0.0402608279556%, for beta11=173.6113024(-dp=173.6113038+dp=173.611301)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.053874921, approx=-3.10000001225, error=-1.49905845492%, for disp1=2.152107288(-dp=2.152107319+dp=2.152107257)
+deriv=18.20455536, approx=18.2500000001, error=0.249322147312%, for disp1p=-3.053874921(-dp=-3.053875103+dp=-3.053874738)
+deriv=-168.6743994, approx=-169.499999991, error=-0.488269125493%, for disp1p2=18.20455536(-dp=18.20455704+dp=18.20455365)
+deriv=-140.1641801, approx=-144.999999918, error=-3.391603965%, for beta11=177.6814104(-dp=177.6814118+dp=177.6814089)
+deriv=-2.287393056, approx=-2.30000001267, error=-0.549634900627%, for alfa11=-2.410471007(-dp=-2.410470984+dp=-2.41047103)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=18.37524851, approx=18.3999999903, error=0.134609452414%, for disp1p=-3.09734048(-dp=-3.097340664+dp=-3.097340296)
+deriv=-169.7153207, approx=-170.500000074, error=-0.461283972885%, for disp1p2=18.37524851(-dp=18.37525021+dp=18.3752468)
+deriv=-111.7109068, approx=-109.999999154, error=-1.54336805291%, for beta11=176.8789079(-dp=176.878909+dp=176.8789068)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.917223808, approx=-2.8999999957, error=-0.592166053197%, for disp1=2.17239243(-dp=2.172392459+dp=2.172392401)
+null derivative or approximation for disp1p
+deriv=-158.335461, approx=-159.000000011, error=-0.41882429941%, for disp1p2=17.14133416(-dp=17.14133574+dp=17.14133256)
+deriv=-103.0073832, approx=-104.999999451, error=-1.91590916177%, for beta11=171.6318176(-dp=171.6318186+dp=171.6318165)
+deriv=2.510980263, approx=2.50000000701, error=0.438247823682%, for alfa11=2.363654408(-dp=2.363654383+dp=2.363654433)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=16.54926191, approx=16.5999999968, error=0.306118953455%, for disp1p=-2.807676864(-dp=-2.80767703+dp=-2.807676698)
+deriv=-153.5107316, approx=-153.999999952, error=-0.318212213134%, for disp1p2=16.54926191(-dp=16.54926344+dp=16.54926036)
+deriv=-103.3271086, approx=-99.9999997475, error=-3.27266627605%, for beta11=166.2229729(-dp=166.2229739+dp=166.2229719)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.750985051, approx=-2.80000000963, error=-1.76599137245%, for disp1=2.105502414(-dp=2.105502442+dp=2.105502386)
+deriv=16.33320564, approx=16.3499999983, error=0.102770569808%, for disp1p=-2.750985051(-dp=-2.750985214+dp=-2.750984887)
+deriv=-152.1816883, approx=-153.000000047, error=-0.536278406201%, for disp1p2=16.33320564(-dp=16.33320716+dp=16.3332041)
+deriv=-103.9574432, approx=-104.999999451, error=-0.997864672785%, for beta11=108.0893294(-dp=108.0893304+dp=108.0893283)
+deriv=1.683994223, approx=1.69999999633, error=0.945969306816%, for alfa11=1.774555636(-dp=1.774555619+dp=1.774555653)
+null derivative or approximation for gama11
+deriv=-2.126887989, approx=-2.09999999612, error=-1.27223588491%, for disp1=1.720489256(-dp=1.720489277+dp=1.720489235)
+null derivative or approximation for disp1p
+deriv=-136.7292311, approx=-137.000000056, error=-0.197837077481%, for disp1p2=13.89642911(-dp=13.89643047+dp=13.89642773)
+deriv=-103.6600872, approx=-104.999999451, error=-1.28430144182%, for beta11=102.9894491(-dp=102.9894502+dp=102.9894481)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.070106388, approx=-2.05000000308, error=-0.976012899046%, for disp1=1.684623919(-dp=1.684623939+dp=1.684623898)
+deriv=13.66798069, approx=13.649999997, error=0.131639986333%, for disp1p=-2.070106388(-dp=-2.070106524+dp=-2.070106251)
+deriv=-135.2278854, approx=-135.50000002, error=-0.201024449218%, for disp1p2=13.66798069(-dp=13.66798204+dp=13.66797933)
+deriv=-97.3658125, approx=-97.4999998959, error=-0.137722871236%, for beta11=61.92180756(-dp=61.92180853+dp=61.92180658)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=11.66464578, approx=11.649999998, error=0.125635895206%, for disp1p=-1.590563461(-dp=-1.590563577+dp=-1.590563344)
+null derivative or approximation for disp1p2
+deriv=-96.36046958, approx=-96.4999998132, error=-0.144695523809%, for beta11=58.57687615(-dp=58.57687712+dp=58.57687519)
+deriv=0.7619302522, approx=0.749999995442, error=1.57814909474%, for alfa11=1.117499276(-dp=1.117499269+dp=1.117499284)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=11.48084986, approx=11.4499999926, error=0.269068679206%, for disp1p=-1.548664456(-dp=-1.54866457+dp=-1.548664341)
+deriv=-120.183163, approx=-120.00000007, error=-0.152519375292%, for disp1p2=11.48084986(-dp=11.48085106+dp=11.48084866)
+deriv=-83.15943806, approx=-82.999999762, error=-0.191910011332%, for beta11=34.57994962(-dp=34.57995045+dp=34.57994879)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.213744869, approx=-1.19999999937, error=-1.13888338505%, for disp1=1.103309313(-dp=1.103309325+dp=1.103309301)
+deriv=9.911161721, approx=9.90000000867, error=0.112681048042%, for disp1p=-1.213744869(-dp=-1.213744968+dp=-1.21374477)
+deriv=-108.1924897, approx=-107.699999941, error=-0.45623612038%, for disp1p2=9.911161721(-dp=9.911162797+dp=9.911160643)
+deriv=-81.67308482, approx=-81.9999996793, error=-0.399472961951%, for beta11=33.18795197(-dp=33.18795279+dp=33.18795115)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.190245472, approx=-1.15000000633, error=-3.43942257674%, for disp1=1.085058982(-dp=1.085058993+dp=1.08505897)
+deriv=9.79011971, approx=9.74999999626, error=0.410639385503%, for disp1p=-1.190245472(-dp=-1.190245569+dp=-1.190245374)
+deriv=-107.1970104, approx=-106.650000031, error=-0.51159038193%, for disp1p2=9.79011971(-dp=9.790120775+dp=9.790118642)
+deriv=-81.31470291, approx=-81.4999999932, error=-0.227617137617%, for beta11=32.87721708(-dp=32.8772179+dp=32.87721627)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.184694433, approx=-1.14999999523, error=-2.97207526168%, for disp1=1.08074788(-dp=1.080747891+dp=1.080747868)
+deriv=9.761527109, approx=9.74999999626, error=0.118156950832%, for disp1p=-1.184694433(-dp=-1.18469453+dp=-1.184694335)
+deriv=-106.9618578, approx=-106.400000011, error=-0.526671257137%, for disp1p2=9.761527109(-dp=9.761528171+dp=9.761526043)
+deriv=-80.2841895, approx=-79.9999998691, error=-0.354607191196%, for beta11=32.03433146(-dp=32.03433226+dp=32.03433066)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.168966489, approx=-1.19999999937, error=-2.62000416813%, for disp1=1.068533091(-dp=1.068533103+dp=1.068533079)
+deriv=9.680514739, approx=9.64999999908, error=0.315715751282%, for disp1p=-1.168966489(-dp=-1.168966586+dp=-1.168966393)
+deriv=-106.2955921, approx=-105.749999957, error=-0.514598901%, for disp1p2=9.680514739(-dp=9.680515795+dp=9.68051368)
+deriv=-86.51662258, approx=-86.5000000516, error=-0.0192149495608%, for beta11=32.19391601(-dp=32.19391687+dp=32.19391514)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.261503432, approx=-1.2499999924, error=-0.916060036794%, for disp1=1.070848348(-dp=1.070848361+dp=1.070848336)
+deriv=10.27956485, approx=10.2500000043, error=0.288022136762%, for disp1p=-1.261503432(-dp=-1.261503534+dp=-1.261503329)
+deriv=-112.335957, approx=-111.499999988, error=-0.746937197%, for disp1p2=10.27956485(-dp=10.27956596+dp=10.27956373)
+deriv=-90.18101525, approx=-89.9999999859, error=-0.200926011909%, for beta11=33.30950799(-dp=33.30950889+dp=33.30950709)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.311859869, approx=-1.29999999654, error=-0.908155342964%, for disp1=1.086621235(-dp=1.086621248+dp=1.086621222)
+deriv=10.57947583, approx=10.5000000028, error=0.754058856401%, for disp1p=-1.311859869(-dp=-1.311859974+dp=-1.311859764)
+deriv=-115.1050207, approx=-114.49999997, error=-0.527010017438%, for disp1p2=10.57947583(-dp=10.57947697+dp=10.57947468)
+deriv=-92.21628938, approx=-92.0000001514, error=-0.234820958705%, for beta11=34.58099698(-dp=34.5809979+dp=34.58099606)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.335307662, approx=-1.35000000068, error=-1.09427600281%, for disp1=1.103184532(-dp=1.103184546+dp=1.103184519)
+deriv=10.69997, approx=10.6500000041, error=0.468103663674%, for disp1p=-1.335307662(-dp=-1.335307768+dp=-1.335307555)
+deriv=-115.9629849, approx=-115.000000012, error=-0.833886770848%, for disp1p2=10.69997(-dp=10.69997115+dp=10.69996885)
+deriv=-113.7934932, approx=-113.500000154, error=-0.258250283977%, for beta11=58.58446181(-dp=58.58446295+dp=58.58446068)
+deriv=-0.4689751902, approx=-0.499999996961, error=-6.40363286333%, for alfa11=-1.117766404(-dp=-1.117766399+dp=-1.117766409)
+null derivative or approximation for gama11
+deriv=-1.69575272, approx=-1.64999999219, error=-2.7349736662%, for disp1=1.343014526(-dp=1.343014542+dp=1.343014509)
+deriv=12.39759492, approx=12.3500000004, error=0.384642788235%, for disp1p=-1.69575272(-dp=-1.695752843+dp=-1.695752596)
+deriv=-127.3704491, approx=-126.000000034, error=-1.08177498291%, for disp1p2=12.39759492(-dp=12.39759618+dp=12.39759366)
+deriv=-115.6545321, approx=-115.499999964, error=-0.133704612611%, for beta11=61.93018436(-dp=61.93018552+dp=61.93018321)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=12.59455036, approx=12.5000000017, error=0.753552917983%, for disp1p=-1.74027593(-dp=-1.740276055+dp=-1.740275805)
+deriv=-128.6333726, approx=-127.000000028, error=-1.27790245514%, for disp1p2=12.59455036(-dp=12.59455163+dp=12.59454909)
+deriv=-130.2174291, approx=-130.000000098, error=-0.167113327161%, for beta11=103.006693(-dp=103.0066943+dp=103.0066917)
+deriv=-1.316337324, approx=-1.29999999654, error=-1.2488701156%, for alfa11=-1.718861896(-dp=-1.718861883+dp=-1.718861909)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=14.72576513, approx=14.600000009, error=0.857710756637%, for disp1p=-2.245340593(-dp=-2.245340739+dp=-2.245340447)
+deriv=-141.7715858, approx=-139.999999949, error=-1.2574623852%, for disp1p2=14.72576513(-dp=14.72576653+dp=14.72576373)
+deriv=-131.3593716, approx=-130.000000098, error=-1.04023168793%, for beta11=108.1076031(-dp=108.1076044+dp=108.1076018)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=14.96736983, approx=14.8499999852, error=0.787258202065%, for disp1p=-2.304745949(-dp=-2.304746098+dp=-2.304745801)
+deriv=-143.2130129, approx=-141.000000031, error=-1.55729172702%, for disp1p2=14.96736983(-dp=14.96737124+dp=14.96736842)
+deriv=-138.8891578, approx=-134.999999091, error=-2.83995084247%, for beta11=166.2524441(-dp=166.2524455+dp=166.2524428)
+deriv=-2.163671077, approx=-2.15000000026, error=-0.633848826164%, for alfa11=-2.319758549(-dp=-2.319758528+dp=-2.319758571)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=17.53195882, approx=17.3499999923, error=1.04328331287%, for disp1p=-2.954360358(-dp=-2.954360532+dp=-2.954360185)
+deriv=-158.0812803, approx=-155.000000035, error=-1.96835803259%, for disp1p2=17.53195882(-dp=17.53196037+dp=17.53195727)
+deriv=-139.2603278, approx=-140.000000215, error=-0.529736837471%, for beta11=172.2065389(-dp=172.2065403+dp=172.2065375)
+deriv=-2.232331074, approx=-2.24999998633, error=-0.788380513973%, for alfa11=-2.368505052(-dp=-2.36850503+dp=-2.368505075)
+null derivative or approximation for gama11
+deriv=-3.01897866, approx=-2.99999998177, error=-0.630627864359%, for disp1=2.141653051(-dp=2.141653081+dp=2.141653021)
+deriv=17.78096817, approx=17.6000000129, error=1.02296893699%, for disp1p=-3.01897866(-dp=-3.018978836+dp=-3.018978484)
+deriv=-159.4905211, approx=-156.499999981, error=-1.89279166242%, for disp1p2=17.78096817(-dp=17.78096974+dp=17.78096661)
+deriv=-139.3406205, approx=-140.000000215, error=-0.472097264823%, for beta11=173.6310964(-dp=173.6310978+dp=173.631095)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-3.034242825, approx=-3.00000000397, error=-1.13495005085%, for disp1=2.150542644(-dp=2.150542674+dp=2.150542614)
+deriv=17.83978928, approx=17.6500000171, error=1.06954291181%, for disp1p=-3.034242825(-dp=-3.034243002+dp=-3.034242649)
+deriv=-159.8234126, approx=-157.000000023, error=-1.78232571501%, for disp1p2=17.83978928(-dp=17.83979085+dp=17.83978771)
+deriv=-139.5527894, approx=-140.000000215, error=-0.319947309833%, for beta11=177.7048622(-dp=177.7048636+dp=177.7048608)
+deriv=-2.294503512, approx=-2.25000000853, error=-1.95856393416%, for alfa11=-2.412645586(-dp=-2.412645564+dp=-2.412645609)
+null derivative or approximation for gama11
+deriv=-3.077491295, approx=-3.05000000811, error=-0.897309699223%, for disp1=2.175729823(-dp=2.175729854+dp=2.175729793)
+deriv=18.00644908, approx=17.8999999934, error=0.592924610444%, for disp1p=-3.077491295(-dp=-3.077491474+dp=-3.077491116)
+deriv=-160.7666052, approx=-158.499999969, error=-1.41988243931%, for disp1p2=18.00644908(-dp=18.00645067+dp=18.0064475)
+deriv=-111.1209267, approx=-110.000000575, error=-1.01385801777%, for beta11=176.9141464(-dp=176.9141475+dp=176.9141453)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.897658033, approx=-2.85000001377, error=-1.65834567216%, for disp1=2.17084037(-dp=2.170840398+dp=2.170840341)
+deriv=16.77758598, approx=16.5999999968, error=1.06410321771%, for disp1p=-2.897658033(-dp=-2.897658199+dp=-2.897657867)
+deriv=-149.5106743, approx=-146.499999865, error=-2.03416612857%, for disp1p2=16.77758598(-dp=16.77758745+dp=16.77758452)
+deriv=-102.4322966, approx=-105.000000872, error=-2.47570344933%, for beta11=171.6680396(-dp=171.6680407+dp=171.6680386)
+deriv=2.514697912, approx=2.55000001115, error=1.39404559496%, for alfa11=2.364108686(-dp=2.36410866+dp=2.364108711)
+null derivative or approximation for gama11
+deriv=-2.788424648, approx=-2.79999998742, error=-0.414261269647%, for disp1=2.138236583(-dp=2.138236611+dp=2.138236555)
+deriv=16.19132007, approx=16.0499999957, error=0.876639504813%, for disp1p=-2.788424648(-dp=-2.788424808+dp=-2.788424487)
+deriv=-144.8270863, approx=-142.000000025, error=-1.97128263655%, for disp1p2=16.19132007(-dp=16.19132149+dp=16.19131865)
+deriv=-102.7596149, approx=-99.9999997475, error=-2.7220560241%, for beta11=166.2581515(-dp=166.2581525+dp=166.2581505)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.731936571, approx=-2.70000000135, error=-1.17588153765%, for disp1=2.103992596(-dp=2.103992623+dp=2.103992569)
+deriv=15.97914957, approx=15.8500000014, error=0.811517557758%, for disp1p=-2.731936571(-dp=-2.73193673+dp=-2.731936413)
+deriv=-143.5921161, approx=-141.000000031, error=-1.82163589349%, for disp1p2=15.97914957(-dp=15.97915098+dp=15.97914816)
+deriv=-103.4916645, approx=-104.999999451, error=-1.44690192606%, for beta11=108.112624(-dp=108.112625+dp=108.1126229)
+deriv=1.688236365, approx=1.69999999633, error=0.694380797272%, for alfa11=1.774942093(-dp=1.774942076+dp=1.77494211)
+null derivative or approximation for gama11
+deriv=-2.110343709, approx=-2.09999999612, error=-0.491347671608%, for disp1=1.71916851(-dp=1.719168531+dp=1.719168489)
+deriv=13.59013544, approx=13.4500000026, error=1.03649952244%, for disp1p=-2.110343709(-dp=-2.110343844+dp=-2.110343575)
+deriv=-129.295966, approx=-126.999999939, error=-1.791652126%, for disp1p2=13.59013544(-dp=13.59013671+dp=13.59013417)
+deriv=-103.2056517, approx=-99.9999997475, error=-3.15508149467%, for beta11=103.0116247(-dp=103.0116257+dp=103.0116237)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=13.36659974, approx=13.2500000083, error=0.876142954482%, for disp1p=-2.053819687(-dp=-2.05381982+dp=-2.053819555)
+deriv=-127.9135559, approx=-125.499999992, error=-1.90483567406%, for disp1p2=13.36659974(-dp=13.366601+dp=13.36659849)
+deriv=-97.03024142, approx=-96.9999998546, error=-0.0311720123902%, for beta11=61.9340722(-dp=61.93407317+dp=61.93407123)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.576781571, approx=-1.55000000612, error=-1.71304353799%, for disp1=1.370873994(-dp=1.37087401+dp=1.370873979)
+deriv=11.41103878, approx=11.3000000024, error=0.977839707687%, for disp1p=-1.576781571(-dp=-1.576781684+dp=-1.576781458)
+deriv=-115.3482511, approx=-113.499999976, error=-1.61526349008%, for disp1p2=11.41103878(-dp=11.41103992+dp=11.41103765)
+deriv=-96.03800335, approx=-95.9999997718, error=-0.0395792265573%, for beta11=58.58822392(-dp=58.58822488+dp=58.58822296)
+deriv=0.7667566517, approx=0.799999999579, error=4.24358790522%, for alfa11=1.117810047(-dp=1.117810039+dp=1.117810055)
+null derivative or approximation for gama11
+deriv=-1.535140181, approx=-1.50000000199, error=-2.31555558527%, for disp1=1.342470027(-dp=1.342470042+dp=1.342470012)
+deriv=11.23215629, approx=11.0999999969, error=1.18355156904%, for disp1p=-1.535140181(-dp=-1.535140292+dp=-1.53514007)
+deriv=-114.144378, approx=-111.999999941, error=-1.89646815762%, for disp1p2=11.23215629(-dp=11.23215741+dp=11.23215517)
+deriv=-82.97297717, approx=-82.4999997207, error=-0.571667299682%, for beta11=34.58335871(-dp=34.58335954+dp=34.58335789)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.710251624, approx=9.59999999495, error=1.14189738413%, for disp1p=-1.202725908(-dp=-1.202726005+dp=-1.202725813)
+deriv=-103.3105305, approx=-101.550000053, error=-1.71876001867%, for disp1p2=9.710251624(-dp=9.710252644+dp=9.710250613)
+null derivative or approximation for beta11
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.179450627, approx=-1.19999999937, error=-1.72723671092%, for disp1=1.084172404(-dp=1.084172416+dp=1.084172392)
+deriv=9.59348413, approx=9.49999999778, error=0.97922549493%, for disp1p=-1.179450627(-dp=-1.179450722+dp=-1.179450532)
+deriv=-102.4185366, approx=-100.649999979, error=-1.74181254354%, for disp1p2=9.59348413(-dp=9.593485141+dp=9.593483128)
+deriv=-81.14423449, approx=-80.9999999518, error=-0.177908932356%, for beta11=32.87985856(-dp=32.87985937+dp=32.87985775)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.173952529, approx=-1.14999999523, error=-2.0613617119%, for disp1=1.079865301(-dp=1.079865312+dp=1.079865289)
+deriv=9.565901258, approx=9.49999999778, error=0.691299711886%, for disp1p=-1.173952529(-dp=-1.173952624+dp=-1.173952434)
+deriv=-102.2078294, approx=-100.450000051, error=-1.73477565959%, for disp1p2=9.565901258(-dp=9.565902267+dp=9.565900258)
+deriv=-80.12245856, approx=-79.9999998691, error=-0.152956296234%, for beta11=32.03656645(-dp=32.03656725+dp=32.03656565)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=9.487749785, approx=9.4000000006, error=0.929171398316%, for disp1p=-1.158374584(-dp=-1.158374678+dp=-1.15837449)
+deriv=-101.6108256, approx=-99.9000000057, error=-1.69799869476%, for disp1p2=9.487749785(-dp=9.487750789+dp=9.487748791)
+deriv=-86.37574694, approx=-86.5000000516, error=-0.143748459546%, for beta11=32.1947669(-dp=32.19476777+dp=32.19476604)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.08719039, approx=9.9500000017, error=1.36935753583%, for disp1p=-1.250907075(-dp=-1.250907175+dp=-1.250906976)
+deriv=-107.659578, approx=-105.500000025, error=-2.02625469148%, for disp1p2=10.08719039(-dp=10.08719145+dp=10.08718934)
+deriv=-90.04606069, approx=-89.4999999446, error=-0.608268144125%, for beta11=33.31011938(-dp=33.31012028+dp=33.31011849)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=10.3851158, approx=10.2499999932, error=1.30957158794%, for disp1p=-1.301141724(-dp=-1.301141827+dp=-1.301141622)
+deriv=-110.3806364, approx=-108.500000007, error=-1.71841276062%, for disp1p2=10.3851158(-dp=10.38511689+dp=10.38511472)
+deriv=-92.09049302, approx=-91.9999997961, error=-0.0983138482293%, for beta11=34.58157128(-dp=34.58157221+dp=34.58157037)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-1.324521188, approx=-1.29999999654, error=-1.86862210176%, for disp1=1.102289373(-dp=1.102289386+dp=1.10228936)
+deriv=10.5046965, approx=10.4000000056, error=1.00165524377%, for disp1p=-1.324521188(-dp=-1.324521292+dp=-1.324521084)
+deriv=-111.2173551, approx=-109.500000001, error=-1.55615773718%, for disp1p2=10.5046965(-dp=10.5046976+dp=10.50469541)
+deriv=-113.8411171, approx=-114.000000195, error=-0.139468325325%, for beta11=58.58432021(-dp=58.58432135+dp=58.58431907)
+deriv=-0.4608554926, approx=-0.450000003926, error=-2.38358086764%, for alfa11=-1.117732758(-dp=-1.117732754+dp=-1.117732763)
+null derivative or approximation for gama11
+deriv=-1.684126609, approx=-1.65000000329, error=-2.04710916372%, for disp1=1.342010955(-dp=1.342010972+dp=1.342010939)
+deriv=12.19109832, approx=12.0499999978, error=1.16412482908%, for disp1p=-1.684126609(-dp=-1.68412673+dp=-1.684126489)
+deriv=-122.3637936, approx=-120.500000023, error=-1.53484679588%, for disp1p2=12.19109832(-dp=12.19109953+dp=12.19109712)
+deriv=-115.7263622, approx=-115.499999964, error=-0.195792757967%, for beta11=61.92994197(-dp=61.92994313+dp=61.92994082)
+deriv=-0.5394024332, approx=-0.550000001098, error=-1.94557448462%, for alfa11=-1.173788998(-dp=-1.173788993+dp=-1.173789004)
+null derivative or approximation for gama11
+deriv=-1.728563483, approx=-1.75000000047, error=-1.23249252564%, for disp1=1.370379694(-dp=1.370379712+dp=1.370379677)
+deriv=12.38689969, approx=12.2999999963, error=0.704014637746%, for disp1p=-1.728563483(-dp=-1.728563606+dp=-1.72856336)
+deriv=-123.5998762, approx=-121.500000017, error=-1.71348612319%, for disp1p2=12.38689969(-dp=12.38690091+dp=12.38689848)
+deriv=-130.5867219, approx=-130.000000098, error=-0.450308286926%, for beta11=103.0052045(-dp=103.0052058+dp=103.0052032)
+null derivative or approximation for alfa11
+null derivative or approximation for gama11
+deriv=-2.232788968, approx=-2.19999999329, error=-1.47938352109%, for disp1=1.682485702(-dp=1.682485724+dp=1.68248568)
+deriv=14.50689916, approx=14.3999999924, error=0.739610063438%, for disp1p=-2.232788968(-dp=-2.232789113+dp=-2.232788825)
+deriv=-136.477249, approx=-133.999999985, error=-1.83176146927%, for disp1p2=14.50689916(-dp=14.50690051+dp=14.50689783)
+deriv=-131.765622, approx=-135.000000512, error=-2.42488404717%, for beta11=108.1059594(-dp=108.1059608+dp=108.1059581)
+deriv=-1.382369464, approx=-1.35000000068, error=-2.36933282569%, for alfa11=-1.774858124(-dp=-1.774858111+dp=-1.774858138)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=14.74735043, approx=14.6500000131, error=0.662307421771%, for disp1p=-2.292108028(-dp=-2.292108175+dp=-2.292107882)
+deriv=-137.8918506, approx=-135.50000002, error=-1.74975996856%, for disp1p2=14.74735043(-dp=14.7473518+dp=14.74734909)
+deriv=-139.7168846, approx=-139.999998794, error=-0.202429106493%, for beta11=166.2490236(-dp=166.249025+dp=166.2490222)
+deriv=-2.146782146, approx=-2.09999999612, error=-2.20318105876%, for alfa11=-2.31968766(-dp=-2.319687639+dp=-2.319687681)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=17.3007325, approx=17.1499999979, error=0.875061231846%, for disp1p=-2.940883761(-dp=-2.940883933+dp=-2.94088359)
+deriv=-152.4994743, approx=-149.999999977, error=-1.65254787924%, for disp1p2=17.3007325(-dp=17.30073401+dp=17.30073101)
+deriv=-140.1312236, approx=-140.000000215, error=-0.0936870822501%, for beta11=172.2029364(-dp=172.2029378+dp=172.202935)
+deriv=-2.215086586, approx=-2.24999998633, error=-1.56383979393%, for alfa11=-2.368432653(-dp=-2.368432631+dp=-2.368432676)
+null derivative or approximation for gama11
+null derivative or approximation for disp1
+deriv=17.54873912, approx=17.3999999964, error=0.851184491161%, for disp1p=-3.005427033(-dp=-3.005427208+dp=-3.00542686)
+deriv=-153.8853947, approx=-150.999999882, error=-1.89277339592%, for disp1p2=17.54873912(-dp=17.54874064+dp=17.54873762)
+deriv=-140.2218449, approx=-139.999998794, error=-0.158336054886%, for beta11=173.6274504(-dp=173.6274518+dp=173.627449)
+deriv=-2.231221494, approx=-2.20000000439, error=-1.40915951135%, for alfa11=-2.379947219(-dp=-2.379947197+dp=-2.379947241)
+null derivative or approximation for gama11
+deriv=-3.020673475, approx=-3.00000000397, error=-0.686749450876%, for disp1=2.149288069(-dp=2.149288099+dp=2.149288039)
+deriv=17.60732336, approx=17.4500000005, error=0.897520656968%, for disp1p=-3.020673475(-dp=-3.02067365+dp=-3.020673301)
+deriv=-154.2127774, approx=-151.500000101, error=-1.77472287649%, for disp1p2=17.60732336(-dp=17.60732489+dp=17.60732186)
+deriv=-140.4635509, approx=-140.000000215, error=-0.330560376341%, for beta11=177.7010915(-dp=177.7010929+dp=177.7010901)
+deriv=-2.276937064, approx=-2.24999998633, error=-1.19007962226%, for alfa11=-2.412571821(-dp=-2.412571798+dp=-2.412571843)
+null derivative or approximation for gama11
+deriv=-3.063871728, approx=-3.05000000811, error=-0.453778570754%, for disp1=2.174468765(-dp=2.174468795+dp=2.174468734)
+deriv=17.77331205, approx=17.6499999949, error=0.696219794302%, for disp1p=-3.063871728(-dp=-3.063871905+dp=-3.063871552)
+deriv=-155.1403619, approx=-152.500000006, error=-1.71652502154%, for disp1p2=17.77331205(-dp=17.77331358+dp=17.77331053)
+deriv=-140.4635509, approx=-140.000000215, error=-0.330560376341%, for beta11=177.7010915(-dp=177.7010929+dp=177.7010901)
+deriv=-2.276937064, approx=-2.24999998633, error=-1.19007962226%, for alfa11=-2.412571821(-dp=-2.412571798+dp=-2.412571843)
+null derivative or approximation for gama11
+deriv=-3.063871728, approx=-3.05000000811, error=-0.453778570754%, for disp1=2.174468765(-dp=2.174468795+dp=2.174468734)
+deriv=17.77331205, approx=17.6499999949, error=0.696219794302%, for disp1p=-3.063871728(-dp=-3.063871905+dp=-3.063871552)
+deriv=-155.1403619, approx=-152.500000006, error=-1.71652502154%, for disp1p2=17.77331205(-dp=17.77331358+dp=17.77331053)
+deriv=-140.4635509, approx=-140.000000215, error=-0.330560376341%, for beta11=177.7010915(-dp=177.7010929+dp=177.7010901)
+deriv=-2.276937064, approx=-2.24999998633, error=-1.19007962226%, for alfa11=-2.412571821(-dp=-2.412571798+dp=-2.412571843)
+null derivative or approximation for gama11
+deriv=-3.063871728, approx=-3.05000000811, error=-0.453778570754%, for disp1=2.174468765(-dp=2.174468795+dp=2.174468734)
+deriv=17.77331205, approx=17.6499999949, error=0.696219794302%, for disp1p=-3.063871728(-dp=-3.063871905+dp=-3.063871552)
+deriv=-155.1403619, approx=-152.500000006, error=-1.71652502154%, for disp1p2=17.77331205(-dp=17.77331358+dp=17.77331053)
+maxError=8.39910965697
+done.
+
+
+!write,table="map_table",file="map_table";
+
+!write,table="map_table",file="ring_matrix_at_end";
+
+
+
+stop; ! line_lattice won't work as computation of the one-turn characteristics relies on the existence of a closed-orbit 
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

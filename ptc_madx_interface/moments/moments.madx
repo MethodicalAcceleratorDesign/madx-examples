@@ -1,0 +1,161 @@
+!For the time being use only with 6D and Gaussian distributions
+
+!E0 = 1.3;
+!emitx =2.0e-9;
+!emityn =3.0e-8;
+!
+!dp=0.8e-3;
+
+ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+ptc_enforce6d, flag=true;
+
+call, file='matchline';
+call, file='ATF2-1.madx';
+
+myatf2: LINE=(MLinv,ATF2);
+
+ini_betaz = 23; !Emittance is sigmadp^2/sqrt(gammaz), so emittance must be adjusted to the initial betaz and alfaz
+ini_alfaz = 0;
+ini_gamaz = (1+ini_alfaz*ini_alfaz)/ini_betaz;
+
+sigmadp=0.008;
+emiz = (sigmadp*sigmadp)/ini_gamaz;
+
+
+beam, particle=electron, energy=1.3, ex = 3.e-6/2544.0313111546, ey = 3.e-8/2544.0313111546, et = emiz, sigt=0, sige=0;
+use, sequence=myATF2;
+!use, sequence=my;
+
+!Here is sigmax^2
+ptc_select_moment, table = momord2,   moment_s=2;
+
+!Below are example how to encode other moments
+!ptc_select_moment, table = momord2,   moment_s=20,11,02, 002,0011,0002, 00002;
+!ptc_select_moment, table = momord2xy, moment_s=1010,0110,1001,0101, 10001,01001, 00101, 00011;
+!ptc_select_moment, table = momord4,   moment_s=40,22,04, 004,0022,0004;
+!ptc_select_moment, table = momord6,   moment_s=6;
+
+
+
+
+
+
+select, flag=twiss,column=name,s,betx,mux,bety,muy,k2l,dx,alfx,alfy,dpx;
+twiss, beta0=mline,alfx=0,alfy=0,file='twiss';
+
+
+
+SELECT, flag=ptc_twiss, column=name, s, beta11, beta12, beta21, beta22, beta33, mu2,mu3,gama11, disp1,disp3;
+
+show, mline;
+
+ptc_create_universe;
+!PTC_SETSWITCH, fringe=true;
+ptc_create_layout, model=2, method=6, nst=10;
+
+
+ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+ptc_twiss, icase=56, zdistr=gauss, no=4, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+value, table(momord2,myatf2$end,mu200000);
+sigmax4 = table(momord2,myatf2$end,mu200000);
+
+
+ptc_twiss, icase=56, zdistr=gauss, no=3, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+value, table(momord2,myatf2$end,mu200000);
+sigmax3 = table(momord2,myatf2$end,mu200000);
+
+
+ptc_twiss, icase=56, zdistr=gauss, no=2, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+value, table(momord2,myatf2$end,mu200000);
+sigmax2 = table(momord2,myatf2$end,mu200000);
+
+
+ptc_twiss, icase=56, zdistr=gauss, no=1, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+value, table(momord2,myatf2$end,mu200000);
+sigmax1 = table(momord2,myatf2$end,mu200000);
+
+value, sigmax1, sigmax2, sigmax3, sigmax4;  
+
+stop;
+
+
+!ptc_twiss, icase=56, zdistr=gauss, no=6, deltap=0.0, file='twiss.ptc';
+
+!value, table(momord2,myatf2$end,mu200000),
+!       table(momord2,myatf2$end,mu002000),
+!       table(momord2,myatf2$end,mu020000),
+!       table(momord2,myatf2$end,mu000200),
+!       table(momord2,myatf2$end,mu000020);
+
+
+
+
+
+ptc_moments, no=6;
+value, table(momord2,myatf2$end,mu200000);
+
+ptc_moments, no=4;
+value, table(momord2,myatf2$end,mu200000);
+
+ptc_moments, no=2;
+value, table(momord2,myatf2$end,mu200000);
+
+stop;
+
+ptc_moments, no=3;
+value, table(momord2,myatf2$end,mu200000);
+
+
+ptc_moments, no=5;
+value, table(momord2,myatf2$end,mu200000);
+
+ptc_moments, no=6;
+value, table(momord2,myatf2$end,mu200000);
+
+ptc_moments, no=7;
+value, table(momord2,myatf2$end,mu200000);
+
+ptc_moments, no=8;
+value, table(momord2,myatf2$end,mu200000);
+
+
+
+
+value, table(momord2,myatf2$end,mu200000) - 4.71702404773e-12;
+
+plot, table=MOMORD2, vaxis=mu200000, haxis=s, colour=100;
+
+
+write, table=momord2, file="atf.moms2";
+write, table=momord2xy, file="atf.moms2xy";
+write, table=momord4, file="atf.moms4";
+
+stop;
+
+
+
+!ptc_normal,icase=5,no=6,deltap=0.00;
+
+ptc_end;
+
+
+value, table(momord2,myatf2$end,mu200000),
+       table(momord2,myatf2$end,mu400000),
+       table(momord2,myatf2$end,mu600000);
+
+
+value, table(momord2,myatf2$end,mu200000),
+
+       table(momord2,myatf2$end,mu200000) +
+       table(momord2,myatf2$end,mu400000),
+
+       table(momord2,myatf2$end,mu200000) +
+       table(momord2,myatf2$end,mu400000) +
+       table(momord2,myatf2$end,mu600000);
+
+stop;

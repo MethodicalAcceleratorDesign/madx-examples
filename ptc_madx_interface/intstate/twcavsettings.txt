@@ -1,0 +1,2 @@
+      !ElNo         Ref.Momentum           Phase  Frequency [Hz]         Voltage          DeltaE
+               9           0.020      -3663.8521       0.300E+10       0.583E+01           0.000

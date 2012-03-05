@@ -1,0 +1,53 @@
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8;
+Option,  warn,info,echo;
+!set,format="22.18e";
+
+Title, "Compiling Optics for the LHC 6.5 lattice with MADX";
+
+option, -echo, -info,  warn;
+call,   file = "../V6.5.seq";
+call,   file = "../V6.5.coll.str";
+option,  echo,  info,  warn;
+
+beam, particle = proton, sequence=lhcb1, energy = 7000.0;
+beam, particle = proton, sequence=lhcb2, energy = 7000.0, bv = -1;
+
+!  set switches to 1 if crossing scheme is required
+on_x1   := 0; on_x2   := 0; on_x5   := 0; on_x8   := 0;
+on_sep1 := 0; on_sep2 := 0; on_sep5 := 0; on_sep8 := 0;
+on_alice:= 0; on_lhcb := 0;
+
+
+Option, -echo,-warn,-info;
+select, flag=twiss, clear;
+select, flag=twiss, pattern="IP\.*",     column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="s.ds.l\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="e.ds.r\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py;
+
+use,    period   = lhcb1;
+twiss,  sequence = lhcb1, file      = twiss.lhcb1.data;
+!system, "cat twiss.lhcb1.data";
+
+! Match tune
+QX0 = 64.31;
+QY0 = 59.32;
+
+match,sequence=lhcb1;
+global, q1=QX0,q2=QY0;
+vary, name=KQF;
+vary, name=KQD;
+lmdif,calls=10,tolerance=1.0e-21;
+endmatch;
+
+QPRIME=2.0;
+
+KSF.B1=0;
+KSD.B1=0;
+match,sequence=lhcb1;
+global, dQ1=QPRIME,dQ2=QPRIME;
+vary, name=KSF.B1, step=0.00001;
+vary, name=KSD.B1, step=0.00001;
+lmdif, tolerance=1.0E-10, calls=100;
+endmatch;
+
+twiss,  sequence = lhcb1, file      = twiss.lhcb1.data;

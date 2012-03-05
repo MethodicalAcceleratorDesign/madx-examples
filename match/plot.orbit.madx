@@ -1,0 +1,3 @@
+PLOT,STYLE=100,TITLE="LHC optics",HAXIS=S,VAXIS1=X,Y, NOLINE;
+
+return;

@@ -1,0 +1,28 @@
+
+! saved on 07/04/06 11:37:11 by T.Risselada
+
+ Rr = 0.017; ON_MBW = 1;
+
+
+ exec, Efcomp_Measured_Dip(MBW.F6L3);
+ exec, Efcomp_Measured_Dip(MBW.E6L3);
+ exec, Efcomp_Measured_Dip(MBW.D6L3);
+ exec, Efcomp_Measured_Dip(MBW.C6L3);
+ exec, Efcomp_Measured_Dip(MBW.B6L3);
+ exec, Efcomp_Measured_Dip(MBW.A6L3);
+ exec, Efcomp_Measured_Dip(MBW.A6R3);
+ exec, Efcomp_Measured_Dip(MBW.B6R3);
+ exec, Efcomp_Measured_Dip(MBW.C6R3);
+ exec, Efcomp_Measured_Dip(MBW.D6R3);
+ exec, Efcomp_Measured_Dip(MBW.E6R3);
+ exec, Efcomp_Measured_Dip(MBW.F6R3);
+ exec, Efcomp_Measured_Dip(MBW.D6L7);
+ exec, Efcomp_Measured_Dip(MBW.C6L7);
+ exec, Efcomp_Measured_Dip(MBW.B6L7);
+ exec, Efcomp_Measured_Dip(MBW.A6L7);
+ exec, Efcomp_Measured_Dip(MBW.A6R7);
+ exec, Efcomp_Measured_Dip(MBW.B6R7);
+ exec, Efcomp_Measured_Dip(MBW.C6R7);
+ exec, Efcomp_Measured_Dip(MBW.D6R7);
+
+return;

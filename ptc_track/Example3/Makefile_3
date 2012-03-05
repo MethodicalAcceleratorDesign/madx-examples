@@ -1,0 +1,9 @@
+# Run Example No. 3 with "madxp" 
+#     using the input "fv9_3.madx" and output "fv9_3.out" 
+madxp < fv9_3.madx > fv9_3.out
+
+# Plot with GNUPLOT4.0
+gnuplot make_plots3.plt
+
+# clean temp files
+rm empty.ps

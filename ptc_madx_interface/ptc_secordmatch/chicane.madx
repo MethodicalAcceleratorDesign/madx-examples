@@ -1,0 +1,143 @@
+ptc_enforce6d, flag=true;
+!
+! This example:
+! - matches quadrupole strengths in a chicane so the third order element T112 = -2.
+! - shows how to extract higher order map coefficients to user table
+! - shows how to link it to twiss table so later it can be plotted
+!  
+! Piotr Skowronski (CERN) 2006
+!
+
+dsel :=1.2;!length of starting and ending drift
+dmid1l:=1.5;!length of middle drift
+dmid2l:=0.6;!length of middle drift
+ql   :=0.2;!length of quads
+
+
+qfstr := 6.695198761;!strength of quads
+qdstr :=-6.712879942;!strength of quads
+qf3str := 0.1;!strength of quads
+
+lbend:=2.0;
+
+sedft: drift, L:=dsel;
+middft1: drift, L:=dmid1l;
+middft2: drift, L:=dmid2l;
+
+angb:= pi/6.;
+
+
+bend1: RBEND, L=lbend, ANGLE:=-angb, e1=angb/2, ptcrbend=true;             ! Deflection to the left
+qf1: quadrupole, l=ql, k1:=qfstr;
+qd:  quadrupole, l=ql, k1:=qdstr;
+qf2: quadrupole, l=ql, k1:=qfstr;
+bend2: RBEND, L=lbend, ANGLE=angb, e1=-angb/2, ptcrbend=true;              ! Deflection to the right
+theend: marker;
+
+chicane: line=(sedft,bend1,middft1,qf1,middft2,qd,middft2,qf2,middft1,bend2,sedft,theend);
+
+beam, PARTICLE=ELECTRON, ENERGY=0.11d0, SIGT=1, SIGE=0.001;
+use, period=chicane;
+
+
+
+
+!creates a table
+create, table=R1, column=_name,"c11","c12","c21","c22";
+!instructs ptc to store given monomials cofficients in the just created table
+ptc_select, table=R1, column="c11", polynomial=1, monomial="100000";
+ptc_select, table=R1, column="c12", polynomial=1, monomial="010000";
+ptc_select, table=R1, column="c21", polynomial=2, monomial="100000";
+ptc_select, table=R1, column="c22", polynomial=2, monomial="010000";
+
+
+create, table=R3, column=_name,"c51","c52","c55","c56","c66";
+ptc_select, table=R3, column="c51", polynomial=5, monomial="100000";
+ptc_select, table=R3, column="c52", polynomial=5, monomial="010000";
+ptc_select, table=R3, column="c55", polynomial=5, monomial="000010";
+ptc_select, table=R3, column="c56", polynomial=5, monomial="000001";
+ptc_select, table=R3, column="c66", polynomial=6, monomial="000001";
+
+
+create, table=T2, column=_name,"c111","c112","c113","c566","c556","c656","c666";
+!instructs ptc to store given monomials cofficients in the just created table
+ptc_select, table=T2, column="c111", polynomial=1, monomial="200000";
+ptc_select, table=T2, column="c112", polynomial=1, monomial="110000";
+ptc_select, table=T2, column="c113", polynomial=1, monomial="101000";
+ptc_select, table=T2, column="c566", polynomial=5, monomial="000002";
+ptc_select, table=T2, column="c556", polynomial=5, monomial="000011";
+ptc_select, table=T2, column="c666", polynomial=6, monomial="000002";
+ptc_select, table=T2, column="c656", polynomial=6, monomial="000011";
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+T111:=table(T2,c111);!we need that for plotting
+T112:=table(T2,c112);
+T566:=table(T2,c566);
+
+select, flag=twiss, column=name, s, beta11, alfa11, beta13,  T111, T112, T566, re12, re56;
+
+
+match, use_macro;
+  vary, name=qfstr, step=0.01;
+  vary, name=qdstr, step=0.01;
+  m1: macro=
+   {
+
+      ptc_create_universe;
+      ptc_create_layout, model=1, method=6, nst=10, exact=true, closed_layout=false;
+      ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=true;
+
+      ptc_twiss, rmatrix, table=twiss, icase=56, no=2, betx=10., alfx=0.0,  bety=10., alfy=0.0, betz=10., alfz=0.0;
+
+      value, table(twiss,qf1,beta11);
+      value, table(twiss,qf1,beta12);
+      value, table(twiss,theend,beta11);
+      value, table(twiss,theend,beta12);
+      value, table(twiss,theend,beta13);
+      
+      value, table(T2,theend,c111), table(T2,theend,c112), table(T2,theend,c113),
+             table(T2,theend,c566), table(T2,theend,c556),
+             table(T2,theend,c666), table(T2,theend,c656);
+      
+      value, qfstr,qdstr;
+      
+      ptc_end;
+      
+   };
+
+
+!   constraint, expr=table(R3,theend,c51) = 0;
+!   constraint, expr=table(R3,theend,c52) = 0;
+   constraint, expr=table(T2,theend,c112) = -2.0;
+
+   constraint, weight=10, expr=table(twiss,qf1,beta11)   <200.0;
+   constraint, weight=10, expr=table(twiss,qf1,beta12)   <200.0;
+   constraint, weight=10, expr=table(twiss,theend,beta11)<200.0;
+   constraint, weight=10, expr=table(twiss,theend,beta12)<200.0;
+
+!   constraint, weight=10, expr=table(twiss,theend,beta11) = 20.0;
+   
+
+   lmdif,  tolerance=1e-30 ,calls=200;
+endmatch;
+
+
+plot, noversion=true, vaxis1=T112, vaxis2=T566, haxis=s, colour=100,
+  title="Matched 3rd order map coefficients";
+
+write, table=twiss, file=twiss.tbl;
+write, table=r1, file=r1.tbl;
+write, table=r3, file=r3.tbl;
+write, table=t2, file=t2.tbl;
+
+stop;
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+
+Short run with five fodo cells:
+
+Date: 15.09.2005
+
+Run command:
+madx < fv9.madx >! fv9.out
+ 
+Special tasks:
+
+a.) Twiss parameters calculated at the center of the element.
+b.) The internal table "my_table" is used as a twiss table ergo this name
+    is used in the "select" command.
+c.) The components of the one-turn map, at the location of each element, here
+    just re11, re12, re13, re14, are written to the twiss output file. 
+d.) The cumulative sectormaps are written at the center of the drifts to the 
+    sectorfile = "my_sectorfile".
+
+run output:       fv9.out
+twiss output:     twiss_fv9
+sectormap output: my_sectorfile
+
+Comment V2.00: sector map has been corrected for closed orbit error
+Comment V3.00.00: 1) Results are now closer again to those of V2.10 and earlier.
+                  For unknown reasons old executable do not reproduce the
+                  bad results.
+                  2) Results are different since the center option was incorrect
+                  before when a closed orbit was present.
+------------------------------------------------------------------------------
+
+
+Date: 15.09.2005
+
+Run command:
+madx < fv9_matrix.madx > ! fv9_matrix.out
+
+Special task:
+
+Introduce a matched arbitrary matrix at position "partstart" of the above example
+"fv9.madx". The effect of this matrix can be found in the output file 
+"fv9_matrix.out" by inspecting the TWISS output before and after the introduction 
+of the element.
+
+Comment V2.00: The phase advance in the beta0 block has been changed to be in units
+               of 2 *pi (request Oliver Bruening).
+Comment V3.00.00: All okay here!
+Comment V3.02.03: the command "value" must have a comma now!
+------------------------------------------------------------------------------
+
+Long run of Lep:
+
+Date: 15.09.2005
+
+Run command:
+madx < lep.madx > ! lep.out
+
+Special tasks:
+
+a.) Twiss parameters calculated at the center of the element.
+b.) Write out of one-turn matrix at every element
+c.) Notice: "couple" is no longer a valid attribute since TWISS in MAD-X
+    calculates in coupled mode by default.
+
+run output:   lep.out
+twiss output: twiss_lep
+
+Comment V2.00: The "illegal" couple flag. V2.00 turned out to be corrupted!!!
+Comment V3.00.00: All okay here!
+------------------------------------------------------------------------------
+
+Test of chromatic functions:
+
+Date: 15.09.2005
+
+Courtesy of Jean-Yves Hemery
+
+Run command:
+madx < jvh_twiss.madx > ! jvh_twiss.out
+
+run output:   jvh_twiss.out
+twiss output: twissleirinj.txt
+
+Comment V2.00: The initilisation of Wy=0 works now properly, before 
+               initialised to a "circular" value.
+Comment V3.00.00: All okay here! Twiss select works now.
+------------------------------------------------------------------------------
+
+Realistic run of LHC V6.5 at injection with dipole errors and seed 1
+
+Date: 15.09.2005
+
+Task:
+A simple twiss is being performed. Notice that I have left in the 
+SixTrack convertor (see the c6t module).
+
+Run command:
+madx < lhc.madx > ! lhc.out
+
+Input files:
+injection_errors-emfqcs-1.tfs   Measured errors at injection
+Msubroutines.madx               Error routines
+Esubroutines.madx:              Specifications of field imperfections I
+Efcomp_XXX.madx:                Specifications of field imperfections II
+align_XXX.madx                  Alignment errors
+corr_XXX                        Code and input files for corrections
+V6.5.seq:                       MAD-X sequence of LHC version 6.5
+V6.5.thin.inj.str:              LHC V6.5 THIN lens injection optics
+V6.5.thin.lowb.str:             LHC V6.5 THIN lens collision optics
+(all some more specialized input files)
+
+                                                                          
+Output files:                                     
+lhc.out:                        MAD-X run output
+fc.2:                           SixTrack geometrtry input
+fc.3:                           SixTrack error template
+fc.16:                          SixTrack error input
+fc.3.aux:                       Sixtrack auxiliary info from MAD-X run
+fc.34:                          Multipole strength and lattice parameters for 
+                                use of resonance amalysis tools (SODD).

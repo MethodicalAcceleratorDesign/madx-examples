@@ -1,0 +1,272 @@
+! ===============================================================
+! error routines using measured individual multipole error values
+! ===============================================================
+
+! saved on 02/10/08 10:20:22 by T.Risselada
+
+
+ ON_SYST: macro = {
+    ON_A1s  = 1 ; ON_A1r  = 0 ; ON_B1s  = 1 ; ON_B1r  = 0 ;
+    ON_A2s  = 1 ; ON_A2r  = 0 ; ON_B2s  = 1 ; ON_B2r  = 0 ;
+    ON_A3s  = 1 ; ON_A3r  = 0 ; ON_B3s  = 1 ; ON_B3r  = 0 ;
+    ON_A4s  = 1 ; ON_A4r  = 0 ; ON_B4s  = 1 ; ON_B4r  = 0 ;
+    ON_A5s  = 1 ; ON_A5r  = 0 ; ON_B5s  = 1 ; ON_B5r  = 0 ;
+    ON_A6s  = 1 ; ON_A6r  = 0 ; ON_B6s  = 1 ; ON_B6r  = 0 ;
+    ON_A7s  = 1 ; ON_A7r  = 0 ; ON_B7s  = 1 ; ON_B7r  = 0 ;
+    ON_A8s  = 1 ; ON_A8r  = 0 ; ON_B8s  = 1 ; ON_B8r  = 0 ;
+    ON_A9s  = 1 ; ON_A9r  = 0 ; ON_B9s  = 1 ; ON_B9r  = 0 ;
+    ON_A10s = 1 ; ON_A10r = 0 ; ON_B10s = 1 ; ON_B10r = 0 ;
+    ON_A11s = 1 ; ON_A11r = 0 ; ON_B11s = 1 ; ON_B11r = 0 ;
+    ON_A12s = 1 ; ON_A12r = 0 ; ON_B12s = 1 ; ON_B12r = 0 ;
+    ON_A13s = 1 ; ON_A13r = 0 ; ON_B13s = 1 ; ON_B13r = 0 ;
+    ON_A14s = 1 ; ON_A14r = 0 ; ON_B14s = 1 ; ON_B14r = 0 ;
+    ON_A15s = 1 ; ON_A15r = 0 ; ON_B15s = 1 ; ON_B15r = 0 ;
+    ON_A16s = 1 ; ON_A16r = 0 ; ON_B16s = 1 ; ON_B16r = 0 ;
+    ON_A17s = 1 ; ON_A17r = 0 ; ON_B17s = 1 ; ON_B17r = 0 ;
+    ON_A18s = 1 ; ON_A18r = 0 ; ON_B18s = 1 ; ON_B18r = 0 ;
+    ON_A19s = 1 ; ON_A19r = 0 ; ON_B19s = 1 ; ON_B19r = 0 ;
+    ON_A20s = 1 ; ON_A20r = 0 ; ON_B20s = 1 ; ON_B20r = 0 ;
+    print, text="all systematic multipoles (order 1 to 20) enabled";
+ }
+
+
+ NO_MULT: macro = {
+    ON_A1s  = 0 ; ON_A1r  = 0 ; ON_B1s  = 0 ; ON_B1r  = 0 ;
+    ON_A2s  = 0 ; ON_A2r  = 0 ; ON_B2s  = 0 ; ON_B2r  = 0 ;
+    ON_A3s  = 0 ; ON_A3r  = 0 ; ON_B3s  = 0 ; ON_B3r  = 0 ;
+    ON_A4s  = 0 ; ON_A4r  = 0 ; ON_B4s  = 0 ; ON_B4r  = 0 ;
+    ON_A5s  = 0 ; ON_A5r  = 0 ; ON_B5s  = 0 ; ON_B5r  = 0 ;
+    ON_A6s  = 0 ; ON_A6r  = 0 ; ON_B6s  = 0 ; ON_B6r  = 0 ;
+    ON_A7s  = 0 ; ON_A7r  = 0 ; ON_B7s  = 0 ; ON_B7r  = 0 ;
+    ON_A8s  = 0 ; ON_A8r  = 0 ; ON_B8s  = 0 ; ON_B8r  = 0 ;
+    ON_A9s  = 0 ; ON_A9r  = 0 ; ON_B9s  = 0 ; ON_B9r  = 0 ;
+    ON_A10s = 0 ; ON_A10r = 0 ; ON_B10s = 0 ; ON_B10r = 0 ;
+    ON_A11s = 0 ; ON_A11r = 0 ; ON_B11s = 0 ; ON_B11r = 0 ;
+    ON_A12s = 0 ; ON_A12r = 0 ; ON_B12s = 0 ; ON_B12r = 0 ;
+    ON_A13s = 0 ; ON_A13r = 0 ; ON_B13s = 0 ; ON_B13r = 0 ;
+    ON_A14s = 0 ; ON_A14r = 0 ; ON_B14s = 0 ; ON_B14r = 0 ;
+    ON_A15s = 0 ; ON_A15r = 0 ; ON_B15s = 0 ; ON_B15r = 0 ;
+    ON_A16s = 0 ; ON_A16r = 0 ; ON_B16s = 0 ; ON_B16r = 0 ;
+    ON_A17s = 0 ; ON_A17r = 0 ; ON_B17s = 0 ; ON_B17r = 0 ;
+    ON_A18s = 0 ; ON_A18r = 0 ; ON_B18s = 0 ; ON_B18r = 0 ;
+    ON_A19s = 0 ; ON_A19r = 0 ; ON_B19s = 0 ; ON_B19r = 0 ;
+    ON_A20s = 0 ; ON_A20r = 0 ; ON_B20s = 0 ; ON_B20r = 0 ;
+    print, text="all multipoles (order 1 to 20) disabled";
+ }
+
+
+ Efcomp_Measured_Dip(slot) : macro = {
+! build aperture name from slotname
+
+ yrotangle := table(rotations, slot, yrota);  // rotation around vertical axis
+ inout     := table(rotations, slot, inout);  // 0: single bore   1: outer    2: inner
+
+ if (inout > 0 && mylhcbeam ==   2) {inout= 3 - inout;} ;    // beam 2 clockwise, bv=-1
+ if (inout > 0 && mylhcbeam ==   3) {inout= 3 - inout;} ;    // beam 2 clockwise
+ if (inout > 0 && mylhcbeam ==   4) {inout= 3 - inout;} ;    // beam 2 counter-clockwise
+
+ if (inout > 0 && yrotangle == 180) {inout= 3 - inout;} ;    // rotated magnet
+
+ if (inout == 0) {exec, Set_Dipole_Mult(slot, slot)   ;} ;
+ if (inout == 1) {exec, Set_Dipole_Mult(slot, slot.v1);} ;
+ if (inout == 2) {exec, Set_Dipole_Mult(slot, slot.v2);} ;
+
+     };
+
+
+ Set_Dipole_Mult(slot, apert) :  macro {
+! extract multipole values from table and call EFCOMP
+
+ yfac = 1;
+ if (yrotangle == 180) {yfac = -1; };
+ if (mylhcbeam ==   4) {yfac = -1*yfac; };
+
+!value, apert, slot, yfac, inout;
+
+
+ a1s  = table(efield, apert, A1) *yfac;  b1s  = table(efield, apert, B1)      ;
+ a2s  = table(efield, apert, A2)      ;  b2s  = table(efield, apert, B2) *yfac;
+ a3s  = table(efield, apert, A3) *yfac;  b3s  = table(efield, apert, B3)      ;
+ a4s  = table(efield, apert, A4)      ;  b4s  = table(efield, apert, B4) *yfac;
+ a5s  = table(efield, apert, A5) *yfac;  b5s  = table(efield, apert, B5)      ;
+ a6s  = table(efield, apert, A6)      ;  b6s  = table(efield, apert, B6) *yfac;
+ a7s  = table(efield, apert, A7) *yfac;  b7s  = table(efield, apert, B7)      ;
+ a8s  = table(efield, apert, A8)      ;  b8s  = table(efield, apert, B8) *yfac;
+ a9s  = table(efield, apert, A9) *yfac;  b9s  = table(efield, apert, B9)      ;
+ a10s = table(efield, apert, A10)     ;  b10s = table(efield, apert, B10)*yfac;
+ a11s = table(efield, apert, A11)*yfac;  b11s = table(efield, apert, B11)     ;
+ a12s = table(efield, apert, A12)     ;  b12s = table(efield, apert, B12)*yfac;
+ a13s = table(efield, apert, A13)*yfac;  b13s = table(efield, apert, B13)     ;
+ a14s = table(efield, apert, A14)     ;  b14s = table(efield, apert, B14)*yfac;
+ a15s = table(efield, apert, A15)*yfac;  b15s = table(efield, apert, B15)     ;
+
+ select, flag=error, clear ;
+ select, flag=error, class=multipole, pattern="^slot" ;
+ select, flag=error, class=sbend,     pattern="^slot" ;
+ select, flag=error, class=rbend,     pattern="^slot" ;
+
+ Efcomp,  radius = Rr, order= 0,
+      dknr:={                       1E-4*( B1s  *ON_B1S ),
+             1E-4*(-B2s  *ON_B2S ), 1E-4*( B3s  *ON_B3S ),
+             1E-4*(-B4s  *ON_B4S ), 1E-4*( B5s  *ON_B5S ),
+             1E-4*(-B6s  *ON_B6S ), 1E-4*( B7s  *ON_B7S ),
+             1E-4*(-B8s  *ON_B8S ), 1E-4*( B9s  *ON_B9S ),
+             1E-4*(-B10s *ON_B10S), 1E-4*( B11s *ON_B11S),
+             1E-4*(-B12s *ON_B12S), 1E-4*( B13s *ON_B13S),
+             1E-4*(-B14s *ON_B14S), 1E-4*( B15s *ON_B15S)},
+      dksr:={                       1E-4*(-A1s  *ON_A1S ),
+             1E-4*( A2s  *ON_A2S ), 1E-4*(-A3s  *ON_A3S ),
+             1E-4*( A4s  *ON_A4S ), 1E-4*(-A5s  *ON_A5S ),
+             1E-4*( A6s  *ON_A6S ), 1E-4*(-A7s  *ON_A7S ),
+             1E-4*( A8s  *ON_A8S ), 1E-4*(-A9s  *ON_A9S ),
+             1E-4*( A10s *ON_A10S), 1E-4*(-A11s *ON_A11S),
+             1E-4*( A12s *ON_A12S), 1E-4*(-A13s *ON_A13S),
+             1E-4*( A14s *ON_A14S), 1E-4*(-A15s *ON_A15S)};
+ };
+
+
+ Efcomp_Measured_Quad(slot) : macro = {
+! build aperture name from slotname
+
+ yrotangle := table(rotations, slot, yrota);  // rotation around vertical axis
+ srotangle := table(rotations, slot, srota);  // rotation around beam axis
+ inout     := table(rotations, slot, inout);  // 0: single bore    1: outer     2: inner
+
+ if (inout > 0 && mylhcbeam ==   2) {inout= 3 - inout;} ;    // beam 2 clockwise, bv=-1
+ if (inout > 0 && mylhcbeam ==   3) {inout= 3 - inout;} ;    // beam 2 clockwise
+ if (inout > 0 && mylhcbeam ==   4) {inout= 3 - inout;} ;    // beam 2 counter-clockwise
+
+ if (inout > 0 && yrotangle == 180) {inout= 3 - inout;} ;    // rotated magnet
+
+ if (inout == 0) {exec, Set_Quadru_Mult(slot, slot)   ;} ;
+ if (inout == 1) {exec, Set_Quadru_Mult(slot, slot.v1);} ;
+ if (inout == 2) {exec, Set_Quadru_Mult(slot, slot.v2);} ;
+
+     };
+
+
+ Set_Quadru_Mult(slot, apert) :  macro {
+! extract multipole values from table and call EFCOMP
+
+ yfac = 1;
+ if (yrotangle == 180) {yfac = -1; };
+ if (mylhcbeam ==   4) {yfac = -1*yfac; };
+
+ sfac = 1;
+ if (srotangle == 180) {sfac = -1; };
+
+!value, apert, slot, yfac, sfac, inout;
+
+
+ a1s  = table(efield, apert, A1)      *sfac;  b1s  = table(efield, apert, B1) *yfac*sfac;
+ a2s  = table(efield, apert, A2) *yfac     ;  b2s  = table(efield, apert, B2)           ;
+ a3s  = table(efield, apert, A3)      *sfac;  b3s  = table(efield, apert, B3) *yfac*sfac;
+ a4s  = table(efield, apert, A4) *yfac     ;  b4s  = table(efield, apert, B4)           ;
+ a5s  = table(efield, apert, A5)      *sfac;  b5s  = table(efield, apert, B5) *yfac*sfac;
+ a6s  = table(efield, apert, A6) *yfac     ;  b6s  = table(efield, apert, B6)           ;
+ a7s  = table(efield, apert, A7)      *sfac;  b7s  = table(efield, apert, B7) *yfac*sfac;
+ a8s  = table(efield, apert, A8) *yfac     ;  b8s  = table(efield, apert, B8)           ;
+ a9s  = table(efield, apert, A9)      *sfac;  b9s  = table(efield, apert, B9) *yfac*sfac;
+ a10s = table(efield, apert, A10)*yfac     ;  b10s = table(efield, apert, B10)          ;
+ a11s = table(efield, apert, A11)     *sfac;  b11s = table(efield, apert, B11)*yfac*sfac;
+ a12s = table(efield, apert, A12)*yfac     ;  b12s = table(efield, apert, B12)          ;
+ a13s = table(efield, apert, A13)     *sfac;  b13s = table(efield, apert, B13)*yfac*sfac;
+ a14s = table(efield, apert, A14)*yfac     ;  b14s = table(efield, apert, B14)          ;
+ a15s = table(efield, apert, A15)     *sfac;  b15s = table(efield, apert, B15)*yfac*sfac;
+
+ select, flag=error, clear ;
+ select, flag=error, class=multipole,  pattern=^slot;
+ select, flag=error, class=quadrupole, pattern=^slot;
+
+ Efcomp,  radius = Rr, order= 1,
+      dknr:={               1E-4*(-B1s *ON_B1S ),
+      1E-4*( B2s *ON_B2S ), 1E-4*(-B3s *ON_B3S ),
+      1E-4*( B4s *ON_B4S ), 1E-4*(-B5s *ON_B5S ),
+      1E-4*( B6s *ON_B6S ), 1E-4*(-B7s *ON_B7S ),
+      1E-4*( B8s *ON_B8S ), 1E-4*(-B9s *ON_B9S ),
+      1E-4*( B10s*ON_B10S), 1E-4*(-B11s*ON_B11S),
+      1E-4*( B12s*ON_B12S), 1E-4*(-B13s*ON_B13S),
+      1E-4*( B14s*ON_B14S), 1E-4*(-B15s*ON_B15S)},
+      dksr:={               1E-4*( A1s *ON_A1S ),
+      1E-4*(-A2s *ON_A2S ), 1E-4*( A3s *ON_A3S ),
+      1E-4*(-A4s *ON_A4S ), 1E-4*( A5s *ON_A5S ),
+      1E-4*(-A6s *ON_A6S ), 1E-4*( A7s *ON_A7S ),
+      1E-4*(-A8s *ON_A8S ), 1E-4*( A9s *ON_A9S ),
+      1E-4*(-A10s*ON_A10S), 1E-4*( A11s*ON_A11S),
+      1E-4*(-A12s*ON_A12S), 1E-4*( A13s*ON_A13S),
+      1E-4*(-A14s*ON_A14S), 1E-4*( A15s*ON_A15S)};
+ };
+
+
+ ReSelectAllSlices: macro = {
+ select, flag=error, clear;
+
+ if (ON_MB   <> 0) { select, flag=error, class=multipole, pattern=mb\.;    };
+ if (ON_MBX  <> 0) { select, flag=error, class=multipole, pattern=mbx\.;   };
+ if (ON_MBW  <> 0) { select, flag=error, class=multipole, pattern=mbw\.;   };
+ if (ON_MBXW <> 0) { select, flag=error, class=multipole, pattern=mbxw\.;  };
+ if (ON_MBRC <> 0) { select, flag=error, class=multipole, pattern=mbrc\.;  };
+ if (ON_MBRS <> 0) { select, flag=error, class=multipole, pattern=mbrs\.;  };
+ if (ON_MBRB <> 0) { select, flag=error, class=multipole, pattern=mbrb\.;  };
+
+
+ if (ON_MQ   <> 0) { select, flag=error, class=multipole, pattern=mq\.;    };
+ if (ON_MQM  <> 0) { select, flag=error, class=multipole, pattern=mqm\.;   };
+ if (ON_MQY  <> 0) { select, flag=error, class=multipole, pattern=mqy\.;   };
+ if (ON_MQX  <> 0) { select, flag=error, class=multipole, pattern=mqxa\.;
+                     select, flag=error, class=multipole, pattern=mqxb\.;  };
+ if (ON_MQML <> 0) { select, flag=error, class=multipole, pattern=mqml\.;  };
+ if (ON_MQMC <> 0) { select, flag=error, class=multipole, pattern=mqmc\.;  };
+ if (ON_MQW  <> 0) { select, flag=error, class=multipole, pattern=mqwa\.;
+                     select, flag=error, class=multipole, pattern=mqwb\.;  };
+ if (ON_MQTL <> 0) { select, flag=error, class=multipole, pattern=mqtli\.;
+                     select, flag=error, class=multipole, pattern=mqtlh\.; };
+ };
+
+
+ ReSelectAllMagnets : macro {
+! Select Slice #1 of All Magnets in Enabled Classes for flag=error
+
+ select, flag=error, clear;
+
+ if (ON_ENDS <> 0) { select, flag=error, pattern=^lend\. ;
+                     select, flag=error, pattern=^rend\. ;              };
+
+ if (ON_MB   <> 0) { select, flag=error, class=mb;                      };
+ if (ON_MBW  <> 0) { select, flag=error, class=mbw;                     };
+ if (ON_MBXW <> 0) { select, flag=error, class=mbxw;                    };
+ if (ON_MBX  <> 0) { select, flag=error, pattern=mbx.*\.\.1$;           };
+ if (ON_MBRC <> 0) { select, flag=error, pattern=mbrc.*\.\.1$;          };
+ if (ON_MBRS <> 0) { select, flag=error, pattern=mbrs.*\.\.1$;          };
+ if (ON_MBRB <> 0) { select, flag=error, pattern=mbrb.*\.\.1$;          };
+
+
+
+ if (ON_MQ   <> 0) { select, flag=error, class=mq;                      };
+ if (ON_MQM  <> 0) { select, flag=error, class=mqm, pattern=mqm.*b1$;
+                     select, flag=error, pattern=mqm.*\.\.1$;           };
+ if (ON_MQML <> 0) { select, flag=error, class=mqml, pattern=mqml.*b1$;
+                     select, flag=error, pattern=mqml.*\.\.1$;          };
+ if (ON_MQMC <> 0) { select, flag=error, class=mqmc, pattern=mqmc.*b1$;
+                     select, flag=error, pattern=mqmc.*\.\.1$;          };
+ if (ON_MQY  <> 0) { select, flag=error, pattern=mqy.*\.\.1$;           };
+
+ if (ON_MQXA <> 0) { select, flag=error, pattern=mqxa.*\.\.1$;          };
+ if (ON_MQXB <> 0) { select, flag=error, pattern=mqxb.*\.\.1$;          };
+ if (ON_MQX  <> 0) { select, flag=error, pattern=mqxa.*\.\.1$;
+                     select, flag=error, pattern=mqxb.*\.\.1$;          };
+
+ if (ON_MQW  <> 0) { select, flag=error, pattern=mqwa.*\.\.1$;
+                     select, flag=error, pattern=mqwb.*\.\.1$;          };
+
+ if (ON_MQT  <> 0) { select, flag=error, pattern=^mqt.12;
+                     select, flag=error, pattern=^mqt.13;               };
+
+ if (ON_MQTL <> 0) { select, flag=error, class=mqtli, pattern=mqtli.*b1$;
+                     select, flag=error, pattern=mqtli.*\.\.1$;
+                     select, flag=error, pattern=mqtlh.*\.\.1$;         };
+
+     };
+
+
+return;

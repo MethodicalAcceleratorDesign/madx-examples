@@ -1,0 +1,37 @@
+@ NAME             %05s "CORR1"
+@ TYPE             %05s "CORR1"
+@ TITLE            %60s "LHC 6.5 with errors and two beam orbit correction using MADX"
+@ ORIGIN           %19s "MAD-X 4.00.01 Linux"
+@ DATE             %08s "05/03/09"
+@ TIME             %08s "12.24.38"
+* NAME                           PX.OLD             PY.OLD      PX.CORRECTION      PY.CORRECTION 
+$ %s                                %le                %le                %le                %le 
+ "MKQA.6L4.B1"                        0                  0                  0   -5.268988753e-08
+ "MCBXV.1R1"                          0                  0                  0   -1.852833229e-07
+ "MCBXV.2R1"                          0                  0                  0    -5.55527804e-07
+ "MCBXV.3R1"                          0                  0                  0    7.511614822e-07
+ "MCBXV.3L2"                          0                  0                  0   -9.823300206e-08
+ "MCBXV.2L2"                          0                  0                  0   -6.252546445e-07
+ "MCBXV.1L2"                          0                  0                  0    9.180431953e-07
+ "MBXWT.1L2"                          0                  0                  0      0.07511847687
+ "MBWMD.1L2"                          0                  0                  0      0.02132407951
+ "MBAW.1R2"                           0                  0                  0      -0.3954570007
+ "MBXWT.1R2"                          0                  0                  0       0.2990143738
+ "MCBXV.1R2"                          0                  0                  0     -5.4648082e-07
+ "MCBXV.2R2"                          0                  0                  0    4.176313523e-07
+ "MCBXV.3R2"                          0                  0                  0    2.739979936e-08
+ "MCBXV.3L5"                          0                  0                  0   -1.002237108e-05
+ "MCBXV.2L5"                          0                  0                  0    3.470546007e-05
+ "MCBXV.1L5"                          0                  0                  0   -2.813148685e-05
+ "MCBXV.1R5"                          0                  0                  0    2.268188447e-05
+ "MCBXV.2R5"                          0                  0                  0   -2.834619954e-05
+ "MCBXV.3R5"                          0                  0                  0    8.305602707e-06
+ "MCBXV.3L8"                          0                  0                  0   -3.112477809e-05
+ "MCBXV.2L8"                          0                  0                  0    0.0001072300971
+ "MCBXV.1L8"                          0                  0                  0   -8.668190241e-05
+ "MCBXV.1R8"                          0                  0                  0    8.959860355e-05
+ "MCBXV.2R8"                          0                  0                  0   -0.0001091402248
+ "MCBXV.3R8"                          0                  0                  0    3.064908087e-05
+ "MCBXV.3L1"                          0                  0                  0   -2.549706958e-06
+ "MCBXV.2L1"                          0                  0                  0    6.908298936e-06
+ "MCBXV.1L1"                          0                  0                  0   -4.912346136e-06

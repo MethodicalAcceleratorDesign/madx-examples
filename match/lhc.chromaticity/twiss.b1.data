@@ -1,0 +1,56 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %05s "LHCB1"
+@ PARTICLE         %06s "PROTON"
+@ MASS             %le         0.938272013
+@ CHARGE           %le                   1
+@ ENERGY           %le                 450
+@ PC               %le         449.9990218
+@ GAMMA            %le         479.6050546
+@ KBUNCH           %le                   1
+@ BCURRENT         %le     0.0001891809752
+@ SIGE             %le             0.00045
+@ SIGT             %le                   0
+@ NPART            %le            1.05e+11
+@ EX               %le                   1
+@ EY               %le                   1
+@ ET               %le                   1
+@ LENGTH           %le          26658.8832
+@ ALFA             %le     0.0003225720358
+@ ORBIT5           %le                   0
+@ GAMMATR          %le         55.67838664
+@ Q1               %le         64.27694863
+@ Q2               %le         59.28605461
+@ DQ1              %le                   2
+@ DQ2              %le                   2
+@ DXMAX            %le         3.318845685
+@ DYMAX            %le                  -0
+@ XCOMAX           %le                   0
+@ YCOMAX           %le                   0
+@ BETXMAX          %le         589.2427413
+@ BETYMAX          %le         650.6522993
+@ XCORMS           %le                   0
+@ YCORMS           %le                   0
+@ DXRMS            %le         1.465377841
+@ DYRMS            %le                   0
+@ DELTAP           %le                   0
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %55s "Matching chromaticity for the LHC 6.4 lattice with MADX"
+@ ORIGIN           %19s "MAD-X 4.00.19 Linux"
+@ DATE             %08s "05/05/09"
+@ TIME             %08s "11.13.35"
+* NAME                                S               BETX               BETY 
+$ %s                                %le                %le                %le 
+ "IP1"                                0        18.32961066        16.74042733
+ "IP2"                      3332.436584        9.990659507        10.87984295
+ "IP3.B1"                     6664.7208        133.6657504        241.7188544
+ "IP4.B1"                   9997.005016        153.0475507        212.6075986
+ "IP5"                      13329.28923        18.23414906        19.33045012
+ "IP6.B1"                   16661.72582        189.9042975        163.7148624
+ "IP7.B1"                    19994.1624        110.6449086        149.5948205
+ "IP8"                      23315.37898        9.719524714        10.65211605
+ "IP1.L1"                    26658.8832        18.32961066        16.74042733

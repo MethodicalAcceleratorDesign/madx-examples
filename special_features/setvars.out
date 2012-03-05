@@ -1,0 +1,84 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 20.02.08 10.04.55 +
+  +++++++++++++++++++++++++++++++++++++++++++
+create,table=t,column=a,b;
+
+Value of withname 1
+a=1; b=2;
+
+fill,table=t; ! as usual
+
+a=2; b=4;
+
+++++++ info: a redefined
+++++++ info: b redefined
+fill,table=t; ! as usual
+
+write,table=t;
+
+@ NAME             %01s "T"
+@ TYPE             %04s "USER"
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 3.04.19 Linux"
+@ DATE             %08s "20/02/08"
+@ TIME             %08s "10.05.03"
+*                  A                  B 
+$                %le                %le 
+                  1                  2
+                  2                  4
+a=3;
+
+++++++ info: a redefined
+fill,table=t,row=1; ! now the first row is [3 4]
+
+write,table=t;
+
+@ NAME             %01s "T"
+@ TYPE             %04s "USER"
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 3.04.19 Linux"
+@ DATE             %08s "20/02/08"
+@ TIME             %08s "10.05.03"
+*                  A                  B 
+$                %le                %le 
+                  3                  4
+                  2                  4
+b=-1;
+
+++++++ info: b redefined
+fill,table=t; ! now the last row is [3 -1]
+
+write,table=t;
+
+@ NAME             %01s "T"
+@ TYPE             %04s "USER"
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 3.04.19 Linux"
+@ DATE             %08s "20/02/08"
+@ TIME             %08s "10.05.03"
+*                  A                  B 
+$                %le                %le 
+                  3                  4
+                  2                  4
+                  3                 -1
+setvars,table=t,row=1; ! now a=3, b=4
+
+value,a,b;
+
+a =                  3 ;
+b =                  4 ;
+setvars,table=t;       ! now a=3, b=-1
+
+value,a,b;
+
+a =                  3 ;
+b =                 -1 ;
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.19 finished normally +
+  +++++++++++++++++++++++++++++++++++

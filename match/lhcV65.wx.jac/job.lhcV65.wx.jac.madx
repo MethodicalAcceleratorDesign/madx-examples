@@ -1,0 +1,60 @@
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8;
+
+! This example works with the V6.5 optics (/afs/cern.ch/eng/lhc/optics/V6.5).
+! The optics is modified to works with the new madx (the bv flag was removed).
+! With the V6.503 release the wx matchng will not converge, please keep this
+! as just an example.
+
+
+Option,  warn,info,echo;
+!set,format="22.18e";
+
+Title, "Compiling Optics for the LHC 6.5 lattice with MADX";
+
+option, -echo, -info,  warn;
+call,   file = "V6.5.seq";
+call,   file = "V6.5.coll.str";
+option,  echo,  info,  warn;
+
+beam, particle = proton, sequence=lhcb1, energy = 7000.0;
+beam, particle = proton, sequence=lhcb2, energy = 7000.0, bv = -1;
+
+!  set switches to 1 if crossing scheme is required
+on_x1   := 0; on_x2   := 0; on_x5   := 0; on_x8   := 0;
+on_sep1 := 0; on_sep2 := 0; on_sep5 := 0; on_sep8 := 0;
+on_alice:= 0; on_lhcb := 0;
+
+
+Option, -echo,-warn,-info;
+select, flag=twiss, clear;
+select, flag=twiss, pattern="IP\.*",     column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="s.ds.l\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="e.ds.r\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,dy,dpy,mux,muy,x,px,y,py,wx,wy;
+
+use,    period   = lhcb1;
+twiss,  chrom,sequence = lhcb1, file      = twiss.lhcb1.data;
+!system, "cat twiss.lhcb1.data";
+
+
+! Spool species definition
+kcs.b1=0;
+kcs.b2=0;
+KCS.A12B1:=kcs.b1;
+KCS.A23B1:=kcs.b1;
+KCS.A34B1:=kcs.b1;
+KCS.A45B1:=kcs.b1;
+KCS.A56B1:=kcs.b1;
+KCS.A67B1:=kcs.b1;
+KCS.A78B1:=kcs.b1;
+KCS.A18B1:=kcs.b1;
+
+
+match,chrom,sequence=lhcb1;
+constraint,sequence=lhcb1,range=ip5,wx=0;
+vary, name=KSF.B1;
+vary, name=KSD.B1;
+vary, name=KCS.B1;
+jacobian,calls=10,tolerance=1.0e-21;
+endmatch;
+
+twiss,  sequence = lhcb1, file      = twiss.lhcb1.data;

@@ -1,0 +1,183 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 02.02.11 19.14.07 +
+  +++++++++++++++++++++++++++++++++++++++++++
+title,'LHC Cell APERTURE exemple, BJ Aug2009';
+
+
+
+REAL CONST ANGLE.MB = TWOPI/8/(23*6+2*2*4);
+
+
+
+REAL CONST l.MB = 14.30;
+
+REAL CONST l.MQ = 3.10;
+
+
+
+REAL CONST drift1 = 3.67;
+
+REAL CONST drift2 = 1.02;
+
+REAL CONST drift3 = 1.74;
+
+
+
+len_half_cell = l.MQ+drift1+3*l.MB+2*drift2+drift3;
+
+value, len_half_cell;
+
+len_half_cell =              53.45 ;
+
+
+!!!! apertures
+
+a = 0.022; b = 0.018; h = 0.022; v= 0.022;
+
+!!!! tolerances
+
+th= 0.001; tv=0.0005; tr=0.001 ;
+
+
+
+MB :	SBEND, L := l.MB, angle = ANGLE.MB;
+
+MQ : 	QUADRUPOLE, L := l.MQ,
+
+	apertype=rectellipse,aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+
+
+kqf =     0.008703550815 ;
+
+kqd =    -0.008705002933 ;
+
+
+
+LHCCELL : SEQUENCE, refer = ENTRY, L = 2*len_half_cell;
+
+ 
+
+  MQ1 : MQ, k1:= kqf, at= 0.;
+
+
+
+  MB1 : MB,  at= l.MQ+drift1 ,
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+  MB2 : MB,  at= l.MQ+drift1+l.mb+drift2,
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+  MB3 : MB,  at= l.MQ+drift1+2*(l.mb+drift2),
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+
+
+  MQ2 : MQ, k1 := kqd,  at=  len_half_cell;
+
+
+
+  MB4 : MB,  at= len_half_cell + l.MQ+drift1 ,
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+  MB5 : MB,  at= len_half_cell + l.MQ+drift1+l.mb+drift2,
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+  MB6 : MB,  at= len_half_cell + l.MQ+drift1+2*(l.mb+drift2),
+
+	apertype=rectellipse, aperture = {a,b,h,v}, aper_tol = {th,tv,tr};
+
+
+
+endsequence;
+
+
+
+beam,particle=proton,energy=450.;
+
+
+
+use,period=LHCCELL;
+
+select, flag=twiss, clear;
+
+select, flag=twiss, column=name,s,l,betx,bety,dx,mux,muy,n1;
+
+twiss, sequence=LHCCELL,file=twcell.txt;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             106.9                 -0    0.0004452321861         47.3921841 
+
+                q1                dq1            betxmax              dxmax 
+              0.25      -0.3179054665        177.4532595        2.187225241 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.698552358                  0                  0               0.25 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3180354423         177.468158                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+!!! uses default beam and halo data (lhc at injection)
+
+set, format="7.3f";
+
+select, flag=aperture, clear;
+
+select, flag=aperture, column=name,s,betx,bety,dx,x,y,n1,apertype,xtol,ytol,rtol;
+
+aperture,offsetelem="offset.tfs",file=ap.txt;
+
+
+Processing apertures from lhccell$start:1 to lhccell$end:1...
++++++++ deltap from TWISS            0
+
+ Reading offsets from tfs "offset.tfs"
+
+reference node: lhccell$start:1
+
+
+APERTURE LIMIT: mq1:1, n1: 4.85636, at: 3.1
+
+
+
+WRITE HEADER : APERTURE LIMIT: mq1:1, n1: 4.85636, at: 3.1
+
+
+header 29 
+
+
+WRITE HEADER : APERTURE LIMIT: mq1:1, n1: 4.85636, at: 3.1
+
+
+curr 21 
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

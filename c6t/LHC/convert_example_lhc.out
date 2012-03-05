@@ -1,0 +1,226 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 02.02.11 16.52.27 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8
+
+Option,  warn,info,echo;
+
+
+
+System,"mkdir temp";
+
+
+
+Option, -echo,-warn,thin_foc=false;
+
+
+
+!--------RF CAVITIES--------------------------------------------
+
+! 4 units * 2cells = 8 cavities with a total voltage VRF
+
+ACS          : RFCavity, l:= 1.122   , volt:= VRF/4, lag:= 0.5, harmon:=35640;
+
+RFCa.L4: ACS;
+
+RFCb.L4: ACS;
+
+RFCc.L4: ACS;
+
+RFCd.L4: ACS;
+
+VRF = 8.0E0;
+
+!seqedit, sequence=lhcb1;
+
+!install, element=RFCd.L4, at = -158.401, from = IP4.B1;!OLD V5 POSITION
+
+!install, element=RFCc.L4, at = -154.661, from = IP4.B1;!OLD V5 POSITION
+
+!install, element=RFCb.L4, at = -150.171, from = IP4.B1;!OLD V5 POSITION
+
+!install, element=RFCa.L4, at = -146.431, from = IP4.B1;!OLD V5 POSITION
+
+!endedit;
+
+Beam, particle = proton, energy = 450.0,
+
+                NPART=1.05E11, sige= 4.5e-4;
+
+
+
+Use, period=lhcb1;
+
+
+
+select,flag=twiss,pattern="ip.*",column=name,s,betx,bety;
+
+
+
+twiss, sequence=lhcb1,file=twiss62_1.dat;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+         26658.864                 -0    0.0003199640169         55.9048427 
+
+                q1                dq1            betxmax              dxmax 
+        64.2800005        2.025883213        639.9936915        2.890203001 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.381517697                  0                  0        59.30999977 
+
+               dq2            betymax              dymax              dyrms 
+       2.511550449        656.0712727                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+!******************************************************************************
+
+! BUTTON: Quadrupole Misalignment Errors
+
+Select, flag=ERROR, clear;
+
+Select, flag=ERROR, class=MQ;
+
+eoption,seed=2;
+
+ealign, dy:=tgauss(2.5)*0.1e-3, dx:=tgauss(2.5)*0.1e-3;
+
+Assigned alignment errors to 392 elements
+!******************************************************************************
+
+
+
+
+
+SEEDSYS = 1;
+
+SEEDRAN = 1;
+
+option,-echo;
+
+ Efcomp : Main and Disp. Suppr. Dipoles (MB)
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+Assigned field errors to 154 elements
+ Efcomp : Arc Quadrupoles(MQ)
+Assigned field errors to 47 elements
+Assigned field errors to 51 elements
+Assigned field errors to 51 elements
+Assigned field errors to 47 elements
+Assigned field errors to 47 elements
+Assigned field errors to 51 elements
+Assigned field errors to 51 elements
+Assigned field errors to 47 elements
+ Efcomp : Disp. Suppr. Quadrupoles(MQM Series)
+Assigned field errors to 8 elements
+Assigned field errors to 4 elements
+Assigned field errors to 4 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 4 elements
+Assigned field errors to 4 elements
+Assigned field errors to 8 elements
+ Efcomp : Low-Beta Quadrupoles (MQXA)
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+ Efcomp : Low-Beta Quadrupoles (MQXB)
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+Assigned field errors to 8 elements
+ Efcomp : Large Aperture Quadrupoles(MQY)
+
+
+
+
+twiss, save, sequence=lhcb1;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+  
+iteration:   1 error:   1.140373E-03 deltap:   0.000000E+00
+orbit:   6.900077E-04 -1.729730E-05 -2.466447E-04 -4.292884E-05  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   6.778142E-06 deltap:   0.000000E+00
+orbit:   6.884204E-04 -1.778914E-05 -2.429904E-04 -4.281457E-05  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   3.702581E-09 deltap:   0.000000E+00
+orbit:   6.884206E-04 -1.778911E-05 -2.429886E-04 -4.281464E-05  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+         26658.864                 -0    0.0003319569822        54.88568593 
+
+                q1                dq1            betxmax              dxmax 
+       64.27201022       -423.1660425        607.7976664        8.778890527 
+
+             dxrms             xcomax             xcorms                 q2 
+       2.998250564     0.007438292141     0.001829113101        59.30795682 
+
+               dq2            betymax              dymax              dyrms 
+       388.4893796        642.7605063        6.249128671        1.858055208 
+
+            ycomax             ycorms             deltap            synch_1 
+    0.008867588052     0.001832886205                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+sixtrack,radius=0.017;
+
+  ++++++++++++++++++++++++++++
+  +   c6t version 2.0        +
+  ++++++++++++++++++++++++++++
+
+max_mult_ord set to : 11
+Reference radius set to : 0.017000
+++++++ info: MADX sequence converted to c6t internal. 
+
+total block length: 26658.864000
+
+c6t terminated - total number of elements: 12208
+                    field errors    MAD-X: 1800
+                    field errors SixTrack: 1800
+                 alignment errors   MAD-X: 392
+                alignment errors SixTrack: 784
+                          sequence length: 26658.864000 [m]
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

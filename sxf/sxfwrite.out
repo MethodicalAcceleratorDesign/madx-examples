@@ -1,0 +1,220 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 03.02.11 17.01.11 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!TITLE,'Test input for MAD-X';
+
+
+
+ eg   :=  100;
+
+ bg   :=  eg/pmass;
+
+ en   := 3.75e-06;
+
+ epsx := en/bg;
+
+ epsy := en/bg;
+
+beam, particle = proton, energy =   eg        , 
+
+                         sigt=      0.077     , 
+
+                         sige=      1.1e-4    , 
+
+                         npart=     1.05e11   , 
+
+                         exn=4*en,  eyn=4*en  , 
+
+                         kbunch = 10,
+
+                         et = 0.002, bv = -1,
+
+                         ex=epsx,   ey=epsy;
+
+value,epsx,epsy;
+
+epsx =    3.518520049e-08 ;
+epsy =    3.518520049e-08 ;
+option,-echo;
+
+
+
+use,period=fivecell;
+
+// alignment errors
+
+
+
+/*
+
+select,flag=error,clear;
+
+select,flag=error,pattern="q.*",range=qf.1;
+
+ealign,dx=0.0001;
+
+select,flag=error,class=quadrupole,range=qf.4/qf.5;
+
+ealign,dy=0.0002,dtheta=0.0003;
+
+*/
+
+
+
+/*
+
+select,flag=error,clear;
+
+
+
+// field errors
+
+gcutr=3.0;
+
+b1r=1.e-4;
+
+b2r=2.e-4;
+
+b3r=3.e-4;
+
+b4r=4.e-4;
+
+b5r=5.e-4;
+
+a1r=1.e-4;
+
+a2r=2.e-4;
+
+a3r=3.e-4;
+
+a4r=4.e-4;
+
+a5r=5.e-4;
+
+
+
+Select, flag=error, clear = true;
+
+select, flag=error, pattern="q.*\..*";
+
+efcomp, order:=1, radius:=0.010, 
+
+dknr={0,1e-1*b2r},
+
+dksr={0,1e-1*a2r};
+
+esave;
+
+*/
+
+
+
+select,flag=sectormap,class=drift;
+
+
+
+select,flag=my_table,class=quadrupole,
+
+column=name,parent,keyword,s,betx,bety,dx,dy,k1l,
+
+re11,re12,re13,re14;
+
+
+
+twiss,centre,rmatrix,
+
+sectormap,sectorfile=my_sectorfile,
+
+table=my_table,file=twiss_fv9;
+
+enter Twiss module
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004431832856        47.50160824 
+
+                q1                dq1            betxmax              dxmax 
+       1.254459671       -7.806096655        181.4636127        2.199763173 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.657954287                  0                  0        1.254524491 
+
+               dq2            betymax              dymax              dyrms 
+      -2.007682523        181.4476868                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+select, flag=sxfwrite_table, class=quadrupole, column=s,betx,dx,dy;
+
+twiss,  table=sxfwrite_table, file = sxfwrite_twiss;
+
+enter Twiss module
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004431832856        47.50160824 
+
+                q1                dq1            betxmax              dxmax 
+       1.254459671       -7.806096655        177.6982659        2.176740606 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.657954287                  0                  0        1.254524491 
+
+               dq2            betymax              dymax              dyrms 
+      -2.007682523        177.6832141                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+plot, table=sxfwrite_table vaxis=betx,bety, haxis=s, colour=100, interpolate=true, title="fv9", file="sxfwrite_twiss.ps";
+
+
+ GXPLOT-X11  1.50 initialized
+
+ plot number =            1
+plot, table=sxfwrite_table vaxis=dx,dy, haxis=s, colour=100, interpolate=true, title="fv9";
+
+ plot number =            2
+
+
+
+
+sxfwrite, file = "fv9.sxf";
+
++=+=+= SXF_ex warning - making names unique
+
+
+SXF_ex terminated - total number of elements: 79
+              elements with alignment errors: 0
+              elements with field     errors: 0
+
+
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

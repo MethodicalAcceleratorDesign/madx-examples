@@ -1,0 +1,7 @@
+Twiss parameters derivatives w.r.t. delta_p are evaluated. A python script is used to compare the derivates as computed by ptc_twiss, with approximations by finite differences.
+
+1. ptc_twiss is invoked with option 'deltap_dependency'
+2. select,flag=ptc_twiss,column=name,...,beta11p ... derivative w.r.t deltap
+
+In addition the information gather over one-turn is collected in summary table.
+

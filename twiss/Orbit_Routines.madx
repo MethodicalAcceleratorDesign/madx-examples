@@ -1,0 +1,42 @@
+! routines to be used in the orbit correction process
+! requires "twiss, table=nominal;" to be run previously
+
+! saved on 13/10/08 15:41:45 by T.Risselada
+
+
+! preliminary correction with recovery from Twiss failure (unstable machine)
+  initial_micado(n_iter) : macro = { twiss;
+      mytunes = table(summ,q1)*table(summ,q2);
+      value, mytunes;
+
+      if (mytunes > 1) {
+          correct, plane=x, mode=micado, ncorr=n_iter, model=nominal;
+          correct, plane=y, mode=micado, ncorr=n_iter, model=nominal;
+      };
+
+      if (mytunes < 1) {
+          twiss,   betx=beta.ip1, bety=beta.ip1;
+          correct, plane=x, mode=micado, ncorr=n_iter, model=nominal, flag=line;
+          correct, plane=y, mode=micado, ncorr=n_iter, model=nominal, flag=line;
+      };
+  };
+
+
+
+! final correction aiming at peak orbit amplitudes < target
+  final_micado (target) : macro = { niter = 1;
+      while (niter < 20) { value, niter; twiss;
+
+          xpeak = table(summ, xcomax); value, xpeak;
+          ypeak = table(summ, ycomax); value, ypeak;
+
+          if (xpeak > target) {correct, plane=x, mode=micado, ncorr=10, model=nominal;}
+          if (ypeak > target) {correct, plane=y, mode=micado, ncorr=10, model=nominal;}
+
+          if (xpeak < target && ypeak < target){niter = 1000;}
+          niter = niter + 1;
+      }
+  };
+
+
+return;

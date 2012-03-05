@@ -1,0 +1,34 @@
+title, "V6.5 Thin Lens" ;    // USE ONLY WITH MAD-X version > June 2005
+
+option,-echo;
+
+set, format="12.6f";
+select, flag=twiss, clear;
+select, flag=twiss, pattern="IP\.*",     column=name,s,betx,bety,alfx,alfy,dx,dpx,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="s.ds.l\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,mux,muy,x,px,y,py;
+select, flag=twiss, pattern="e.ds.r\.*", column=name,s,betx,bety,alfx,alfy,dx,dpx,mux,muy,x,px,y,py;
+
+call, file="V6.5.seq";
+call, file="V6.5.thin.inj.str";
+option,echo,warn,info;
+
+beam, particle = proton, sequence=lhcb1, energy = 450.0;
+
+use, sequence=lhcb1;
+
+! convert to THIN
+option, info,  warn, -echo;
+call,   file="slice.madx";
+option, echo, warn, info;
+makethin, sequence=lhcb1;
+
+!  set switches to 1 if crossing scheme is required
+on_x1   := 0; on_x2   := 0; on_x5   := 0; on_x8   := 0;
+on_sep1 := 0; on_sep2 := 0; on_sep5 := 0; on_sep8 := 0;
+on_alice:= 0; on_lhcb := 0;
+
+use,    sequence=lhcb1;
+twiss,  sequence=lhcb1, file=lhc_twiss_b1.data, betx=beta.ip1, bety=beta.ip1, x=+x.ip1, y=+y.ip1, py=+py.ip1;
+save,sequence=lhcb1,file="lhcb1_thin.seq";
+
+stop;

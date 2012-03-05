@@ -1,0 +1,20 @@
+SXF Read and Write Test
+
+Input:
+fv9.seq
+fv9.opt
+
+
+Run:
+./madx < sxfwrite.madx > ! sxfwrite.out
+./madx < sxfread.madx > ! sxfread.out
+
+twiss_out:
+sxfwrite_twiss
+my_sectorfile
+sxfread_twiss
+
+postscript output:
+sxfwrite_twiss.ps.ps
+sxfread_twiss.ps.ps
+

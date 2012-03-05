@@ -1,0 +1,66 @@
+! apply measured errors to all MQW
+
+! written on 21/12/05 11:27:37 by T.Risselada
+
+
+
+ Rr = 0.017; ON_MQW = 1;
+
+ exec, Efcomp_Measured_Quad(MQWA.E5L3);
+ exec, Efcomp_Measured_Quad(MQWA.D5L3);
+ exec, Efcomp_Measured_Quad(MQWA.C5L3);
+ exec, Efcomp_Measured_Quad(MQWB.5L3,);
+ exec, Efcomp_Measured_Quad(MQWA.B5L3);
+ exec, Efcomp_Measured_Quad(MQWA.A5L3);
+
+ exec, Efcomp_Measured_Quad(MQWA.E4L3);
+ exec, Efcomp_Measured_Quad(MQWA.D4L3);
+ exec, Efcomp_Measured_Quad(MQWA.C4L3);
+ exec, Efcomp_Measured_Quad(MQWB.4L3,);
+ exec, Efcomp_Measured_Quad(MQWA.B4L3);
+ exec, Efcomp_Measured_Quad(MQWA.A4L3);
+
+ exec, Efcomp_Measured_Quad(MQWA.A4R3);
+ exec, Efcomp_Measured_Quad(MQWA.B4R3);
+ exec, Efcomp_Measured_Quad(MQWB.4R3,);
+ exec, Efcomp_Measured_Quad(MQWA.C4R3);
+ exec, Efcomp_Measured_Quad(MQWA.D4R3);
+ exec, Efcomp_Measured_Quad(MQWA.E4R3);
+
+ exec, Efcomp_Measured_Quad(MQWA.A5R3);
+ exec, Efcomp_Measured_Quad(MQWA.B5R3);
+ exec, Efcomp_Measured_Quad(MQWB.5R3,);
+ exec, Efcomp_Measured_Quad(MQWA.C5R3);
+ exec, Efcomp_Measured_Quad(MQWA.D5R3);
+ exec, Efcomp_Measured_Quad(MQWA.E5R3);
+
+
+ exec, Efcomp_Measured_Quad(MQWA.E5L7);
+ exec, Efcomp_Measured_Quad(MQWA.D5L7);
+ exec, Efcomp_Measured_Quad(MQWA.C5L7);
+ exec, Efcomp_Measured_Quad(MQWB.5L7,);
+ exec, Efcomp_Measured_Quad(MQWA.B5L7);
+ exec, Efcomp_Measured_Quad(MQWA.A5L7);
+
+ exec, Efcomp_Measured_Quad(MQWA.E4L7);
+ exec, Efcomp_Measured_Quad(MQWA.D4L7);
+ exec, Efcomp_Measured_Quad(MQWA.C4L7);
+ exec, Efcomp_Measured_Quad(MQWB.4L7,);
+ exec, Efcomp_Measured_Quad(MQWA.B4L7);
+ exec, Efcomp_Measured_Quad(MQWA.A4L7);
+
+ exec, Efcomp_Measured_Quad(MQWA.A4R7);
+ exec, Efcomp_Measured_Quad(MQWA.B4R7);
+ exec, Efcomp_Measured_Quad(MQWB.4R7,);
+ exec, Efcomp_Measured_Quad(MQWA.C4R7);
+ exec, Efcomp_Measured_Quad(MQWA.D4R7);
+ exec, Efcomp_Measured_Quad(MQWA.E4R7);
+
+ exec, Efcomp_Measured_Quad(MQWA.A5R7);
+ exec, Efcomp_Measured_Quad(MQWA.B5R7);
+ exec, Efcomp_Measured_Quad(MQWB.5R7,);
+ exec, Efcomp_Measured_Quad(MQWA.C5R7);
+ exec, Efcomp_Measured_Quad(MQWA.D5R7);
+ exec, Efcomp_Measured_Quad(MQWA.E5R7);
+
+return;

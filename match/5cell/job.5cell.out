@@ -1,0 +1,18 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 21.02.08 09.43.12 +
+  +++++++++++++++++++++++++++++++++++++++++++
+TITLE,'CELL matching with MAD-X';
+
+
+
+option,info,warning;
+
+++++++ warning: illegal keyword: warning
+
+
+call file="../fv9.opt";  
+
++=+=+= fatal: cannot open input file: ../fv9.opt

@@ -1,0 +1,46 @@
+Example 3:   One can compare the plots with different order of Normal Forms 
+             by changing the parameter <norm_no>
+             
+   Input in standard coordinates; 4 particles;
+   icase=4; closed_orbit; turns=1000; norm_no=1,4,8,12,16; 
+   Output in normalized coordinates at beginning of the ring (i.e., at START)
+
+Initial files for running the example 1 are
+    Readme                - this file
+    fv9_3.madx            - madX input data file
+    fv9.opt               - madX input data file
+    fv9.seq               - madX input data file
+    Makefile_3            - command file 
+    *.plt                 - scripts for running GNUPLOT
+
+The example can be run with commands ("Makefile_3"):
+=============================================================
+# Run Example No. 3 with "madxdev" 
+#     using the input "fv9_3.madx" and output "fv9_3.out" 
+madxp < fv9_3.madx > fv9_3.out
+
+# Plot with GNUPLOT4.0
+gnuplot make_plots3.plt
+
+# clean temp files
+rm empty.ps
+==============================================================
+
+The resuling files are
+
+    fv9_3.out  - the output text-file of madx
+ 
+    track.obs0001.p000* - output data-table for the n-th particle 
+                          at observation point0001 (i.e., at START)
+    fv9_3_START.ps      - phase spaces at START
+    obs1_XX1.eps        - X-X' phase spaces plotted by GNUPLOT
+    obs1_YY1.eps        - Y-Y' phase spaces plotted by GNUPLOT 
+
+
+    <no_1>...<no_16>    - directories with results for different values 
+                          of parameter  <norm_no>. 
+                          pdf-images derived from the above postscript files 
+                          are also posted there. 
+
+    fv9_1_START_no1_4_8_12_16.ps(pdf) - 
+                          results for different <norm_no> collected in one file. 

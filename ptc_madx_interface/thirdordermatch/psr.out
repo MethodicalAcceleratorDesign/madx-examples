@@ -1,0 +1,1107 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.14              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 23.11.2009      +
+  + Execution Time Stamp: 23.11.09 17.12.33 +
+  +++++++++++++++++++++++++++++++++++++++++++
+TITLE "PSR Ring"
+
+
+
+option,echo,rbarc=false;
+
+QDK1 := 0.558619275157041;
+
+        Dm: DRIFT, L:= -1.1;
+
+        Dp: DRIFT, L:= 1.1;
+
+        D1: DRIFT, L:= 2.28646;
+
+        D2: DRIFT, L:= 0.45;
+
+        QD  :  QUADRUPOLE, L:=0.5, K1:= QDK1, tilt=0.0*pi/180;
+
+        QF  :  QUADRUPOLE, L:=0.5, K1:=-0.394319488346147, tilt=0.0*pi/180;
+
+        trueB   :  RBEND,  L:=2.54948, ANGLE:= 0.628318530717959, E1:=0.0, E2:=0.0,ptcrbend=true,truerbend=true;
+
+        wedgB   :  RBEND,  L:=2.54948, ANGLE:= 0.628318530717959, E1:=0., E2:=0.0,ptcrbend=true,truerbend=false;
+
+        B   :   RBEND,  L:=2.54948, ANGLE:= 0.628318530717959, E1:=0., E2:=0.;
+
+        Bs   :  QUADRUPOLE,  L:=2.507749201408435, k1:=0.0;
+
+
+
+        B1  :  RBEND,  L:=2.5, ANGLE:= -0.628318530717959, E1:=0.628318530717959/2.0, E2:=0.0,ptcrbend=true,truerbend=true;
+
+        B2  :  RBEND,  L:=2.5, ANGLE:=  0.628318530717959, E1:=0.628318530717959/2.0, E2:=0.0,ptcrbend=true,truerbend=true;
+
+        Q1  :  QUADRUPOLE, L:=0.5, K1:= 0.0;
+
+        Q2  :  QUADRUPOLE, L:=0.5, K1:= 0.0;
+
+        Q3  :  QUADRUPOLE, L:=0.5, K1:= 0.0;
+
+        D : DRIFT, L:= 2.0;
+
+        BHdown :   RBEND,  L:=0.2, ANGLE:= 0.1, E1:=0., E2:=0., tilt=-pi/2;
+
+        BHup :     RBEND,  L:=0.2, ANGLE:= 0.1, E1:=0., E2:=0., tilt= pi/2;
+
+        RF: RFCAVITY, L:=0.45, VOLT:=50, FREQ:=1;
+
+    
+
+
+
+!CELL:    LINE=( D1,QD,D2,B,dm, dp,D2,QF,D1);
+
+CELL:    LINE=( D1,QD,RF,B,dm, dp,D2,QF,D1);
+
+CHIC:    LINE=( BHdown, D2,BHup, D2,RF,D2, BHup, D2, BHdown);
+
+CELLH:     LINE=( CELL, CHIC, CELL );
+
+
+
+PSR:     LINE=( 10*CELL );
+
+onebs:     LINE=( Bs );
+
+
+
+
+
+eg :=  1.73527443433878; !  ... in GeV
+
+beam, particle = proton, energy = eg; 
+
+use, period=PSR;
+
+
+
+select, flag=twiss, clear;
+
+select, flag=twiss, columns=name, s, beta11, beta22, beta33, mux, muy;
+
+
+
+create, table=H3, column=_name,"h0000";
+
+!instructs ptc to store given monomials cofficients in the just created table
+
+ptc_select, table=H3, column="h0000", polynomial=1, monomial="300000";
+
+
+
+select_ptc_normal, dq1=1, dq2=1;
+
+The minimum required order is 2 
+--------------------------------
+select_ptc_normal, dq1=2, dq2=2;
+
+The minimum required order is 3 
+--------------------------------
+
+
+
+
+dQxdX:= table(normal_results,value,1);
+
+dQydX:= table(normal_results,value,2);
+
+dQxdX2:= table(normal_results,value,3);
+
+dQydX2:= table(normal_results,value,4);!4th row in table normal_results
+
+
+
+match, use_macro;
+
+  vary, name=QDK1, step=0.01;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_create_universe;
+
+      ptc_create_layout, model=1, method=6, nst=10, exact=true, closed_layout=true;
+
+      ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=true;
+
+
+
+      ptc_twiss, closed_orbit, table=twiss, icase=4, no=4;
+
+
+
+      ptc_normal, closed_orbit,normal,icase=4, no=4;
+
+
+
+      value, table(twiss,PSR$END,beta11);
+
+      value, table(twiss,PSR$END,beta22);
+
+      value, table(H3,PSR$END,h0000);
+
+      value, dQxdX, dQydX, dQxdX2, dQydX2;
+
+      value, SD0;
+
+
+
+      ptc_end;
+
+
+
+   };
+
+
+
+
+
+   constraint, expr=table(H3,PSR$END,h0000) = 0.0;
+
+
+
+   constraint, expr= dQxdX   <1e-3;
+
+   constraint, expr= dQxdX2  <1e-3;
+
+
+
+
+
+
+
+   lmdif,  tolerance=1e-30 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      3
+
+START LMDIF:
+
+ Now PTC
+ MAD-X Beam Parameters
+                  Energy : 0.173527E+01
+          Kinetic Energy : 0.797002E+00
+      Particle Rest Mass : 0.938272E+00
+                Momentum : 0.145973E+01
+ Setting MADx with 
+     energy         1.73527443433878
+     method         6
+     Num. of steps  10
+     charge         1.
+  Length of machine:  90.64825229896786
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0. 0. 0.
+ Before   end:  0. 0. 0.
+ After  start:  0. 0. 0.
+ After    end:  -1.1803328949541551E-14 0. 4.1744385725905886E-14
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -5.197781211349304E-9 -5.509211299697282E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.2588532686809142E-16    1.000000000000065        0.000000000000000        0.000000000000000    
+   -1.000000000000065      -0.1968911145233676E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.2168404344971009E-16   0.9999999999999970    
+    0.000000000000000        0.000000000000000      -0.9999999999999971       0.1791101988946053E-15
+ Deviation from symplecticity  0.3399545049761685E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.1607329720709760E-16    1.000000000000057        0.000000000000000        0.000000000000000    
+   -1.000000000000057      -0.3456436525883788E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.9757819552369540E-18   0.9999999999999888    
+    0.000000000000000        0.000000000000000      -0.9999999999999889       0.4211041237933699E-15
+ Deviation from symplecticity  0.3419652934303144E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621774                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -2.564700978e-11        1.849436422       0.2652807875 
+
+                q2                dq1                dq2         beta_x_min 
+      0.2492043901                  0                  0        3.755912986 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       12.11976252        3.740728592        12.18041568                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -5.197782174e-09    -5.50921456e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -5.197781211349304E-9 -5.509211299697282E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.2588532686809142E-16    1.000000000000065        0.000000000000000        0.000000000000000    
+   -1.000000000000065      -0.1968911145233676E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.2168404344971009E-16   0.9999999999999970    
+    0.000000000000000        0.000000000000000      -0.9999999999999971       0.1791101988946053E-15
+ Deviation from symplecticity  0.3399545049761685E-11 %                                                                  
+table( twiss psr$end beta11 ) =        6.449300706 ;
+table( twiss psr$end beta22 ) =        6.299122671 ;
+table( h3 psr$end h0000 ) =      -0.2025180224 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+Initial Penalty Function =   0.41013549E-01
+
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -5.1966632843504214E-9 -5.508421671212699E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.1214306433183765E-16    1.000000000000026        0.000000000000000        0.000000000000000    
+   -1.000000000000026      -0.2818925648462312E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1436567878543293E-16   0.9999999999999938    
+    0.000000000000000        0.000000000000000      -0.9999999999999937       0.3100818213308543E-15
+ Deviation from symplecticity  0.1644714366869776E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.1124859753953711E-16    1.000000000000022        0.000000000000000        0.000000000000000    
+   -1.000000000000022      -0.2545706700995964E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1891932790987205E-16   0.9999999999999883    
+    0.000000000000000        0.000000000000000      -0.9999999999999883      -0.9324138683375338E-16
+ Deviation from symplecticity  0.1708090727236058E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621774                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    -2.55796544e-11        1.849436422       0.2655550878 
+
+                q2                dq1                dq2         beta_x_min 
+      0.2491194831                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       12.11976252        3.740728592        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -5.196664991e-09   -5.508423312e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -5.1966632843504214E-9 -5.508421671212699E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.1214306433183765E-16    1.000000000000026        0.000000000000000        0.000000000000000    
+   -1.000000000000026      -0.2818925648462312E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1436567878543293E-16   0.9999999999999938    
+    0.000000000000000        0.000000000000000      -0.9999999999999937       0.3100818213308543E-15
+ Deviation from symplecticity  0.1644714366869776E-11 %                                                                  
+table( twiss psr$end beta11 ) =         6.44856764 ;
+table( twiss psr$end beta22 ) =        6.299447077 ;
+table( h3 psr$end h0000 ) =      -0.2026058293 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -1.002595553516956E-8 -8.922831023547114E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.3313592889658823E-17    1.000000000000029        0.000000000000000        0.000000000000000    
+   -1.000000000000029      -0.3404394821604484E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.4031876828930470E-17    1.000000000000006    
+    0.000000000000000        0.000000000000000       -1.000000000000006      -0.2027458062547893E-15
+ Deviation from symplecticity  0.1740160072245464E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.3232277726722410E-17    1.000000000000032        0.000000000000000        0.000000000000000    
+   -1.000000000000032       0.8066464163292153E-16    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.4330032426363983E-17    1.000000000000018    
+    0.000000000000000        0.000000000000000       -1.000000000000018       0.1446325698095663E-15
+ Deviation from symplecticity  0.2526027753938995E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621771                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -3.168093215e-10        1.849436423       0.5879059979 
+
+                q2                dq1                dq2         beta_x_min 
+      0.4425982638                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -1.002595825e-08   -8.922832031e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -1.002595553516956E-8 -8.922831023547114E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.3313592889658823E-17    1.000000000000029        0.000000000000000        0.000000000000000    
+   -1.000000000000029      -0.3404394821604484E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.4031876828930470E-17    1.000000000000006    
+    0.000000000000000        0.000000000000000       -1.000000000000006      -0.2027458062547893E-15
+ Deviation from symplecticity  0.1740160072245464E-11 %                                                                  
+table( twiss psr$end beta11 ) =        9.142562856 ;
+table( twiss psr$end beta22 ) =        5.610515346 ;
+table( h3 psr$end h0000 ) =       -0.279567868 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.254284490055803E-9 -6.256132126657425E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6234162491791650E-18    1.000000000000030        0.000000000000000        0.000000000000000    
+   -1.000000000000030      -0.1949395506128937E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3062871137271550E-17    1.000000000000000    
+    0.000000000000000        0.000000000000000       -1.000000000000000       0.9844555726168380E-16
+ Deviation from symplecticity  0.1506227868125487E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.3289875967135703E-17    1.000000000000022        0.000000000000000        0.000000000000000    
+   -1.000000000000022       0.6700369425960417E-16    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3137410036629928E-17    1.000000000000004    
+    0.000000000000000        0.000000000000000       -1.000000000000004      -0.2298508605669269E-15
+ Deviation from symplecticity  0.1306542984832191E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621774                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -8.936096356e-11        1.849436422      0.04416242995 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3162711379                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.254287622e-09   -6.256138026e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.254284490055803E-9 -6.256132126657425E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6234162491791650E-18    1.000000000000030        0.000000000000000        0.000000000000000    
+   -1.000000000000030      -0.1949395506128937E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3062871137271550E-17    1.000000000000000    
+    0.000000000000000        0.000000000000000       -1.000000000000000       0.9844555726168380E-16
+ Deviation from symplecticity  0.1506227868125487E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.115959467 ;
+table( twiss psr$end beta22 ) =        6.049262651 ;
+table( h3 psr$end h0000 ) =     -0.05636750441 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:       4   Penalty function =   0.31772956E-02
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.252834369529424E-9 -6.255120434234667E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.8538092108323347E-18    1.000000000000033        0.000000000000000        0.000000000000000    
+   -1.000000000000033      -0.2038300084272748E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.5908901840045999E-17    1.000000000000003    
+    0.000000000000000        0.000000000000000       -1.000000000000003      -0.2372234353398284E-15
+ Deviation from symplecticity  0.1798654473516952E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.1565316886525947E-17    1.000000000000028        0.000000000000000        0.000000000000000    
+   -1.000000000000028      -0.4597017211338539E-16    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.5163512846462215E-17    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000005       0.1318389841742373E-15
+ Deviation from symplecticity  0.1669947986588250E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621774                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -8.927297066e-11        1.849436422      0.04442377166 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3161937076                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.252826613e-09   -6.255098796e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.252834369529424E-9 -6.255120434234667E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.8538092108323347E-18    1.000000000000033        0.000000000000000        0.000000000000000    
+   -1.000000000000033      -0.2038300084272748E-15    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.5908901840045999E-17    1.000000000000003    
+    0.000000000000000        0.000000000000000       -1.000000000000003      -0.2372234353398284E-15
+ Deviation from symplecticity  0.1798654473516952E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.115074323 ;
+table( twiss psr$end beta22 ) =        6.049543981 ;
+table( h3 psr$end h0000 ) =     -0.05671469333 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.499990156122673E-9 -6.429874502387966E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6733911930671688E-19    1.000000000000028        0.000000000000000        0.000000000000000    
+   -1.000000000000028       0.4377466271410224E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1270549420881451E-17   0.9999999999999957    
+    0.000000000000000        0.000000000000000      -0.9999999999999957       0.4002874420816482E-15
+ Deviation from symplecticity  0.1636626800998185E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.1950293361053027E-18    1.000000000000034        0.000000000000000        0.000000000000000    
+   -1.000000000000034      -0.3449118161219511E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1094366567852556E-17    1.000000000000003    
+    0.000000000000000        0.000000000000000       -1.000000000000003       0.5984795992119984E-16
+ Deviation from symplecticity  0.1844584882727419E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.041844888e-10        1.849436422     0.001543760057 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3288322052                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.499921832e-09   -6.429739724e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.499990156122673E-9 -6.429874502387966E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6733911930671688E-19    1.000000000000028        0.000000000000000        0.000000000000000    
+   -1.000000000000028       0.4377466271410224E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1270549420881451E-17   0.9999999999999957    
+    0.000000000000000        0.000000000000000      -0.9999999999999957       0.4002874420816482E-15
+ Deviation from symplecticity  0.1636626800998185E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.263729148 ;
+table( twiss psr$end beta22 ) =        6.003835081 ;
+table( h3 psr$end h0000 ) =    -0.002463173809 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:       6   Penalty function =   0.60672252E-05
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.4985205095465446E-9 -6.428712322802986E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.2414043899674756E-19    1.000000000000019        0.000000000000000        0.000000000000000    
+   -1.000000000000019      -0.3401684316173270E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1616138863361205E-17   0.9999999999999925    
+    0.000000000000000        0.000000000000000      -0.9999999999999925      -0.2914335439641036E-15
+ Deviation from symplecticity  0.1350781747486005E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.1005851624864482E-18    1.000000000000010        0.000000000000000        0.000000000000000    
+   -1.000000000000010       0.4987329993433320E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1517883041479706E-17   0.9999999999999916    
+    0.000000000000000        0.000000000000000      -0.9999999999999917      -0.3256943326146455E-15
+ Deviation from symplecticity  0.9492215166401213E-12 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.040913269e-10        1.849436422     0.001803173145 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3287561522                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.498576007e-09   -6.428999156e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.4985205095465446E-9 -6.428712322802986E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.2414043899674756E-19    1.000000000000019        0.000000000000000        0.000000000000000    
+   -1.000000000000019      -0.3401684316173270E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1616138863361205E-17   0.9999999999999925    
+    0.000000000000000        0.000000000000000      -0.9999999999999925      -0.2914335439641036E-15
+ Deviation from symplecticity  0.1350781747486005E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.262808726 ;
+table( twiss psr$end beta22 ) =        6.004108874 ;
+table( h3 psr$end h0000 ) =    -0.002758886167 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.513380786735748E-9 -6.439513371476573E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.5061021859844445E-19    1.000000000000017        0.000000000000000        0.000000000000000    
+   -1.000000000000017       0.4353749348887104E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.7623296525288703E-18   0.9999999999999982    
+    0.000000000000000        0.000000000000000      -0.9999999999999982      -0.7589415207398531E-16
+ Deviation from symplecticity  0.9456181326033831E-12 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.2752857078576476E-19    1.000000000000015        0.000000000000000        0.000000000000000    
+   -1.000000000000015       0.2490276864927643E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.3462670688375580E-17    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000005      -0.9324138683375338E-16
+ Deviation from symplecticity  0.9960741223840003E-12 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    -1.04962083e-10        1.849436422       0.9993823708 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3294656707                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.512708355e-09   -6.439446107e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.513380786735748E-9 -6.439513371476573E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.5061021859844445E-19    1.000000000000017        0.000000000000000        0.000000000000000    
+   -1.000000000000017       0.4353749348887104E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.7623296525288703E-18   0.9999999999999982    
+    0.000000000000000        0.000000000000000      -0.9999999999999982      -0.7589415207398531E-16
+ Deviation from symplecticity  0.9456181326033831E-12 %                                                                  
+table( twiss psr$end beta11 ) =        7.271408143 ;
+table( twiss psr$end beta22 ) =        6.001555178 ;
+table( h3 psr$end h0000 ) =   -2.266431429e-05 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:       8   Penalty function =   0.51367114E-09
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.5120819655190534E-9 -6.438131776573459E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.5346895479542771E-19    1.000000000000004        0.000000000000000        0.000000000000000    
+   -1.000000000000004      -0.1495860184851094E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.6979551485375435E-18    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000005      -0.6938893903907228E-16
+ Deviation from symplecticity  0.4569823456794956E-12 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.4907497138154603E-19    1.000000000000021        0.000000000000000        0.000000000000000    
+   -1.000000000000021      -0.3557538378468061E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1124859753953711E-17    1.000000000000002    
+    0.000000000000000        0.000000000000000       -1.000000000000002      -0.3911801438327700E-15
+ Deviation from symplecticity  0.1175551921666313E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.048686092e-10        1.849436422        0.999641691 
+
+                q2                dq1                dq2         beta_x_min 
+       0.329389687                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.511316234e-09   -6.437601801e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.5120819655190534E-9 -6.438131776573459E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.5346895479542771E-19    1.000000000000004        0.000000000000000        0.000000000000000    
+   -1.000000000000004      -0.1495860184851094E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.6979551485375435E-18    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000005      -0.6938893903907228E-16
+ Deviation from symplecticity  0.4569823456794956E-12 %                                                                  
+table( twiss psr$end beta11 ) =        7.270485868 ;
+table( twiss psr$end beta22 ) =        6.001828595 ;
+table( h3 psr$end h0000 ) =   -0.0003132402014 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.512730897692808E-9 -6.438282857606666E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.9645587686858345E-19    1.000000000000006        0.000000000000000        0.000000000000000    
+   -1.000000000000006       0.8741380015664379E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.5454892180317694E-18    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000004       0.4440892098500626E-15
+ Deviation from symplecticity  0.5273938387743610E-12 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.5579829540037703E-19    1.000000000000028        0.000000000000000        0.000000000000000    
+   -1.000000000000028      -0.5082197683525802E-19    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.2740998617314916E-17    1.000000000000002    
+    0.000000000000000        0.000000000000000       -1.000000000000002       0.9454242944073599E-16
+ Deviation from symplecticity  0.1523440294944722E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.049693562e-10        1.849436422       0.9993621437 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3294715973                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.513276979e-09   -6.440200976e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.512730897692808E-9 -6.438282857606666E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.9645587686858345E-19    1.000000000000006        0.000000000000000        0.000000000000000    
+   -1.000000000000006       0.8741380015664379E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.5454892180317694E-18    1.000000000000005    
+    0.000000000000000        0.000000000000000       -1.000000000000004       0.4440892098500626E-15
+ Deviation from symplecticity  0.5273938387743610E-12 %                                                                  
+table( twiss psr$end beta11 ) =        7.271480092 ;
+table( twiss psr$end beta22 ) =        6.001533852 ;
+table( h3 psr$end h0000 ) =   -2.529485083e-08 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:      10   Penalty function =   0.63982948E-15
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.5117331209548E-9 -6.439860620386343E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6352747104407253E-20   0.9999999999999851        0.000000000000000        0.000000000000000    
+  -0.9999999999999851      -0.4997494388800372E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.3106916850528774E-17   0.9999999999999963    
+    0.000000000000000        0.000000000000000      -0.9999999999999963       0.1812786032395763E-15
+ Deviation from symplecticity  0.9316585161189080E-12 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.3716357056078243E-19    1.000000000000020        0.000000000000000        0.000000000000000    
+   -1.000000000000020      -0.7284483346386983E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.2056595995933441E-17   0.9999999999999781    
+    0.000000000000000        0.000000000000000      -0.9999999999999780       0.2246466901389965E-15
+ Deviation from symplecticity  0.2079028220938483E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.048759205e-10        1.849436422       0.9996214631 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3293956142                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.512131907e-09   -6.438679364e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.5117331209548E-9 -6.439860620386343E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.6352747104407253E-20   0.9999999999999851        0.000000000000000        0.000000000000000    
+  -0.9999999999999851      -0.4997494388800372E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.3106916850528774E-17   0.9999999999999963    
+    0.000000000000000        0.000000000000000      -0.9999999999999963       0.1812786032395763E-15
+ Deviation from symplecticity  0.9316585161189080E-12 %                                                                  
+table( twiss psr$end beta11 ) =        7.270557799 ;
+table( twiss psr$end beta22 ) =        6.001807266 ;
+table( h3 psr$end h0000 ) =   -0.0002905520256 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.5131672547338E-9 -6.439576592672033E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.7538593230563273E-19    1.000000000000035        0.000000000000000        0.000000000000000    
+   -1.000000000000035      -0.1948175778684891E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3591419696358233E-18   0.9999999999999936    
+    0.000000000000000        0.000000000000000      -0.9999999999999936       0.3053113317719180E-15
+ Deviation from symplecticity  0.2094867803226587E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+   0.9634999775017666E-19    1.000000000000010        0.000000000000000        0.000000000000000    
+   -1.000000000000010       0.1023215800283195E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3377967393650150E-17    1.000000000000003    
+    0.000000000000000        0.000000000000000       -1.000000000000003       0.2038300084272748E-16
+ Deviation from symplecticity  0.6501024827565769E-12 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.049693528e-10        1.849436422       0.9993621212 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3294716039                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.513178197e-09   -6.439091302e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.5131672547338E-9 -6.439576592672033E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+  -0.7538593230563273E-19    1.000000000000035        0.000000000000000        0.000000000000000    
+   -1.000000000000035      -0.1948175778684891E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.3591419696358233E-18   0.9999999999999936    
+    0.000000000000000        0.000000000000000      -0.9999999999999936       0.3053113317719180E-15
+ Deviation from symplecticity  0.2094867803226587E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.271480172 ;
+table( twiss psr$end beta22 ) =        6.001533829 ;
+table( h3 psr$end h0000 ) =    -2.62364742e-11 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:      12   Penalty function =   0.68835258E-21
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.510850772146109E-9 -6.437694166184238E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.1371134583367899E-19    1.000000000000011        0.000000000000000        0.000000000000000    
+   -1.000000000000011      -0.6403569081242511E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1788933584601082E-17   0.9999999999999978    
+    0.000000000000000        0.000000000000000      -0.9999999999999978       0.4119968255444917E-16
+ Deviation from symplecticity  0.6561226516386676E-12 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.4139873529705393E-19    1.000000000000021        0.000000000000000        0.000000000000000    
+   -1.000000000000021      -0.7995991022080595E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1616138863361205E-17   0.9999999999999811    
+    0.000000000000000        0.000000000000000      -0.9999999999999811      -0.8716985466783456E-16
+ Deviation from symplecticity  0.1983988773740122E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.048759344e-10        1.849436422       0.9996214405 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3293956208                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.512470668e-09   -6.439346243e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.510850772146109E-9 -6.437694166184238E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.1371134583367899E-19    1.000000000000011        0.000000000000000        0.000000000000000    
+   -1.000000000000011      -0.6403569081242511E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000       0.1788933584601082E-17   0.9999999999999978    
+    0.000000000000000        0.000000000000000      -0.9999999999999978       0.4119968255444917E-16
+ Deviation from symplecticity  0.6561226516386676E-12 %                                                                  
+table( twiss psr$end beta11 ) =         7.27055788 ;
+table( twiss psr$end beta22 ) =        6.001807242 ;
+table( h3 psr$end h0000 ) =    -0.000290526702 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.5128089663896736E-9 -6.438945312684511E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.4595153738854579E-19    1.000000000000039        0.000000000000000        0.000000000000000    
+   -1.000000000000039       0.1446732273910345E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1219727444046192E-17    1.000000000000007    
+    0.000000000000000        0.000000000000000       -1.000000000000007      -0.1062518129035794E-15
+ Deviation from symplecticity  0.2289783536331796E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.9952637130238029E-20    1.000000000000022        0.000000000000000        0.000000000000000    
+   -1.000000000000022      -0.8690558038829121E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1880413142904547E-17    1.000000000000002    
+    0.000000000000000        0.000000000000000       -1.000000000000002      -0.3035766082959412E-17
+ Deviation from symplecticity  0.1176981285794338E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.049693805e-10        1.849436422       0.9993621211 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3294716039                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.512977184e-09     -6.4401343e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.5128089663896736E-9 -6.438945312684511E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.4595153738854579E-19    1.000000000000039        0.000000000000000        0.000000000000000    
+   -1.000000000000039       0.1446732273910345E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1219727444046192E-17    1.000000000000007    
+    0.000000000000000        0.000000000000000       -1.000000000000007      -0.1062518129035794E-15
+ Deviation from symplecticity  0.2289783536331796E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.271480172 ;
+table( twiss psr$end beta22 ) =        6.001533829 ;
+table( h3 psr$end h0000 ) =   -6.023637535e-15 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:      14   Penalty function =   0.36284209E-28
+ ++++++++++ LMDIF ended: converged without success
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ Closed orbit:  -6.5128089663896736E-9 -6.438945312684511E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.4595153738854579E-19    1.000000000000039        0.000000000000000        0.000000000000000    
+   -1.000000000000039       0.1446732273910345E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1219727444046192E-17    1.000000000000007    
+    0.000000000000000        0.000000000000000       -1.000000000000007      -0.1062518129035794E-15
+ Deviation from symplecticity  0.2289783536331796E-11 %                                                                  
+ F
+ Check of the symplectic condition on the linear part                    
+
+  -0.9952637130238029E-20    1.000000000000022        0.000000000000000        0.000000000000000    
+   -1.000000000000022      -0.8690558038829121E-18    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1880413142904547E-17    1.000000000000002    
+    0.000000000000000        0.000000000000000       -1.000000000000002      -0.3035766082959412E-17
+ Deviation from symplecticity  0.1176981285794338E-11 %                                                                  
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+        90.6482523       0.2923621773                  0                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0   -1.049693805e-10        1.849436422       0.9993621211 
+
+                q2                dq1                dq2         beta_x_min 
+      0.3294716039                  0                  0        3.755262509 
+
+        beta_x_max         beta_y_min         beta_y_max             deltap 
+       14.49632929        3.636744754        12.18103815                  0 
+
+           orbit_x           orbit_px            orbit_y           orbit_py 
+  -6.512977184e-09     -6.4401343e-10                  0                  0 
+
+          orbit_pt          orbit_-cT 
+                 0                  0 
+ Closed orbit:  -6.5128089663896736E-9 -6.438945312684511E-10 0. 0.
+ Check of the symplectic condition on the linear part                    
+
+   0.4595153738854579E-19    1.000000000000039        0.000000000000000        0.000000000000000    
+   -1.000000000000039       0.1446732273910345E-17    0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000      -0.1219727444046192E-17    1.000000000000007    
+    0.000000000000000        0.000000000000000       -1.000000000000007      -0.1062518129035794E-15
+ Deviation from symplecticity  0.2289783536331796E-11 %                                                                  
+table( twiss psr$end beta11 ) =        7.271480172 ;
+table( twiss psr$end beta22 ) =        6.001533829 ;
+table( h3 psr$end h0000 ) =   -6.023637535e-15 ;
+dqxdx =                  0 ;
+dqydx =                  0 ;
+dqxdx2 =                  0 ;
+dqydx2 =                  0 ;
+sd0 =                  0 ;
+  killing last layout 
+  killed last layout 
+call:      14   Penalty function =   0.36284209E-28
+
+
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(h3,psr$end,h0000)=0.0             
+  values:     -6.02364e-15=+0.00000e+00
+  weight:     +1.00000e+00
+  penalty:    -6.02364e-15
+
+  constraint: dqxdx<1e-3                              
+  values:     +0.00000e+00<+1.00000e-03
+  weight:     +1.00000e+00
+  penalty:    +0.00000e+00
+
+  constraint: dqxdx2<1e-3                             
+  values:     +0.00000e+00<+1.00000e-03
+  weight:     +1.00000e+00
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   3.62842092e-29
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qdk1                      5.05503e-01  5.58619e-01 -1.00000e+20  1.00000e+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   3.62842092e-29
+
+
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.14 finished normally +
+  +++++++++++++++++++++++++++++++++++

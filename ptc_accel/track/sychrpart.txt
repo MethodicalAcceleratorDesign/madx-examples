@@ -1,0 +1,93 @@
+  
+          i=    1 name=      CTF$START                 p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    2 name=      QUAD_L2                   p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    3 name=      DS_QL                     p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    4 name=      QUAD_L1                   p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    5 name=      CELL_Q1                   p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    6 name=      DS_TRIP                   p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    7 name=      CELL_MRK                  p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+          i=    8 name=      BEFORECAV                 p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  
+  poscav(j)=    9 name=      TCAV                      p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.7002  0.0000
+  
+          i=   10 name=      AFTERCAV                  p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   11 name=      DS_TRIP                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   12 name=      CELL_Q3                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   13 name=      QUAD_L1                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   14 name=      DS_QL                     p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   15 name=      QUAD_L2                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   16 name=      QUAD_L2                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   17 name=      DS_QL                     p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   18 name=      QUAD_L1                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   19 name=      CELL_Q1                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   20 name=      DS_TRIP                   p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   21 name=      CELL_MRK                  p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+          i=   22 name=      BEFORECAV                 p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000 -0.0001  0.0000
+  
+  poscav(j)=   23 name=      TCAV                      p0c=    0.0340     Current energy     0.0340
+  0.0000  0.0000  0.0000  0.0000  0.4117  0.0000
+  
+          i=   24 name=      AFTERCAV                  p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   25 name=      DS_TRIP                   p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   26 name=      CELL_Q3                   p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   27 name=      QUAD_L1                   p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   28 name=      DS_QL                     p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   29 name=      QUAD_L2                   p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+          i=   30 name=      CTF$END                   p0c=    0.0480     Current energy     0.0480
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000
+  
+ END
+  0.0000  0.0000  0.0000  0.0000 -0.0000  0.0000

@@ -1,0 +1,205 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.47              +
+  + Code Modification Date: 26.09.2008      +
+  + Execution Time Stamp: 07.10.08 17.15.19 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!Example script showing usage of tracking with PTC
+
+!author: Piotr Skowronski (CERN)
+
+
+
+
+
+!option,-echo;
+
+option,-info;
+
+
+
+LQL := 0.220; ! length of QL
+
+LQS := 0.124; ! length of QS
+
+CAVLENGTH := 2.4;
+
+QL  : QUADRUPOLE, L=LQL; ! QL quadrupole
+
+QS  : QUADRUPOLE, L=LQS; ! QS quadrupole
+
+
+
+!****** define the regular linac cell 
+
+
+
+TCAV      : TWCAVITY,  L=CAVLENGTH, VOLT=14.0d0, LAG=0.d0/360., FREQ=3000.; 
+
+
+
+ds_ql     : drift, l=0.25;    ! short drift between quads in Daniels design
+
+ds_trip   : drift, l=(3.34-CAVLENGTH)/2.; ! long drift between quads in Daniels design
+
+cell_mrk  : marker;
+
+cell_q1   : marker;
+
+cell_q3   : marker;
+
+beforecav : marker;
+
+bc : marker;
+
+aftercav  : marker;
+
+k_ls1     := -1.53125*.56/LQL; ! weaker foc.
+
+k_ls2     :=  1.53125/LQL;     ! weaker foc.
+
+quad_l1   : quadrupole, l=LQL,   k1=k_ls1;
+
+quad_l2   : quadrupole, l=LQL/2, k1=k_ls2;
+
+LDLS      :=(LQL-LQS)/2.; ! half L difference of QL and QS
+
+dls       : DRIFT, L=LDLS; ! 0.048 m
+
+
+
+ctfcell  : line=( quad_l2,ds_ql,quad_l1,cell_q1,ds_trip ,cell_mrk,
+
+                  beforecav, 
+
+                  TCAV,
+
+                  aftercav,
+
+                  ds_trip,cell_q3,quad_l1,ds_ql,quad_l2);
+
+
+
+
+
+ctf   : line=(2*ctfcell);
+
+
+
+! calculate Twiss parameters for regular cell structure
+
+beam, PARTICLE=ELECTRON, ENERGY=0.02d0;
+
+
+
+
+
+USE, period=ctf;
+
+
+
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout, model=1, method=6, nst=100, exact=false, closed_layout=false;
+
+ MAD-X Beam Parameters
+                  Energy : 0.200000E-01
+          Kinetic Energy : 0.194890E-01
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.199935E-01
+ Setting MADx with 
+     energy         2.000000000000000E-02
+     method         6
+     Num. of steps  100
+     charge         -1.000000000000000
+  Length of machine:  9.000000000000000
+ The machine is a LINE
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Before   end:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After  start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After    end:  0.000000000000000E+00 0.000000000000000E+00 8.999999999999998
+ptc_setswitch, debuglevel=0, nocavity=false, maxacceleration=true, exact_mis=true, time=false, totalpath=true, fringe=true;
+
+
+
+!random set of particles distributed evenly on grid in x (every 0.2mm) and t (every 1 deg from -30 to 30 deg)
+
+trackno = 0;
+
+ntracks = 60;
+
+while (trackno <= ntracks)
+
+ {
+
+   xpos = 0;
+
+   nxpos = 10;
+
+   while (xpos <= nxpos)
+
+    {
+
+      ptc_start, x=0.0002*(xpos-nxpos/2.0), px=0.0, y=0.0, py=0.0,t=0.000277777*(trackno-ntracks/2.0);
+
+      xpos = xpos + 1;
+
+    }  
+
+   trackno = trackno + 1; 
+
+ }  
+
+
+
+ptc_trackcavs, debug=3, turns=1;
+
+++++++ warning: skipped, command or element unknown: ptc_trackcavs
+
+
+plot, file="ctfcell", table=track,haxis=y,vaxis=py, particle=1,2,3,4,5,6, colour=1000, multiple, symbol=3;
+
+file track.obs0001.p0001 does not exist 
+file track.obs0001.p0002 does not exist 
+file track.obs0001.p0003 does not exist 
+file track.obs0001.p0004 does not exist 
+file track.obs0001.p0005 does not exist 
+file track.obs0001.p0006 does not exist 
+
+
+ptc_track_end;
+
+
+
+
+
+PLOT, file="ctfcell", ptc=true, table="track", haxis=s, vaxis=e,
+
+      multiple=true, particle=1,2,3,
+
+      title="After setting Cavs: E vs S ";
+
+file track.obs0001.p0001 does not exist 
+file track.obs0001.p0002 does not exist 
+file track.obs0001.p0003 does not exist 
+
+
+
+
+ptc_end;
+
+  killing last layout 
+  killed last layout 
+stop;
+
+
+  Number of warnings: 1
+1 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.47 finished normally +
+  +++++++++++++++++++++++++++++++++++

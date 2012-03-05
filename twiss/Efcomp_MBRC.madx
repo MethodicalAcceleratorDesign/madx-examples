@@ -1,0 +1,16 @@
+
+! saved on 07/04/06 11:20:48 by T.Risselada
+
+ Rr = 0.017; ON_MBRC = 1;
+
+ exec, Efcomp_Measured_Dip(MBRC.4R1);
+ exec, Efcomp_Measured_Dip(MBRC.4L2);
+ exec, Efcomp_Measured_Dip(MBRC.4R2);
+ exec, Efcomp_Measured_Dip(MBRC.4L5);
+ exec, Efcomp_Measured_Dip(MBRC.4R5);
+ exec, Efcomp_Measured_Dip(MBRC.4L8);
+ exec, Efcomp_Measured_Dip(MBRC.4R8);
+ exec, Efcomp_Measured_Dip(MBRC.4L1);
+
+
+return;

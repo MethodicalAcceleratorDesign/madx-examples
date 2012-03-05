@@ -1,0 +1,52 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %06s "INJEGE"
+@ PARTICLE         %08s "ELECTRON"
+@ MASS             %le       0.00051099891
+@ CHARGE           %le                  -1
+@ ENERGY           %le                   1
+@ PC               %le        0.9999998694
+@ GAMMA            %le         1956.951337
+@ KBUNCH           %le                   1
+@ BCURRENT         %le                   0
+@ SIGE             %le               0.001
+@ SIGT             %le                   1
+@ NPART            %le                   0
+@ EX               %le                   1
+@ EY               %le                   1
+@ ET               %le                   1
+@ LENGTH           %le                   3
+@ ALFA             %le                   0
+@ ORBIT5           %le                  -0
+@ GAMMATR          %le                   0
+@ Q1               %le        0.0605594708
+@ Q2               %le        0.4328987224
+@ DQ1              %le        0.0118634137
+@ DQ2              %le       -0.3119021237
+@ DXMAX            %le         1.087312731
+@ DYMAX            %le        0.1381773291
+@ XCOMAX           %le                   0
+@ YCOMAX           %le                   0
+@ BETXMAX          %le         42.85652537
+@ BETYMAX          %le               8.125
+@ XCORMS           %le                   0
+@ YCORMS           %le                   0
+@ DXRMS            %le        0.7348551144
+@ DYRMS            %le        0.1024178703
+@ DELTAP           %le                   0
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %14s "CHROM Pb - JyH"
+@ ORIGIN           %19s "MAD-X 4.01.41 Linux"
+@ DATE             %08s "02/02/11"
+@ TIME             %08s "14.07.31"
+* NAME                                S               BETX               BETY                 DX                 WX                 WY 
+$ %s                                %le                %le                %le                %le                %le                %le 
+ "INJEGE$START"                       0                  5                  8                  0                  0                  0
+ "D1"                                 1                5.2              8.125                0.2       0.2000000261       0.1250000163
+ "Q1"                                 2        13.38330045        2.574074832       0.5436563657        2.498637861        2.026458349
+ "D2"                                 3        42.85652537       0.8715838763        1.087312731        10.84128403        7.680877712
+ "INJEGE$END"                         3        42.85652537       0.8715838763        1.087312731        10.84128403        7.680877712

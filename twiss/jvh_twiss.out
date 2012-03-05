@@ -1,0 +1,95 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 02.02.11 14.07.31 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+  TITLE, 'CHROM Pb - JyH';
+
+  option, echo, warn;
+
+  dummy=0;
+
+  d1       : drift,  l:=1;
+
+  Q1   : QUADRUPOLE, L=1, K1=-1.;
+
+  d2       : drift,  l:=1;
+
+  InjeGe   : LINE = ( d1, Q1, d2 );
+
+
+
+  BEAM, PARTICLE=electron, sequence=InjeGe, sige=.001, sigT=1.;
+
+  USE, period= InjeGe;
+
+!save,sequence=injege,file=t.mad8,mad8;
+
+!stop;
+
+  select, flag=twiss, clear;
+
+  select, flag=twiss,full,column=name,s,betx,bety,dx,wx,wy;
+
+
+
+  TWISS ,
+
+           BETX= 5.   ,ALFX= 0.   ,MUX=0   ,
+
+           BETY= 8.   ,ALFY= 0.   ,MUY=0   ,
+
+           DX=0       ,DPX=0.2    ,DY=0    ,DPY=0.1  ,
+
+           X=0        ,PX=0       ,Y=0     ,PY=0     ,T=0   ,PT=0   ,
+
+           WX= 0      ,PHIX=0     ,DMUX=0  ,
+
+           WY= 0      ,PHIY=0     ,DMUY=0  ,
+
+           DDX=0      ,DDY=0      ,DDPX=0  ,DDPY=0   ,
+
+           chrom, sequence=InjeGe, file=twissLEIRinj.txt,save;
+
+enter Twiss module
+  
+open line - error with deltap:   1.000000E-06
+end values:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00 -7.833598E-13  0.000000E+00
+  
+open line - error with deltap:   0.000000E+00
+end values:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+++++++ info: obsolete option 'full'  ignored on 'select'
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+                 3                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+      0.0605594708       0.0118634137        42.85652537        1.087312731 
+
+             dxrms             xcomax             xcorms                 q2 
+      0.7348551144                  0                  0       0.4328987224 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3119021237              8.125       0.1381773291       0.1024178703 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

@@ -1,0 +1,743 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.47              +
+  + Code Modification Date: 26.09.2008      +
+  + Execution Time Stamp: 02.10.08 09.57.54 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!--------1---------2---------3---------4---------5---------6---------7---------8 
+
+!-- This job should be run with madX 
+
+!   Derived from nov28o.txt 
+
+!system,"rm dec03o.eco"; 
+
+!system,"rm dec03o.lis"; 
+
+!setplot,ascale=1,lscale=1.5,sscale=3,rscale=1.5,xsize=28,ysize=20, 
+
+        post=1 font=-4,lwidth=5; 
+
+++++++ warning: illegal expression set to 0 in: post = 1 font = - 4 , lwidth = 5 
+!setplot,ascale=2,lscale=2,sscale=1.5,rscale=2,xsize=28,ysize=20, 
+
+        post=1,font=-4,lwidth=10; 
+
+++++++ warning: illegal expression set to 0 in: post = 1 , font = - 4 , lwidth = 10 
+setplot,ascale=1.5,lscale=2,sscale=1.5,rscale=2,xsize=28,ysize=20, 
+
+        post=1,font=-4,lwidth=10;  
+
+!-- Define triplet lattice for electron model 
+
+title,"Triplet lattice for e model - dec03o"; 
+
+beam,particle=electron,energy=0.015,exn=1.2e-3,eyn=1.2e-3; 
+
+periodL:=0.3; 
+
+periodN:=36; 
+
+fang:=-0.0648938; 
+
+dang:=pi/periodN-fang; 
+
+fk1:=+2.602827E+02; 
+
+dk1:=-1.313776E+02; 
+
+bf: rbend,l=0.03,angle=fang,k1=FK1; 
+
+bd1: sbend,l=0.05,angle=dang,k1=DK1,e1=dang,e2=0; 
+
+bd2: sbend,l=0.05,angle=dang,k1=DK1,e1=0,e2=dang; 
+
+bd: line=(bd1,bd2); 
+
+d1: drift,l=0.02; 
+
+d2: drift,l=0.025; 
+
+rfvolt:=0; 
+
+rfc: drift,l=0.05; 
+
+!col: ecollimator,xsize=0.2,ysize=0.1; 
+
+!col: drift,l=0;
+
+tri: line=(bf,d1,bd,d1,bf); 
+
+rfs: line=(d2,rfc,d2); 
+
+cell: line=(tri,rfs); 
+
+use,period=cell; 
+
+select,flag=twiss,clear; 
+
+select,flag=twiss,range=#s,column=name,keyword,s,betx,alfx,mux,dx,dpx,x,px, 
+
+bety,alfy,muy,dy,dpy,y,py; 
+
+select,flag=twiss,range=#e,column=name,keyword,s,betx,alfx,mux,dx,dpx,x,px, 
+
+bety,alfy,muy,dy,dpy,y,py; 
+
+twiss, deltap = 0.0, file=tmp.lis; 
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0     0.001122191977        29.85151798 
+
+                q1                dq1            betxmax              dxmax 
+      0.2332158663      -0.1987821017         0.30265783      0.02029308922 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.01765897486                  0                  0       0.1819344553 
+
+               dq2            betymax              dymax              dyrms 
+      -0.336228586       0.5238056069                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+plot,file="dec03o",haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,spline,colour=100;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+ GXPLOT-X11  1.50 initialized
+
+ plot number =  1
+twiss, deltap = 0.0, file=tmp.lis; 
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0     0.001122191977        29.85151798 
+
+                q1                dq1            betxmax              dxmax 
+      0.2332158663      -0.1987821017         0.30265783      0.02029308922 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.01765897486                  0                  0       0.1819344553 
+
+               dq2            betymax              dymax              dyrms 
+      -0.336228586       0.5238056069                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+plot,file="dec03o",haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,spline,colour=100;  
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  2
+system,"cp tmp.lis dec03o.lis"; 
+
+value,fang,dang; 
+
+fang =         -0.0648938 ;
+dang =       0.1521602626 ;
+value,beam->beta,beam->gamma; 
+
+beam->beta =       0.9994195651 ;
+beam->gamma =        29.35427005 ;
+value,bf->k1*beam->pc*1e9/clight,bd1->k1*beam->pc*1e9/clight; 
+
+bf->k1*beam->pc*1e9/clight =        13.01558541 ;
+bd1->k1*beam->pc*1e9/clight =       -6.569612094 ;
+value,bf->angle*beam->pc*1e9/clight/bf->l; 
+
+bf->angle*beam->pc*1e9/clight/bf->l =      -0.1081494083 ;
+value,bd1->angle*beam->pc*1e9/clight/bd1->l; 
+
+bd1->angle*beam->pc*1e9/clight/bd1->l =       0.1521772207 ;
+ 
+
+!-- Prepare graphs of the aperture 
+
+sigN:=3; 
+
+dpp:=0; 
+
+use,period=cell; 
+
+! ax: string,"+sigN*sqrt(beam[exn]*betx/beam[beta]/beam[gamma]/4/(1+dpp))+x)"; 
+
+! ay: string,"+sigN*sqrt(beam[eyn]*bety/beam[beta]/beam[gamma]/4/(1+dpp))"; 
+
+while (dpp < 0.35) 
+
+{ 
+
+dpp=dpp+0.05; 
+
+twiss,deltap=dpp,save,file="tmp.lis"; 
+
+system,"cat tmp.lis >> dec03o.lis"; 
+
+! plot,haxis=s,vaxis1=x,ax,ay,colour=100; 
+
+plot,haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,colour=100; 
+
+} 
+
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   3.490468E-03 deltap:   5.000000E-02
+orbit:   1.064302E-03 -3.031872E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.785713E-06 deltap:   5.000000E-02
+orbit:   1.063433E-03  1.167535E-09  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   1.682877E-11 deltap:   5.000000E-02
+orbit:   1.063433E-03  1.167280E-09  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0     0.003376166359        17.21028574 
+
+                q1                dq1            betxmax              dxmax 
+      0.2228714731      -0.1851677688       0.3085090279       0.0232061287 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.02047084106     0.001063433233    0.0009320977508       0.1673135476 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3312894028       0.5425105667                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               0.05                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  3
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   7.058802E-03 deltap:   1.000000E-01
+orbit:   2.228687E-03 -1.236760E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   7.470713E-06 deltap:   1.000000E-01
+orbit:   2.224744E-03  1.328157E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   2.988184E-10 deltap:   1.000000E-01
+orbit:   2.224744E-03  1.327405E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.00576900638        13.16586781 
+
+                q1                dq1            betxmax              dxmax 
+       0.213548994      -0.1732504666       0.3148785654      0.02623355122 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.02341201461     0.002224743576     0.001962922551       0.1535398991 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3312776281       0.5669948793                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                0.1                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  4
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.064999E-02 deltap:   1.500000E-01
+orbit:   3.492976E-03 -2.824344E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.752220E-05 deltap:   1.500000E-01
+orbit:   3.482939E-03  5.842941E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   1.666852E-09 deltap:   1.500000E-01
+orbit:   3.482938E-03  5.836921E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.00829125012        10.98221627 
+
+                q1                dq1            betxmax              dxmax 
+      0.2050903343      -0.1626836335        0.321639804      0.02937291709 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.02647669419     0.003482938233     0.003091756868       0.1403305007 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3361855974       0.5982801372                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               0.15                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  5
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.422464E-02 deltap:   2.000000E-01
+orbit:   4.857503E-03 -5.078135E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   3.238095E-05 deltap:   2.000000E-01
+orbit:   4.837399E-03  1.712771E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   5.774912E-09 deltap:   2.000000E-01
+orbit:   4.837397E-03  1.710023E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.01093503236        9.562907692 
+
+                q1                dq1            betxmax              dxmax 
+      0.1973703984      -0.1532146214       0.3287059803      0.03262236334 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.02966069467     0.004837397107     0.004318135972       0.1274291388 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3465463476       0.6382503466                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                0.2                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  6
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.775472E-02 deltap:   2.500000E-01
+orbit:   6.323096E-03 -8.003535E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   6.028361E-05 deltap:   2.500000E-01
+orbit:   6.287855E-03  3.993192E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   1.539989E-08 deltap:   2.500000E-01
+orbit:   6.287850E-03  3.984084E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.01369386669        8.545489642 
+
+                q1                dq1            betxmax              dxmax 
+      0.1902885056       -0.144653645       0.3360160369      0.03598052733 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.03296098833      0.00628785012     0.005641860171       0.1145782417 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3636412442        0.690192379                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               0.25                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  7
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   2.122060E-02 deltap:   3.000000E-01
+orbit:   7.891065E-03 -1.160230E-04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.006024E-04 deltap:   3.000000E-01
+orbit:   7.834370E-03  8.030144E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   3.479567E-08 deltap:   3.000000E-01
+orbit:   7.834357E-03  8.005627E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.01656245641        7.770297124 
+
+                q1                dq1            betxmax              dxmax 
+      0.1837624687      -0.1368545568       0.3435260667      0.03944647772 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.03637541382     0.007834357379     0.007062999343       0.1014834451 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3900590604       0.7600447528                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                0.3                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  8
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   2.460878E-02 deltap:   3.500000E-01
+orbit:   9.563190E-03 -1.587466E-04  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.553977E-04 deltap:   3.500000E-01
+orbit:   9.477318E-03  1.455900E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   7.013537E-08 deltap:   3.500000E-01
+orbit:   9.477292E-03  1.450201E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0      0.01953653011         7.15445052 
+
+                q1                dq1            betxmax              dxmax 
+      0.1777243837      -0.1297024428       0.3512039343      0.04301965189 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.03990247858     0.009477291928     0.008581892925      0.08775262966 
+
+               dq2            betymax              dymax              dyrms 
+     -0.4311720883       0.8595716274                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               0.35                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  9
+! ax: string,"-sigN*sqrt(beam[exn]*betx/beam[beta]/beam[gamma]/4/(1+dpp))+x)"; 
+
+! ay: string,"-sigN*sqrt(beam[eyn]*bety/beam[beta]/beam[gamma]/4/(1+dpp))"; 
+
+dpp:=0; 
+
+++++++ info: dpp redefined
+while (dpp > -0.35) 
+
+{ 
+
+dpp=dpp-0.05; 
+
+twiss,deltap=dpp,save,file="tmp.lis"; 
+
+system,"cat tmp.lis >> dec03o.lis"; 
+
+! plot,haxis=s,vaxis1=x,ax,ay,colour=100; 
+
+plot,haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,colour=100; 
+
+} 
+
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   3.336066E-03 deltap:  -5.000000E-02
+orbit:  -9.634947E-04 -2.852884E-06  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.612392E-06 deltap:  -5.000000E-02
+orbit:  -9.641648E-04 -2.323288E-10  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   1.321990E-11 deltap:  -5.000000E-02
+orbit:  -9.641648E-04 -2.323375E-10  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0   -0.0009816068073       -31.91767287 
+
+                q1                dq1            betxmax              dxmax 
+      0.2447861736      -0.2145866394       0.2975161182      0.01749753396 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.01498461244    0.0009641648231    0.0008324253441       0.1977429487 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3466222893       0.5105042324                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              -0.05                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  10
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   6.411274E-03 deltap:  -1.000000E-01
+orbit:  -1.824880E-03 -1.088660E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   6.083212E-06 deltap:  -1.000000E-01
+orbit:  -1.827242E-03  1.593465E-09  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   1.828662E-10 deltap:  -1.000000E-01
+orbit:  -1.827242E-03  1.593859E-09  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0    -0.002921781906       -18.50018632 
+
+                q1                dq1            betxmax              dxmax 
+      0.2578526118        -0.23331619       0.2933849901      0.01482331964 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.01245977819     0.001827242407     0.001564051047       0.2151788228 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3636626673       0.5028678876                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               -0.1                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  11
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   9.077203E-03 deltap:  -1.500000E-01
+orbit:  -2.582232E-03 -2.296007E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.283568E-05 deltap:  -1.500000E-01
+orbit:  -2.586953E-03  1.613476E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   7.807421E-10 deltap:  -1.500000E-01
+orbit:  -2.586953E-03  1.613507E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0     -0.00468241215       -14.61386802 
+
+                q1                dq1            betxmax              dxmax 
+      0.2727855082      -0.2561320217       0.2907658116      0.01227516294 
+
+             dxrms             xcomax             xcorms                 q2 
+     0.01010319575     0.002586954374     0.002193648541       0.2348502275 
+
+               dq2            betymax              dymax              dyrms 
+     -0.3896172552       0.5020221678                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              -0.15                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  12
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.112599E-02 deltap:  -2.000000E-01
+orbit:  -3.232945E-03 -3.726644E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   2.126775E-05 deltap:  -2.000000E-01
+orbit:  -3.240519E-03  6.116378E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   2.010613E-09 deltap:  -2.000000E-01
+orbit:  -3.240520E-03  6.114810E-08  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0    -0.006244716263        -12.6544608 
+
+                q1                dq1            betxmax              dxmax 
+      0.2901163888      -0.2850184039       0.2905579511     0.009859053999 
+
+             dxrms             xcomax             xcorms                 q2 
+    0.007946559731     0.003240525716     0.002720026121       0.2576625993 
+
+               dq2            betymax              dymax              dyrms 
+     -0.4288487718       0.5106523403                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               -0.2                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  13
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.226458E-02 deltap:  -2.500000E-01
+orbit:  -3.773679E-03 -5.098896E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   3.078154E-05 deltap:  -2.500000E-01
+orbit:  -3.784627E-03  1.585254E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   3.806561E-09 deltap:  -2.500000E-01
+orbit:  -3.784628E-03  1.584303E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0     -0.00758660499       -11.48090871 
+
+                q1                dq1            betxmax              dxmax 
+      0.3106603612      -0.3237541839       0.2945525554     0.007581995759 
+
+             dxrms             xcomax             xcorms                 q2 
+    0.006049215287     0.003784643749     0.003142264704       0.2850981345 
+
+               dq2            betymax              dymax              dyrms 
+     -0.4906411915       0.5350470473                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              -0.25                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  14
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.207646E-02 deltap:  -3.000000E-01
+orbit:  -4.200287E-03 -5.978248E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   4.084010E-05 deltap:  -3.000000E-01
+orbit:  -4.215378E-03  3.319487E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   5.665155E-09 deltap:  -3.000000E-01
+orbit:  -4.215379E-03  3.316392E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0    -0.008682160928       -10.73213394 
+
+                q1                dq1            betxmax              dxmax 
+      0.3358019794      -0.3807996535       0.3069265926     0.005652603681 
+
+             dxrms             xcomax             xcorms                 q2 
+    0.004531608662     0.004215412633     0.003460121951       0.3199598893 
+
+               dq2            betymax              dymax              dyrms 
+     -0.5991847995       0.5925119915                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0               -0.3                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  15
+++++++ info: dpp redefined
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   9.963725E-03 deltap:  -3.500000E-01
+orbit:  -4.507748E-03 -5.699628E-05  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   5.106385E-05 deltap:  -3.500000E-01
+orbit:  -4.528240E-03  6.111880E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   6.507846E-09 deltap:  -3.500000E-01
+orbit:  -4.528243E-03  6.105345E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+      0.3000105293                 -0    -0.009501029619       -10.25922758 
+
+                q1                dq1            betxmax              dxmax 
+       0.368349696      -0.4810684298       0.3404470131     0.007280855403 
+
+             dxrms             xcomax             xcorms                 q2 
+    0.003618939007     0.004528303708     0.003674733136       0.3692275154 
+
+               dq2            betymax              dymax              dyrms 
+     -0.8510333504       0.7548880226                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              -0.35                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  16
+ 
+
+return; 
+
+
+  Number of warnings: 2
+2 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.47 finished normally +
+  +++++++++++++++++++++++++++++++++++

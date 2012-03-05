@@ -1,0 +1,611 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.27              +
+  + Code Modification Date: 02.04.2008      +
+  + Execution Time Stamp: 10.04.08 16.24.40 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!Example file showing the usage of PTC_SETSWITCH command 
+
+!that sets the internal state (i.e switches) of PTC
+
+!
+
+!Piotr Skowronski (CERN)
+
+!
+
+option,-echo;
+
+ Now PTC
+ MAD-X Beam Parameters
+                  Energy : 0.200000E-01
+          Kinetic Energy : 0.194890E-01
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.199935E-01
+ Setting MADx with 
+     energy         2.000000000000000E-02
+     method         6
+     Num. of steps  100
+     charge         -1.000000000000000
+  Length of machine:  4.500000000000000
+ The machine is a LINE
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Before   end:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After  start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After    end:  0.000000000000000E+00 0.000000000000000E+00 4.500000000000000
+############################################
+############################################
+##     Tracking with default settings     ##
+############################################
+############################################
+Calling STD PTC track line
+file track.obs0001.p0002 does not exist 
+file track.obs0001.p0003 does not exist 
+############################################
+############################################
+##  Extensive Debug information printout  ##
+############################################
+############################################
+ Setting debug level to 10
+maxaccel is found and its value is 1.000000
+ Setting MAX ACCEL
+exact_mis is found and its value is 1.000000
+ Switching ON exact missaligment
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+radiation is found and its value is 0.000000
+ Switching OFF radiation
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+fringe is found and its value is 1.000000
+ Switching ON fringe
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+totalpath is found and its value is 1.000000
+ Switching ON totalpath (and switching OFF delta and only_4d)
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+time is found and its value is 1.000000
+ Switching ON time
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+nocavity is found and its value is 1.000000
+ Switching ON nocavity
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+obs_points pro_ptc_setswitch Done
+Calling STD PTC track line
+ ptc_trackline, nturns =  1
+ Element  1  is an observation point no.  1
+ Read charge: -1  layout has charge  1
+ reading tracks starting posiotions from table ....
+ reading.... Done
+ ###################################################
+ ###################################################
+ ######         TRACKING WITH PTC         ##########
+ ###################################################
+ ###################################################
+ There is  1  tracks
+ Getting track  1
+    Track         1  0.001000  0.000000  0.000000  0.000000  0.000000  0.001500
+ 1 l= 0.000000000000000E+00
+  0.0010  0.0000  0.0000  0.0000  0.0000  0.0015
+ 2 l= 0.1100000000000000
+  0.0010 -0.0008  0.0000  0.0000  0.0000  0.1115
+ 3 l= 0.3600000000000000
+  0.0008 -0.0008  0.0000  0.0000  0.0000  0.3616
+ 4 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.5817
+ 5 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.5817
+ 6 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0518
+ 7 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0518
+ 8 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0518
+ 9 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3750  3.4526
+ 10 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3750  3.4526
+ 11 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  3.9228
+ 12 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  3.9228
+ 13 l= 4.140000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3750  4.1429
+ 14 l= 4.390000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3750  4.3929
+ 15 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  4.5030
+ 16 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  4.5030
+############################################
+############################################
+##           TOTALPATH==FALSE             ##
+##  T is given with respect to ref. part. ##
+############################################
+############################################
+ Setting debug level to 3
+maxaccel is found and its value is 1.000000
+ Setting MAX ACCEL
+exact_mis is found and its value is 1.000000
+ Switching ON exact missaligment
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+radiation is found and its value is 0.000000
+ Switching OFF radiation
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+fringe is found and its value is 1.000000
+ Switching ON fringe
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+totalpath is found and its value is 0.000000
+ Switching OFF totalpath
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+time is found and its value is 1.000000
+ Switching ON time
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+nocavity is found and its value is 1.000000
+ Switching ON nocavity
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+obs_points pro_ptc_setswitch Done
+Calling STD PTC track line
+ ptc_trackline, nturns =  1
+ Element  1  is an observation point no.  1
+ reading tracks starting posiotions from table ....
+ reading.... Done
+ ###################################################
+ ###################################################
+ ######         TRACKING WITH PTC         ##########
+ ###################################################
+ ###################################################
+ There is  1  tracks
+    Track         1  0.001000  0.000000  0.000000  0.000000  0.000000  0.001500
+ 1 l= 0.000000000000000E+00
+  0.0010  0.0000  0.0000  0.0000  0.0000  0.0015
+ 2 l= 0.1100000000000000
+  0.0010 -0.0008  0.0000  0.0000  0.0000  0.0015
+ 3 l= 0.3600000000000000
+  0.0008 -0.0008  0.0000  0.0000  0.0000  0.0015
+ 4 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.0015
+ 5 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.0015
+ 6 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  0.0015
+ 7 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  0.0015
+ 8 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  0.0015
+ 9 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3750  0.0015
+ 10 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3750  0.0015
+ 11 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  0.0016
+ 12 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  0.0016
+ 13 l= 4.140000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3750  0.0016
+ 14 l= 4.390000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3750  0.0017
+ 15 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  0.0017
+ 16 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3750  0.0017
+############################################
+############################################
+##              TIME==FALSE               ##
+##It is assumed that particle moves with c##
+############################################
+############################################
+ Setting debug level to 3
+maxaccel is found and its value is 1.000000
+ Setting MAX ACCEL
+exact_mis is found and its value is 1.000000
+ Switching ON exact missaligment
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+radiation is found and its value is 0.000000
+ Switching OFF radiation
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+fringe is found and its value is 1.000000
+ Switching ON fringe
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+totalpath is found and its value is 1.000000
+ Switching ON totalpath (and switching OFF delta and only_4d)
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+time is found and its value is 0.000000
+ Switching OFF time
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  FALSE
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+nocavity is found and its value is 1.000000
+ Switching ON nocavity
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  FALSE
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+obs_points pro_ptc_setswitch Done
+Calling STD PTC track line
+ ptc_trackline, nturns =  1
+ Element  1  is an observation point no.  1
+ reading tracks starting posiotions from table ....
+ reading.... Done
+ ###################################################
+ ###################################################
+ ######         TRACKING WITH PTC         ##########
+ ###################################################
+ ###################################################
+ There is  1  tracks
+    Track         1  0.001000  0.000000  0.000000  0.000000  0.000000  0.001500
+ 1 l= 0.000000000000000E+00
+  0.0010  0.0000  0.0000  0.0000  0.0000  0.0015
+ 2 l= 0.1100000000000000
+  0.0010 -0.0008  0.0000  0.0000  0.0000  0.1115
+ 3 l= 0.3600000000000000
+  0.0008 -0.0008  0.0000  0.0000  0.0000  0.3615
+ 4 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.5815
+ 5 l= 0.5800000000000000
+  0.0007 -0.0001  0.0000  0.0000  0.0000  0.5815
+ 6 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0515
+ 7 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0515
+ 8 l= 1.050000000000000
+  0.0006 -0.0001  0.0000  0.0000  0.0000  1.0515
+ 9 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3751  3.4515
+ 10 l= 3.450000000000000
+  0.0003 -0.0001  0.0000  0.0000 -0.3751  3.4515
+ 11 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3751  3.9215
+ 12 l= 3.920000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3751  3.9215
+ 13 l= 4.140000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3751  4.1415
+ 14 l= 4.390000000000000
+  0.0002  0.0000  0.0000  0.0000 -0.3751  4.3915
+ 15 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3751  4.5015
+ 16 l= 4.500000000000000
+  0.0002 -0.0001  0.0000  0.0000 -0.3751  4.5015
+  killing last layout 
+  killed last layout 
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.27 finished normally +
+  +++++++++++++++++++++++++++++++++++

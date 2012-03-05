@@ -1,0 +1,27 @@
+!''''''''''''''''''''''''''''''''''''''''''''''''''''''
+  TITLE, 'CHROM Pb - JyH';
+  option, echo, warn;
+  dummy=0;
+  d1       : drift,  l:=1;
+  Q1   : QUADRUPOLE, L=1, K1=-1.;
+  d2       : drift,  l:=1;
+  InjeGe   : LINE = ( d1, Q1, d2 );
+
+  BEAM, PARTICLE=electron, sequence=InjeGe, sige=.001, sigT=1.;
+  USE, period= InjeGe;
+!save,sequence=injege,file=t.mad8,mad8;
+!stop;
+  select, flag=twiss, clear;
+  select, flag=twiss,full,column=name,s,betx,bety,dx,wx,wy;
+
+  TWISS ,
+           BETX= 5.   ,ALFX= 0.   ,MUX=0   ,
+           BETY= 8.   ,ALFY= 0.   ,MUY=0   ,
+           DX=0       ,DPX=0.2    ,DY=0    ,DPY=0.1  ,
+           X=0        ,PX=0       ,Y=0     ,PY=0     ,T=0   ,PT=0   ,
+           WX= 0      ,PHIX=0     ,DMUX=0  ,
+           WY= 0      ,PHIY=0     ,DMUY=0  ,
+           DDX=0      ,DDY=0      ,DDPX=0  ,DDPY=0   ,
+           chrom, sequence=InjeGe, file=twissLEIRinj.txt,save;
+
+stop;

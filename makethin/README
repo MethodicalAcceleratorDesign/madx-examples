@@ -1,0 +1,65 @@
+The short example may be run with:
+
+madx < fivecell.madx >&! fivecell.out
+
+The example output is stored in fivecell.out
+
+The example takes a small fivecell sequence and slices all quads
+to five slices. The sequence is then saved as
+
+fivecell_thin.seq
+
+---------------------------------------------------------------
+
+The long example may be run with:
+
+madx < lhc_example.madx >&! lhc_example.out
+
+The example output is stored in lhc_example.out
+
+The example loads the thick version of the LHC sequence
+and slices the main magnets, writes the thin sequence
+and calculates the twiss for the thin sequence.
+
+
+asp1b.madX  is a short example which shows how dipole ends
+     can be described using thin lenses, with tracking and plotting.
+     It writes several files, so you may want to copy
+	 the madX-examples/makethin to a temporary directory which you
+	can make by
+mkdir /tmp/$LOGNAME/
+  and run the example there
+cd /tmp/$LOGNAME/ ; madx < asp1b.madX
+  The output files have names b_*
+
+Use dipedge to describe fringe fields.
+Example:
+  instead of
+MyBendWithFringe : SBEND, L:=len, ANGLE:=ang, e1:=ang+b, hgap:=gap, fint:=finol;
+  use dipedge + simple bend
+MyFringe : dipedge, h:=ang/len, e1:=ang+b, fint:=finol, hgap:=gap;
+MyBend   : SBEND, L:=len, ANGLE:ang;
+
+
+---------------------------------------------------------------
+
+Starting from madX version 3, makethin works with standard selection
+for elements by class, range and pattern.
+
+
+Hints for selection:
+--------------------
+
+The selection works on the current sequence and a good
+practice is to have a
+  use, sequence=MySequence;
+before the selection statements for that sequence.
+
+Prefer selection strings without quotes, i.e.
+  class=mbx
+rather than
+  class="MBX"
+to avoid lower / upper case mismatch.
+
+
+H. Burkhardt Februar 2009

@@ -1,0 +1,149 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.00.05              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 10.03.2009      +
+  + Execution Time Stamp: 13.03.09 00.02.41 +
+  +++++++++++++++++++++++++++++++++++++++++++
+Option,  -warn,-info,-echo;
+
+enter Twiss module
+  
+iteration:   1 error:   7.858938E-04 deltap:   0.000000E+00
+orbit:   4.580940E-06 -5.779076E-06 -4.992464E-04  1.366101E-04  8.233624E-05  1.849044E-06
+  
+iteration:   2 error:   9.195383E-06 deltap:   0.000000E+00
+orbit:   1.663672E-08  1.015432E-08 -4.999990E-04  1.425136E-04  5.562260E-05  1.299606E-06
+  
+iteration:   3 error:   4.715158E-09 deltap:   0.000000E+00
+orbit:   1.646046E-08  6.933493E-09 -4.999987E-04  1.425141E-04  5.562218E-05  1.299995E-06
+ ++++++ warning: TWCPGO: 
+ TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+        26658.8832   -5.562218331e-05    0.0003213696982        55.78244393 
+
+                q1                dq1            betxmax              dxmax 
+       64.31000163         0.93102769        4401.955642        2.928565244 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.404894842     0.007885767957    0.0006160623751        59.32000149 
+
+               dq2            betymax              dymax              dyrms 
+       1.126625246        4403.441487        1.148426049       0.1546204222 
+
+            ycomax             ycorms             deltap            synch_1 
+    0.006426984742    0.0005205302443                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+enter Twiss module
+  
+iteration:   1 error:   7.858938E-04 deltap:   0.000000E+00
+orbit:   4.580940E-06 -5.779076E-06 -4.992464E-04  1.366101E-04  8.233624E-05  1.849044E-06
+  
+iteration:   2 error:   9.195383E-06 deltap:   0.000000E+00
+orbit:   1.663672E-08  1.015432E-08 -4.999990E-04  1.425136E-04  5.562260E-05  1.299606E-06
+  
+iteration:   3 error:   4.715158E-09 deltap:   0.000000E+00
+orbit:   1.646046E-08  6.933493E-09 -4.999987E-04  1.425141E-04  5.562218E-05  1.299995E-06
+ ++++++ warning: TWCPGO: 
+ TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+        26658.8832   -5.562218331e-05    0.0003213696982        55.78244393 
+
+                q1                dq1            betxmax              dxmax 
+       64.31000163         0.93102769        4401.955642        2.928565244 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.404894842     0.007885767957    0.0006160623751        59.32000149 
+
+               dq2            betymax              dymax              dyrms 
+       1.126625246        4403.441487        1.148426049       0.1546204222 
+
+            ycomax             ycorms             deltap            synch_1 
+    0.006426984742    0.0005205302443                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+ 
+ Global parameters for the machine: 
+
+radiate = T:
+ 
+     C           26658.883200 m              f0              0.011245 MHz            T0             88.924463 microseconds
+     alfa            0.321370E-03            eta             0.321352E-03            gamma(tr)      55.782444
+     Bcurrent        0.000207 A/bunch        Kbunch         1                        Npart           0.115000E+12 per bunch
+     E            7000.000000 GeV            gamma        7460.523071                beta            1.000000
+ 
+ Emittances:
+ 
+     Ex            0.502500E-03 pi*mm*mrad     sigx            0.265296 mm
+     Ey            0.502500E-03 pi*mm*mrad     sigy            0.269223 mm
+     Et            0.825000E+01 pi*mm*mrad     sigt           74.234918 mm             sigE          0.111134 1/1000
+ sequence name: lhcb1
+apwl.b6l4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkh.d5l4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkh.c5l4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkh.b5l4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkh.a5l4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+acsca.d5l4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.c5l4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.b5l4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.a5l4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.a5r4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.b5r4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.c5r4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+acsca.d5r4.b1   1.09500       2.00000       400.790      0.500000       0.00000    
+apwl.5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+apwl.b5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkv.a5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkv.b5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkv.c5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+adtkv.d5r4.b1   0.00000       0.00000       0.00000       0.00000       0.00000    
+ 
+     CONST               =   1.214779E-08
+ 
+     ENERGY              =    7000.000000 GeV
+     BETA                =       1.000000
+     GAMMA               =       7460.523
+     COULOMB LOG         =         24.265
+ 
+     X-emittance         =   5.025000E-10 m*rad
+     Y-emittance         =   5.025000E-10 m*rad
+ 
+     Momentum spread     =   1.111337E-04
+     Bunch length        =       0.074235 m
+ 
+     Particles per bunch =   1.150000E+11
+     Bunch current       =   2.071987E-04 A
+ 
+ Ring average values (m)
+ 
+     betx   =   1.40063E+02    bety   =   1.44241E+02    Dx  =  1.14657E+00    Dy  =  6.38379E-04
+     alfx   =   1.60206E-03    alfy   =  -1.59358E-03    Dpx =  3.00673E-09
+     Dpy =  5.40923E-03
+     1/betx =   1.42551E-02    1/bety =   1.31874E-02
+ 
+     (Weighted) average rates (1/sec):
+     Longitudinal=    4.790693E-06
+     Horizontal  =    2.688883E-06
+     Vertical    =    3.953809E-07
+ 
+     (Weighted) average lifetimes (sec):
+     Longitudinal=    2.087381E+05
+     Horizontal  =    3.719016E+05
+     Vertical    =    2.529207E+06
+ 
+
+  Number of warnings: 2
+0 in C and 2 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.00.05 finished normally +
+  +++++++++++++++++++++++++++++++++++

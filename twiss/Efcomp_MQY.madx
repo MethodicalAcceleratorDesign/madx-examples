@@ -1,0 +1,35 @@
+! apply measured errors to all MQY
+
+! written on 20/12/05 10:41:42 by T.Risselada
+
+ Rr = 0.017; ON_MQY = 1;
+
+ exec, Efcomp_Measured_Quad(MQY.4R1 );
+ exec, Efcomp_Measured_Quad(MQY.B5L2);
+ exec, Efcomp_Measured_Quad(MQY.A5L2);
+ exec, Efcomp_Measured_Quad(MQY.B4L2);
+ exec, Efcomp_Measured_Quad(MQY.A4L2);
+
+ exec, Efcomp_Measured_Quad(MQY.A4R2);
+ exec, Efcomp_Measured_Quad(MQY.B4R2);
+ exec, Efcomp_Measured_Quad(MQY.6L4 );
+ exec, Efcomp_Measured_Quad(MQY.5L4 );
+ exec, Efcomp_Measured_Quad(MQY.5R4 );
+ exec, Efcomp_Measured_Quad(MQY.6R4 );
+ exec, Efcomp_Measured_Quad(MQY.4L5 );
+
+ exec, Efcomp_Measured_Quad(MQY.4R5 );
+ exec, Efcomp_Measured_Quad(MQY.5L6 );
+ exec, Efcomp_Measured_Quad(MQY.4L6 );
+ exec, Efcomp_Measured_Quad(MQY.4R6 );
+ exec, Efcomp_Measured_Quad(MQY.5R6 );
+ exec, Efcomp_Measured_Quad(MQY.B4L8);
+ exec, Efcomp_Measured_Quad(MQY.A4L8);
+
+ exec, Efcomp_Measured_Quad(MQY.A4R8);
+ exec, Efcomp_Measured_Quad(MQY.B4R8);
+ exec, Efcomp_Measured_Quad(MQY.A5R8);
+ exec, Efcomp_Measured_Quad(MQY.B5R8);
+ exec, Efcomp_Measured_Quad(MQY.4L1 );
+
+return;

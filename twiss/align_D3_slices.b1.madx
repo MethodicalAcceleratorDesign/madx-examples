@@ -1,0 +1,20 @@
+! introduce the transverse offset of all D3 modules and slices
+! Recipe: -survey data - nominal beam separation - magnet bore offset
+
+! saved on 24/05/07 15:09:08 by T.Risselada
+
+ select, flag=error, clear;
+
+! D3 left of IP4:
+ select, flag=error, range=mbrs.5l4.b1..1;   ealign, dx=+0.204059-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5l4.b1..2;   ealign, dx=+0.207029-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5l4.b1..3;   ealign, dx=+0.209010-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5l4.b1..4;   ealign, dx=+0.210000-0.210000+0.003; select, flag=error, clear;
+
+! D3 right of IP4:
+ select, flag=error, range=mbrs.5r4.b1..1;   ealign, dx=+0.210000-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5r4.b1..2;   ealign, dx=+0.209010-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5r4.b1..3;   ealign, dx=+0.207029-0.210000+0.003; select, flag=error, clear;
+ select, flag=error, range=mbrs.5r4.b1..4;   ealign, dx=+0.204059-0.210000+0.003; select, flag=error, clear;
+
+return;

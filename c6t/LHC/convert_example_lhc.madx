@@ -1,0 +1,104 @@
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8
+Option,  warn,info,echo;
+
+System,"mkdir temp";
+
+Option, -echo,-warn,thin_foc=false;
+
+call file="thin62.madx";
+SU=1.0;
+
+call,file="K450Is64-59nV6.2.opt";
+! injection Optics:
+Call,file="kinj.b1b2.v6.2.thin";
+Call,file="kinj.corr.ir2.ir8.thin";
+Call,file="kinj.corr.ir1.ir5.thin";
+
+
+call,file="ir4thin30_08_01.opt"; !New matching, 30/08/01
+call,file="ir6thin30_08_01.opt"; !New matching, 30/08/01
+option,warn,echo;
+
+!--------RF CAVITIES--------------------------------------------
+! 4 units * 2cells = 8 cavities with a total voltage VRF
+ACS          : RFCavity, l:= 1.122   , volt:= VRF/4, lag:= 0.5, harmon:=35640;
+RFCa.L4: ACS;
+RFCb.L4: ACS;
+RFCc.L4: ACS;
+RFCd.L4: ACS;
+VRF = 8.0E0;
+!seqedit, sequence=lhcb1;
+!install, element=RFCd.L4, at = -158.401, from = IP4.B1;!OLD V5 POSITION
+!install, element=RFCc.L4, at = -154.661, from = IP4.B1;!OLD V5 POSITION
+!install, element=RFCb.L4, at = -150.171, from = IP4.B1;!OLD V5 POSITION
+!install, element=RFCa.L4, at = -146.431, from = IP4.B1;!OLD V5 POSITION
+!endedit;
+Beam, particle = proton, energy = 450.0,
+                NPART=1.05E11, sige= 4.5e-4;
+
+Use, period=lhcb1;
+
+select,flag=twiss,pattern="ip.*",column=name,s,betx,bety;
+
+twiss, sequence=lhcb1,file=twiss62_1.dat;
+
+!******************************************************************************
+! BUTTON: Quadrupole Misalignment Errors
+Select, flag=ERROR, clear;
+Select, flag=ERROR, class=MQ;
+eoption,seed=2;
+ealign, dy:=tgauss(2.5)*0.1e-3, dx:=tgauss(2.5)*0.1e-3;
+!******************************************************************************
+
+
+SEEDSYS = 1;
+SEEDRAN = 1;
+option,-echo;
+Call,file='9901m.madx';
+call,file='Esubroutines.madx';
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                 SET THE MAGNETIC IMPERFECTIONS
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+! Select the magnets to be perturbed (only those selected are set)
+ ON_MB =   1; !Main and Disp. Suppr. dipoles (MB);
+ ON_MBXR = 0; !Separator: RHIC single channel dipoles (MBX, MBRS);
+ ON_MBR =  0; !Separator: RHIC 2-1 dipoles (MBRT);
+ ON_MBW =  0; !Separator: single channel (MBXW) and 2-1 warm (MBW) dipoles ;
+ ON_MQ =   1; !Arc (MQ),DS (MQML, MQM, MQMC) quads;
+ ON_MQIP = 0; !Insertion 2-1 Quadrupoles (MQ, MQML, MQM);
+ ON_MQTL = 0; !DS trim (MQTL, MQT) and arc tune shift (MQT) quads;
+ ON_MQR =  0; !Single aperture RF/quadrupoles(MQR, MQRL);
+ ON_MQX =  1; !Low-Beta (MQX) and Low-Beta long quadrupoles (MQXL);
+ ON_MQY =  1; !Wide aperture quadrupoles(MQY);
+ ON_MQW =  0; !Warm quadrupoles (MQW);
+ ON_XSPOOL = 0;!Inner triplet correctors, alignment;
+ ON_CORR = 0;!Activating the Triplet corrector magnets;
+
+! Select the multipole orders of the perturbations (all multipoles are set to
+
+ ON_BDOT =  0 ;           ! do not take into account ramp induced errors;
+
+ ON_A1s =   0 ; ON_A1r =  0 ; ON_B1s =  0 ; ON_B1r =  0;
+ ON_A2s =   0 ; ON_A2r =  0 ; ON_B2s =  0 ; ON_B2r =  0;
+ ON_A3s =   1 ; ON_A3r =  1 ; ON_B3s =  1 ; ON_B3r =  1;
+ ON_A4s =   1 ; ON_A4r =  1 ; ON_B4s =  1 ; ON_B4r =  1;
+ ON_A5s =   1 ; ON_A5r =  1 ; ON_B5s =  1 ; ON_B5r =  1;
+ ON_A6s =   1 ; ON_A6r =  1 ; ON_B6s =  1 ; ON_B6r =  1;
+ ON_A7s =   1 ; ON_A7r =  1 ; ON_B7s =  1 ; ON_B7r =  1;
+ ON_A8s =   1 ; ON_A8r =  1 ; ON_B8s =  1 ; ON_B8r =  1;
+ ON_A9s =   1 ; ON_A9r =  1 ; ON_B9s =  1 ; ON_B9r =  1;
+ ON_A10s =  1 ; ON_A10r = 1 ; ON_B10s = 1 ; ON_B10r = 1;
+ ON_A11s =  1 ; ON_A11r = 1 ; ON_B11s = 1 ; ON_B11r = 1;
+!---------------------------------------------------------------
+
+option,-info;
+call,file='Efcompb1.madx';
+
+option,echo,info;
+
+
+twiss, save, sequence=lhcb1;
+sixtrack,radius=0.017;
+stop;

@@ -1,0 +1,29 @@
+TITLE,':HC CELL matching with MAD-X';
+
+option,info,warning;
+
+call file="../LHC-cell.seq";
+
+kqf = 0.010988503297557      ;
+kqd = -0.011623337240602     ;
+
+Beam, particle = proton, sequence=lhccell, energy = 450.0,
+          NPART=1.05E11, sige=      4.5e-4 ;
+
+use,period=lhccell;
+
+select, flag=twiss, clear;
+select, flag=twiss,column=s,name,betx,bety,mux,muy;
+twiss, sequence=lhccell,file='twiss-output';
+
+
+
+match,sequence=lhccell;
+constraint,sequence=lhccell,range=#e,mux=0.28,muy=0.31;
+vary,name=kqf,step=1.0e-6;
+vary,name=kqd,step=1.0e-6;
+lmdif,calls=500,tolerance=1.e-21;
+endmatch;
+
+value, kqf;
+value, kqd;

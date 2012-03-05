@@ -1,0 +1,22 @@
+IBS Module
+
+1) LHC proton run
+./madx < ibs.mad > ibs.out
+
+2) LHC proton ions
+./madx < ibs_ion.mad > ibs_ion.out
+
+3) CLIC damping ring with quadrupole tilt errors 
+./madx < ibs_clic_dr.mad > ibs_clic_dr.out
+
+4) LHC protons injection with crossing angles 
+./madx < ibs.lhcinjection.mad > ibs.lhcinjection.out
+
+5) LHC protons top energy with crossing angles 
+./madx < ibs.lhctopenergy.crossingangles.mad > ibs.lhctopenergy.crossingangles.out
+
+Comments V3.02.03 19.02.2006 by FS:
+- Input ibs_clic_dr.mad had several input errors but results did not change 
+after a fix.
+- In Routine twsint variable "alam" was used before being initialized, again
+no effect on the results.

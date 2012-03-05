@@ -1,0 +1,33 @@
+! written on 03/01/06 13:06:28 by T.Risselada
+
+ Efcomp_measured_MB(letter,cellnumber,leri,ipnumber,inout) : macro = {
+   if (mylhcbeam < 2) {exec, Set_Dipole_Mult(mb.lettercellnumberleriipnumber.b1, mb.lettercellnumberleriipnumber.vinout); };
+   if (mylhcbeam > 1) {exec, Set_Dipole_Mult(mb.lettercellnumberleriipnumber.b2, mb.lettercellnumberleriipnumber.vinout); };
+     };
+
+
+ Efcomp_measured_MB_octant : macro = {
+     value, nIP;
+
+!    set aperture # (1 or 2) for RIGHT side of specified IP
+     if (nIP == 8) {inout = 2; }; if (nIP <  8) {inout = 1; };
+     if (nIP <  5) {inout = 2; }; if (nIP == 1) {inout = 1; };
+
+     if (mylhcbeam >    1) {inout= 3 - inout; };    // beam 2
+
+!    RIGHT of this IP
+     nmb =  8; while (nmb <= 11) {exec, Efcomp_measured_MB(A,$nmb,R,$nIP,$inout) ; exec, Efcomp_measured_MB(B,$nmb,R,$nIP,$inout) ;                                                  nmb=nmb+1; };
+     nmb = 12; while (nmb <= 34) {exec, Efcomp_measured_MB(A,$nmb,R,$nIP,$inout) ; exec, Efcomp_measured_MB(B,$nmb,R,$nIP,$inout) ; exec, Efcomp_measured_MB(C,$nmb,R,$nIP,$inout) ; nmb=nmb+1; };
+
+     nIP = nIP + 1; mIP = nIP; if (nIP == 9) {mIP = 1; }
+
+!    LEFT of next IP
+     nmb = 34; while (nmb >= 12) {exec, Efcomp_measured_MB(C,$nmb,L,$mIP,$inout) ; exec, Efcomp_measured_MB(B,$nmb,L,$mIP,$inout) ; exec, Efcomp_measured_MB(A,$nmb,L,$mIP,$inout) ; nmb=nmb-1; };
+     nmb = 11; while (nmb >=  8) {                                                 exec, Efcomp_measured_MB(B,$nmb,L,$mIP,$inout) ; exec, Efcomp_measured_MB(A,$nmb,L,$mIP,$inout) ; nmb=nmb-1; };
+     };
+
+
+
+ Rr  = 0.017; ON_MB = 1;
+ nIP = 1; while (nIP <= 8) {  exec, Efcomp_measured_MB_octant; };
+return;

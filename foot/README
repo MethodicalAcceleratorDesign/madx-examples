@@ -1,0 +1,37 @@
+
+Run command:
+
+madx < footprint.mad > ! footprint.out
+
+Creates a footprint for head-on + parasitic collisions at IP1+5 
+of lhc.6.503 (4.00.3 version without individual BV flag); both 
+lhcb1 (for tracking) and lhcb2 (to define the beam-beam elements, 
+i.e. weak-strong) are used; there are flags to select head-on, 
+left, and right parasitic separately at all IPs.
+The bunch spacing can be given in nanosec and automatically creates
+the beam-beam interaction points at the correct positions.
+It is important to set the correct BEAM parameters, i.e. number
+of particles, emittances, bunch length, energy.
+
+The output file "footprint" can be viewed with gnuplot:
+
+gnuplot
+plot "footprint" w l
+
+HG  4.6.02
+
+V4.00.03: lhc.6.503 MAD-X 4.00.3 version without individual BV flag
+
+V3.00.00: Switch to LHC V6.5 with proper slicing (new makethin HB).
+          Dynap (FS) had been corrupted by a coworker by removing 
+          changes (npart = 2*stored_track_start->curr;) of (FZ) in 
+          madxn.c. All fine now.
+
+V3.01.01: while and macro call terminated with a ';'
+          makethin gives messages about inconsistent slicing but okay.
+
+FS 13.12.2005
+
+V3:02:03: Horizontal Tunes wrong due to error in DYNAP module. 
+
+FS 20.03.2006

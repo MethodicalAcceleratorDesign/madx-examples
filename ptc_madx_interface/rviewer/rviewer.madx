@@ -1,0 +1,90 @@
+!madxp: example of match, use_ptcknobs;
+
+ptc_enforce6d, flag=true;
+
+dsel   := 1.2;!length of starting and ending drift
+dmid1l := 1.5;!length of middle drift
+dmid2l := 0.6;!length of middle drift
+ql     := 0.2;!length of quads
+qfstr  := 6.7;!strength of quads
+qdstr  :=-6.71;!strength of quads
+lbend  := 2.0;
+
+sedft:  drift, L:=dsel;
+middft1: drift, L:=dmid1l;
+middft2: drift, L:=dmid2l;
+
+angb = pi/6.;
+
+!bend1: MULTIPOLE, L=lbend,
+bend1: RBEND, L=lbend, ANGLE:=-angb, e1=angb/2, ptcrbend=true, APERTYPE=CIRCLE, APERTURE={10};             ! Deflection to the left
+qf1: quadrupole, l=ql, k1:=qfstr, APERTYPE=CIRCLE, APERTURE={10.0};
+qd:  quadrupole, l=ql, k1:=qdstr, APERTYPE=CIRCLE, APERTURE={10.0};
+qf2: quadrupole, l=ql, k1:=qfstr, APERTYPE=CIRCLE, APERTURE={10.0};
+bend2: RBEND, L=lbend, ANGLE=angb, e1=-angb/2, ptcrbend=true, APERTYPE=CIRCLE, APERTURE={10};              ! Deflection to the right
+theend: marker, APERTYPE=CIRCLE, APERTURE={10.0};
+
+!##############################################################################################
+
+chicane: line=(sedft,bend1,middft1,qf1,middft2,qd,middft2,qf2,middft1,bend2,sedft,theend);
+
+beam, PARTICLE=ELECTRON, ENERGY=0.11d0;
+use, period=chicane;
+
+
+ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+!##############################################################################################
+
+create, table=R1, column=_name,"c11","c12","c21","c22";
+!instructs ptc to store given monomials cofficients in the just created table
+ptc_select, table=R1, column=c11, polynomial=1, monomial="100000",parametric;
+ptc_select, table=R1, column=c12, polynomial=1, monomial="010000",parametric;
+ptc_select, table=R1, column=c21, polynomial=2, monomial="100000",parametric;
+ptc_select, table=R1, column=c22, polynomial=2, monomial="010000",parametric;
+
+
+create, table=R3, column=_name,"c51","c52","c55","c56","c66";
+
+ptc_select, table=R3, column=c51, polynomial=5, monomial="100000",parametric;
+ptc_select, table=R3, column=c52, polynomial=5, monomial="010000",parametric;
+ptc_select, table=R3, column=c55, polynomial=5, monomial="000010",parametric;
+ptc_select, table=R3, column=c56, polynomial=5, monomial="000001",parametric;
+ptc_select, table=R3, column=c66, polynomial=6, monomial="000001",parametric;
+
+
+create, table=T2, column=_name,"c111","c566","c556";
+!instructs ptc to store given monomials cofficients in the just created table
+ptc_select, table=T2, column=c111, polynomial=1, monomial="200000",parametric;
+ptc_select, table=T2, column=c566, polynomial=5, monomial="000002",parametric;
+ptc_select, table=T2, column=c556, polynomial=5, monomial="010001",parametric;
+
+!##############################################################################################
+
+ptc_create_universe;
+ptc_create_layout, model=1, method=6, nst=10, exact=true, closed_layout=false;
+
+ptc_knob, element=qf1,   kn=0,1, exactmatch=false;
+ptc_knob, element=qf2,   kn=0,1, exactmatch=false;
+ptc_knob, element=bend1, kn=0, exactmatch=false;
+ptc_knob, element=bend2, kn=0, exactmatch=false;
+
+ptc_twiss, table=ptc_twiss, icase=6, no=4, betx=10, alfx=.0,  bety=10., alfy=0, betz=10., alfz=0;
+
+rviewer;
+
+ptc_printparametric, filename=parres.tex, format=tex;
+ptc_printparametric, filename=parres.txt;
+
+ptc_end;
+
+
+stop;
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!  SSSSS  TTTTT   OOO   PPP
+!  S        T    O   O  P  P
+!  SSSSS    T    O   O  PPP
+!      S    T    O   O  P
+!  SSSSS    T     OOO   P
+!

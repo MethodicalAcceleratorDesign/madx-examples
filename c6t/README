@@ -1,0 +1,47 @@
+Example 1:
+
+run with 
+
+./madx < convert_example_rhic.madx >! convert_example_rhic.out 
+
+the output is in 
+
+convert_example_rhic.out
+
+and it creates the files fc.2, fc.3.aux and fc.34
+
+these have been renamed as fc.2_ref_rhic, fc.3.aux_ref_rhic 
+and fc.34_ref_rhic respectively.
+
+All the example does is create the RHIC sequence and then outputs it to 
+sixtrack format with the split flag set.
+
+Comment 3.02.03: removed the non-existing optics command
+----------------------------------------------------------------------------
+
+Example 2:
+
+run with 
+
+./madx < convert_example_lhc.madx >! convert_example_lhc.out 
+
+the output is in 
+
+convert_example_lhc.out
+
+and it creates the files:
+fc.2
+fc.3
+fc.3.aux
+fc.8
+fc.16
+fc.34
+
+which have been renamed with a _ref_lhc suffix (for reference).
+
+The example loads in the LHC v6.2 thin sequence, it misaligns the 
+quads, adds field errors to various magnets corrects and finally twisses. 
+The resulting sequence is then output as SixTrack input (with the 
+reference radius of the magnets set to 0.017).
+
+----------------------------------------------------------------------------

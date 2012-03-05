@@ -1,0 +1,9 @@
+@ NAME             %06s "SURVEY"
+@ TYPE             %06s "SURVEY"
+@ TITLE            %22s "TI8 test of globaltilt"
+@ ORIGIN           %19s "MAD-X 3.02.03 Linux"
+@ DATE             %08s "17/03/06"
+@ TIME             %08s "15.29.34"
+* NAME                                S                  L              ANGLE                  X                  Y                  Z              THETA                PHI                PSI         GLOBALTILT 
+$ %s                                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le 
+ "TED.87765"                2493.121241                4.3                  0       -4343.448199        2331.272836        4683.672946      -0.3520295742    -0.002998500412      0.06627894546    2.391420395e-12

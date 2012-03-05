@@ -1,0 +1,56 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %05s "LHCB1"
+@ PARTICLE         %06s "PROTON"
+@ MASS             %le         0.938272013
+@ CHARGE           %le                   1
+@ ENERGY           %le                 450
+@ PC               %le         449.9990218
+@ GAMMA            %le         479.6050546
+@ KBUNCH           %le                   1
+@ BCURRENT         %le     0.0001891809752
+@ SIGE             %le             0.00045
+@ SIGT             %le                   0
+@ NPART            %le            1.05e+11
+@ EX               %le                   1
+@ EY               %le                   1
+@ ET               %le                   1
+@ LENGTH           %le          26658.8832
+@ ALFA             %le     0.0003225545428
+@ ORBIT5           %le                   0
+@ GAMMATR          %le          55.6798964
+@ Q1               %le               64.28
+@ Q2               %le               59.31
+@ DQ1              %le    -3.619593181e-12
+@ DQ2              %le    -1.417962841e-12
+@ DXMAX            %le         3.309031681
+@ DYMAX            %le                  -0
+@ XCOMAX           %le                   0
+@ YCOMAX           %le                   0
+@ BETXMAX          %le         589.2182046
+@ BETYMAX          %le         649.1129004
+@ XCORMS           %le                   0
+@ YCORMS           %le                   0
+@ DXRMS            %le         1.464461588
+@ DYRMS            %le                   0
+@ DELTAP           %le                   0
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %24s " Chromaticity correction"
+@ ORIGIN           %19s "MAD-X 4.00.19 Linux"
+@ DATE             %08s "05/05/09"
+@ TIME             %08s "11.24.26"
+* NAME                                S               BETX               BETY 
+$ %s                                %le                %le                %le 
+ "IP1"                                0        18.32798886        16.56448084
+ "IP2"                      3332.436584        9.986825216        10.95505072
+ "IP3.B1"                     6664.7208         133.615252        242.7809746
+ "IP4.B1"                   9997.005016        153.0680389        212.6407883
+ "IP5"                      13329.28923        18.22959262        19.32775699
+ "IP6.B1"                   16661.72582        189.9085288        162.2885764
+ "IP7.B1"                    19994.1624        110.6243392        148.5741042
+ "IP8"                      23315.37898        9.724490622        10.62912707
+ "IP1.L1"                    26658.8832        18.32798886        16.56448084

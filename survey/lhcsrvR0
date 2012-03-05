@@ -1,0 +1,28 @@
+!*******************************************
+!** SURVEY TEST WITH AVERAGE LHC RING  *****
+!*******************************************
+real const r0=1.0;
+option,-echo,-warn,-info;
+call,file="V6.5.seq.06042009";
+beam,particle=proton,energy=450,sequence=lhcb1;
+use,period=lhcb1;select,flag=survey,clear;
+select,flag=survey,column=name,l,angle,x,z,theta;
+survey,file="lhcb0surv";
+system,"grep NAME lhcb0surv";
+system,"grep IP1 lhcb0surv";
+system,"grep IP3 lhcb0surv";
+system,"grep IP5 lhcb0surv";
+
+makethin,sequence=lhcb1;
+use,period=lhcb1;select,flag=survey,clear;
+select,flag=survey,column=name,l,angle,x,z,theta;
+survey,file="lhcb0surv";
+system,"grep NAME lhcb0surv";
+system,"grep IP1 lhcb0surv";
+system,"grep IP3 lhcb0surv";
+system,"grep IP5 lhcb0surv";
+
+system,"rm lhcb0surv";
+stop;
+
+option,echo,warn,info;

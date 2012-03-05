@@ -1,0 +1,18 @@
+# Run Example No. 5 with "madxp" 
+#     using the input "fv9_5.madx" and output "fv9_5.out" 
+madxp < fv9_5.madx > fv9_5.out
+
+# Plot with GNUPLOT4.0 at different observation points
+gnuplot make_plots5_obs1.plt
+gnuplot make_plots5_obs2.plt
+gnuplot make_plots5_obs3.plt
+gnuplot make_plots5_obs4.plt
+
+# clean temp files
+rm empty.ps
+
+# move results at different observation points to the 
+# corresponding directories, if wanted
+# For example, for the 3rd obs.point : 
+#  mv track.obs0003.* observ3/.
+#  mv obs3*.eps observ3/.

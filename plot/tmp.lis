@@ -1,0 +1,49 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %04s "CELL"
+@ PARTICLE         %08s "ELECTRON"
+@ MASS             %le       0.00051099891
+@ CHARGE           %le                  -1
+@ ENERGY           %le               0.015
+@ PC               %le       0.01499129348
+@ GAMMA            %le         29.35427005
+@ KBUNCH           %le                   1
+@ BCURRENT         %le                   0
+@ SIGE             %le                   0
+@ SIGT             %le                   0
+@ NPART            %le                   0
+@ EX               %le     1.022591368e-05
+@ EY               %le     1.022591368e-05
+@ ET               %le                   1
+@ LENGTH           %le        0.3000105293
+@ ALFA             %le     -0.009501029619
+@ ORBIT5           %le                  -0
+@ GAMMATR          %le        -10.25922758
+@ Q1               %le         0.368349696
+@ Q2               %le        0.3692275154
+@ DQ1              %le       -0.4810684298
+@ DQ2              %le       -0.8510333504
+@ DXMAX            %le      0.007280855403
+@ DYMAX            %le                   0
+@ XCOMAX           %le      0.004528303708
+@ YCOMAX           %le                   0
+@ BETXMAX          %le        0.3404470131
+@ BETYMAX          %le        0.7548880226
+@ XCORMS           %le      0.003674733136
+@ YCORMS           %le                   0
+@ DXRMS            %le      0.003618939007
+@ DYRMS            %le                   0
+@ DELTAP           %le               -0.35
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %36s "Triplet lattice for e model - dec03o"
+@ ORIGIN           %19s "MAD-X 3.04.47 Linux"
+@ DATE             %08s "02/10/08"
+@ TIME             %08s "09.57.54"
+* NAME               KEYWORD                             S               BETX               ALFX                MUX                 DX                DPX                  X                 PX               BETY               ALFY                MUY                 DY                DPY                  Y                 PY 
+$ %s                 %s                                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le                %le 
+ "CELL$START"        "MARKER"                             0       0.3404156646      -0.1500285565                  0     0.003479320263    4.989815121e-05    -0.004528242655    6.105345446e-07       0.1001126252        -1.05088757                  0                  0                  0                  0                  0
+ "CELL$END"          "MARKER"                  0.3000105293       0.3404156646      -0.1500285565        0.368349696     0.003479320263    4.989815121e-05    -0.004528242655    6.105340456e-07       0.1001126252        -1.05088757       0.3692275154                  0                  0                  0                  0

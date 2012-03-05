@@ -1,0 +1,19 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.14              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 23.11.2009      +
+  + Execution Time Stamp: 23.11.09 16.50.05 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!madxp: example of match, use_ptcknobs;
+
+
+
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.14 finished normally +
+  +++++++++++++++++++++++++++++++++++

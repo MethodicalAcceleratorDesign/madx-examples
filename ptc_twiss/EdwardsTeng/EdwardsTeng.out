@@ -1,0 +1,750 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 03.02.11 19.20.04 +
+  +++++++++++++++++++++++++++++++++++++++++++
+// create the lattice with a skew quadrupole to create coupling
+
+// between the x and y degrees of freedom
+
+
+
+deltapValue = -1e-19;
+
+deltapValue = 1e-7;
+
+++++++ info: deltapvalue redefined
+deltapValue = 1e-5;
+
+++++++ info: deltapvalue redefined
+
+
+beam;
+
+
+
+b:     sbend,l=35.09, angle = 0.011306116;
+
+qf:    quadrupole,l=1.6,k1=-0.02268553;
+
+qd:    quadrupole,l=1.6,k1=0.022683642;
+
+sf:    sextupole,l=0.4,k2=-0.13129;
+
+sd:    sextupole,l=0.76,k2=0.26328;
+
+
+
+! define the cell as a sequence:
+
+sequ:  sequence,l=79;
+
+b1:    b,      at=19.115;
+
+sf1:   sf,     at=37.42;
+
+qf1:   qf,     at=38.70;
+
+b2:    b,      at=58.255,angle=b1->angle;
+
+sd1:   sd,     at=76.74;
+
+qd1:   qd,     at=78.20;
+
+endm:  marker, at=79.0;
+
+endsequence;
+
+
+
+
+
+! skew quadrupole
+
+!qfs:	quadrupole,l=1.6, k1s=-0.02268553;
+
+!qds:	quadrupole,l=1.6,k1s=0.022683642;
+
+qfs:	quadrupole,l=0, k1s=-5e-8;
+
+qds:	quadrupole,l=0,k1s=3e-7;
+
+
+
+! sequence with a skew quadrupole
+
+sequSkew: sequence,l=79;
+
+b1:	b,	at=19.115;
+
+++++++ warning: implicit element re-definition ignored: b1
+sf1:   sf,     at=37.42;
+
+++++++ warning: implicit element re-definition ignored: sf1
+qf1:   qf,     at=38.70;
+
+++++++ warning: implicit element re-definition ignored: qf1
+qfs1:  qfs,    at=38.70+1.6/2;
+
+b2:    b,      at=58.255,angle=b1->angle;
+
+++++++ warning: implicit element re-definition ignored: b2
+sd1:   sd,     at=76.74;
+
+++++++ warning: implicit element re-definition ignored: sd1
+qd1:   qd,     at=78.20;
+
+++++++ warning: implicit element re-definition ignored: qd1
+!qds1:  qds,    at=78.20+1.6/2;
+
+endm:  marker, at=79.0;
+
+++++++ warning: implicit element re-definition ignored: endm
+endsequence;
+
+
+
+use  period=sequ;
+
+
+
+select flag=twiss,column=name,betx,bety;
+
+twiss, deltap=deltapValue, file=ringTwiss;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.203561E-05 deltap:   1.000000E-05
+orbit:   1.195727E-05 -2.180919E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.590275E-11 deltap:   1.000000E-05
+orbit:   1.195728E-05 -2.180921E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+                79                 -0    0.0002417679498        64.31327656 
+
+                q1                dq1            betxmax              dxmax 
+      0.2500246459        2.051584199        132.2695473        1.195669233 
+
+             dxrms             xcomax             xcorms                 q2 
+      0.9901455387    1.195736263e-05    9.902029092e-06        0.250000037 
+
+               dq2            betymax              dymax              dyrms 
+     -0.4556819326        132.2785735                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              1e-05                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=6,nst=10,exact;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+01
+          Kinetic Energy : 0.999489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.100000E+01
+ Setting MADx with 
+     energy           1.00000000000000     
+     method                   6
+     Num. of steps           10
+     charge           1.00000000000000     
+  Length of machine:    79.0000000000000     
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:  -0.911571182912848       0.000000000000000E+000   78.9929425792864     
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+
+ptc_twiss, deltap=deltapValue,closed_orbit,icase=5,file=ring,no=3;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps     10
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   1.195728619299719E-005 -2.180943482175922E-007  0.000000000000000E+000  0.000000000000000E+000  9.999998694443235E-006
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000030        0.000000000000000        0.000000000000000    
+   -1.000000000000030        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000        1.000000000000011    
+    0.000000000000000        0.000000000000000       -1.000000000000011        0.000000000000000    
+ Deviation from symplecticity  0.2076117056049043E-11 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :          15
+  NUMBER OF THIN OBJECTS :         129
+  TOTAL IDEAL LENGTH OF STRUCTURE :   78.9999999999999     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   78.9999999999999     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000030        0.000000000000000        0.000000000000000    
+   -1.000000000000030        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000        1.000000000000011    
+    0.000000000000000        0.000000000000000       -1.000000000000011        0.000000000000000    
+ Deviation from symplecticity  0.2076117056049043E-11 %                                                                  
+ sd= -5.150939513891677E-002  disp=  -16.0429217429395     
+ sd=  0.441183330383051       disp=  0.156070489763744     
+ sd=  0.255756404559025       disp=  0.000000000000000E+000
+ sd=  0.255756404559025       disp=  0.000000000000000E+000
+ sd=  0.255756404559025     
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+                79    0.0002417655346     0.003237421997                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0      0.00024150442        64.31359781        0.250024646 
+
+                q2                dq1                dq2                 qs 
+       0.250000037        2.051561324      -0.4556774782                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       23.61210709        132.2682247        23.61534434        132.2772508 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+             1e-05    1.195728619e-05   -2.180943482e-07                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0    9.999998694e-06                  0                  0 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0                  0                  0                  0 
+
+            ycomax            pxcomax            pycomax 
+                 0                  0                  0 
+ptc_end;
+
+  killing last layout 
+  NODE LAYOUT HAS BEEN KILLED 
+  killed last layout 
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=6,nst=10,exact;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+01
+          Kinetic Energy : 0.999489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.100000E+01
+ Setting MADx with 
+     energy           1.00000000000000     
+     method                   6
+     Num. of steps           10
+     charge           1.00000000000000     
+  Length of machine:    79.0000000000000     
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:  -0.911571182912848       0.000000000000000E+000   78.9929425792864     
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+
+ptc_twiss, deltap=0.0,closed_orbit,icase=5,file=ring0,no=3;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps     10
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000004        0.000000000000000        0.000000000000000    
+   -1.000000000000004        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000        1.000000000000010    
+    0.000000000000000        0.000000000000000       -1.000000000000010        0.000000000000000    
+ Deviation from symplecticity  0.7105427357601002E-12 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :          15
+  NUMBER OF THIN OBJECTS :         129
+  TOTAL IDEAL LENGTH OF STRUCTURE :   78.9999999999999     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   78.9999999999999     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000004        0.000000000000000        0.000000000000000    
+   -1.000000000000004        0.000000000000000        0.000000000000000        0.000000000000000    
+    0.000000000000000        0.000000000000000        0.000000000000000        1.000000000000010    
+    0.000000000000000        0.000000000000000       -1.000000000000010        0.000000000000000    
+ Deviation from symplecticity  0.7105427357601002E-12 %                                                                  
+ sd= -5.151874700789625E-002  disp=  -16.0496133151195     
+ sd=  0.441375868871217       disp=  0.156138475846895     
+ sd=  0.255867673182496       disp=  0.000000000000000E+000
+ sd=  0.255867673182496       disp=  0.000000000000000E+000
+ sd=  0.255867673182496     
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+                79    0.0002417979213      0.00323883046                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0002415368014        64.30929055       0.2500041285 
+
+                q2                dq1                dq2                 qs 
+      0.2500045939        2.051914225      -0.4556950241                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       23.61537555        132.2697831        23.61545128        132.2753478 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+                 0                  0                  0                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0                  0                  0                  0 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0                  0                  0                  0 
+
+            ycomax            pxcomax            pycomax 
+                 0                  0                  0 
+ptc_end;
+
+  killing last layout 
+  NODE LAYOUT HAS BEEN KILLED 
+  killed last layout 
+
+
+
+
+
+
+use period=sequSkew;
+
+
+
+select flag=twiss,column=name,betx,bety;
+
+twiss, deltap=deltapValue, file=coupledRingTwiss;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.203561E-05 deltap:   1.000000E-05
+orbit:   1.195727E-05 -2.180919E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.590275E-11 deltap:   1.000000E-05
+orbit:   1.195728E-05 -2.180921E-07  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+                79                 -0    0.0002417679498        64.31327656 
+
+                q1                dq1            betxmax              dxmax 
+      0.2500246459        2.051584199        132.2695473        1.195669233 
+
+             dxrms             xcomax             xcorms                 q2 
+      0.9696612654    1.195736263e-05    9.697176277e-06        0.250000037 
+
+               dq2            betymax              dymax              dyrms 
+     -0.4556819326        132.2785735                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0              1e-05                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+eps=0.001;
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=2,nst=1,exact,resplit,thin=eps,xbend=eps;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+01
+          Kinetic Energy : 0.999489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.100000E+01
+ Setting MADx with 
+     energy           1.00000000000000     
+     method                   2
+     Num. of steps            1
+     charge           1.00000000000000     
+  Length of machine:    79.0000000000000     
+ The machine is a RING
+ Previous of cutable Elements           12
+ METHOD 2           12          12
+ METHOD 4            0           0
+ METHOD 6            0           0
+ number of Slices           12
+ Total NST           16
+ Present of cutable Elements           12
+ METHOD 2           10          20
+ METHOD 4            0           0
+ METHOD 6            2          84
+ number of Slices          104
+ Total NST           36
+ Total NST due to Bend Closed Orbit            0
+ Biggest ds    17.5450000000000     
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:  -0.911571182912848       1.630546417121576E-016   78.9929425792864     
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+
+ptc_twiss, deltap=deltapValue,closed_orbit,icase=5,file=coupledRing,no=3;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     2
+  Default integration steps      1
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   1.195728333187845E-005 -2.180943544688662E-007 -1.148552482078634E-011 -2.103531248660481E-013  9.999998694443235E-006
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000003      -0.7339077266815483E-17  -0.8673193863410408E-17
+   -1.000000000000003        0.000000000000000      -0.3776962263454288E-16   0.8292479658673912E-14
+   0.7339077266815483E-17   0.3776919911806925E-16    0.000000000000000       0.9999999999999971    
+   0.8673193863410408E-17  -0.8292479658673912E-14  -0.9999999999999971        0.000000000000000    
+ Deviation from symplecticity  0.7004199383134371E-12 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :          16
+  NUMBER OF THIN OBJECTS :         100
+  TOTAL IDEAL LENGTH OF STRUCTURE :   79.0000000000000     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   79.0000000000000     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000003      -0.7339077266815483E-17  -0.8673193863410408E-17
+   -1.000000000000003        0.000000000000000      -0.3776962263454288E-16   0.8292479658673912E-14
+   0.7339077266815483E-17   0.3776919911806925E-16    0.000000000000000       0.9999999999999971    
+   0.8673193863410408E-17  -0.8292479658673912E-14  -0.9999999999999971        0.000000000000000    
+ Deviation from symplecticity  0.7004199383134371E-12 %                                                                  
+ sd= -5.150934849430097E-002  disp=  -16.0427626402735     
+ sd=  0.441178490817741       disp=  0.156069736110601     
+ sd=  0.255752460414579       disp=  1.271917756957654E-005
+ sd=  0.255752460414710       disp= -2.854403530367879E-008
+ sd=  0.255752460414699     
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+                79    0.0002417655353     0.003237372071                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0002415044206        64.31359772       0.2500246476 
+
+                q2                dq1                dq2                 qs 
+      0.2500000351        2.051326311      -0.4554649831                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       23.61017948        132.2574249        23.61341675        132.2664522 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+             1e-05    1.195728333e-05   -2.180943545e-07   -1.148552482e-11 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+  -2.103531249e-13    9.999998694e-06                  0                  0 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0                  0                  0                  0 
+
+            ycomax            pxcomax            pycomax 
+                 0                  0                  0 
+ptc_end;
+
+  killing last layout 
+  NODE LAYOUT HAS BEEN KILLED 
+  killed last layout 
+
+
+
+
+
+
+
+
+betx:=table(twiss,SEQUSKEW$START,BETX);
+
+bety:=table(twiss,SEQUSKEW$START,BETY);
+
+alfx:=table(twiss,SEQUSKEW$START,ALFX);
+
+alfy:=table(twiss,SEQUSKEW$START,ALFY);
+
+value, betx,bety;
+
+betx =        132.2690631 ;
+bety =        23.61567362 ;
+
+
+beta11:=table(ptc_twiss,SEQUSKEW$START,BETA11);
+
+beta12:=table(ptc_twiss,SEQUSKEW$START,BETA12);
+
+beta21:=table(ptc_twiss,SEQUSKEW$START,BETA21);
+
+beta22:=table(ptc_twiss,SEQUSKEW$START,BETA22);
+
+alfa11:=table(ptc_twiss,SEQUSKEW$START,ALFA11);
+
+alfa12:=table(ptc_twiss,SEQUSKEW$START,ALFA12);
+
+alfa21:=table(ptc_twiss,SEQUSKEW$START,ALFA21);
+
+alfa22:=table(ptc_twiss,SEQUSKEW$START,ALFA22);
+
+kx:=sqrt(beta12/beta11);
+
+ky:=sqrt(beta21/beta22);
+
+ax:=kx*alfa11-alfa12/kx;
+
+ay:=ky*alfa22-alfa21/ky;
+
+kxy2:=kx*kx*ky*ky;
+
+u1:=(-kxy2+sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+
+!u2:=(-kxy2-sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+
+value, betx,bety,alfx,alfy;
+
+betx =        132.2690631 ;
+bety =        23.61567362 ;
+alfx =        2.406096901 ;
+alfy =      -0.4607590993 ;
+value, beta11,beta22,beta12,beta21;
+
+beta11 =        132.2569407 ;
+beta22 =        23.61350987 ;
+beta12 =      0.01079962812 ;
+beta21 =     0.001927599357 ;
+value, alfa11,alfa22,alfa12,alfa21;
+
+alfa11 =         2.40590044 ;
+alfa22 =      -0.4607214901 ;
+alfa12 =    0.0001964565001 ;
+alfa21 =   -3.760996435e-05 ;
+value, u1;
+
+u1 =    8.163714767e-05 ;
+value, beta11/(1-u1);
+
+beta11/(1-u1) =        132.2677387 ;
+value, beta22/(1-u1);
+
+beta22/(1-u1) =        23.61543777 ;
+value, alfa11/(1-u1);
+
+alfa11/(1-u1) =        2.406096867 ;
+value, alfa22/(1-u1);
+
+alfa22/(1-u1) =      -0.4607591052 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=2,nst=1,exact,resplit,thin=eps,xbend=eps;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+01
+          Kinetic Energy : 0.999489E+00
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.100000E+01
+ Setting MADx with 
+     energy           1.00000000000000     
+     method                   2
+     Num. of steps            1
+     charge           1.00000000000000     
+  Length of machine:    79.0000000000000     
+ The machine is a RING
+ Previous of cutable Elements           12
+ METHOD 2           12          12
+ METHOD 4            0           0
+ METHOD 6            0           0
+ number of Slices           12
+ Total NST           16
+ Present of cutable Elements           12
+ METHOD 2           10          20
+ METHOD 4            0           0
+ METHOD 6            2          84
+ number of Slices          104
+ Total NST           36
+ Total NST due to Bend Closed Orbit            0
+ Biggest ds    17.5450000000000     
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:  -0.911571182912848       1.630546417121576E-016   78.9929425792864     
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+
+ptc_twiss, deltap=0.0,closed_orbit,icase=5,file=coupledRing0,no=3;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     2
+  Default integration steps      1
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999991      -0.3225574255038280E-17  -0.1320803885642048E-15
+  -0.9999999999999991        0.000000000000000       0.6980652628206865E-16   0.2579100127908518E-14
+   0.3225567637593380E-17  -0.6980652628206865E-16    0.000000000000000       0.9999999999999972    
+   0.1320806003224416E-15  -0.2579093351644940E-14  -0.9999999999999972        0.000000000000000    
+ Deviation from symplecticity  0.3223972656355727E-12 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :          16
+  NUMBER OF THIN OBJECTS :         100
+  TOTAL IDEAL LENGTH OF STRUCTURE :   79.0000000000000     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   79.0000000000000     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000       0.9999999999999991      -0.3225574255038280E-17  -0.1320803885642048E-15
+  -0.9999999999999991        0.000000000000000       0.6980652628206865E-16   0.2579100127908518E-14
+   0.3225567637593380E-17  -0.6980652628206865E-16    0.000000000000000       0.9999999999999972    
+   0.1320806003224416E-15  -0.2579093351644940E-14  -0.9999999999999972        0.000000000000000    
+ Deviation from symplecticity  0.3223972656355727E-12 %                                                                  
+ sd= -5.151870038204992E-002  disp=  -16.0494498457488     
+ sd=  0.441370895246616       disp=  0.156137675070451     
+ sd=  0.255863650960061       disp=  1.272571918367821E-005
+ sd=  0.255863650960192       disp= -2.852119223779507E-008
+ sd=  0.255863650960180     
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+                79    0.0002417979213     0.003238779546                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0002415368014        64.30929055       0.2500040393 
+
+                q2                dq1                dq2                 qs 
+      0.2500046831        1.704519034       -0.108322942                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       20.34402139        113.9469828        20.34407522        113.9517131 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+                 0                  0                  0                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0                  0                  0                  0 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0                  0                  0                  0 
+
+            ycomax            pxcomax            pycomax 
+                 0                  0                  0 
+ptc_end;
+
+  killing last layout 
+  NODE LAYOUT HAS BEEN KILLED 
+  killed last layout 
+
+
+
+  Number of warnings: 7
+7 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

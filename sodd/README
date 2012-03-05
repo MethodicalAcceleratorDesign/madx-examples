@@ -1,0 +1,15 @@
+To test the module sodd please execute the following command
+madx < sodd.madx >! sodd.out
+The following files are generated and can viewed to check the module behaviour :
+distort_2_H_end
+distort_2_F_end
+distort_1_H_end
+distort_1_H_all
+distort_1_F_end
+distort_1_F_all
+detune_2_end
+detune_2_all
+detune_1_end
+detune_1_all
+
+

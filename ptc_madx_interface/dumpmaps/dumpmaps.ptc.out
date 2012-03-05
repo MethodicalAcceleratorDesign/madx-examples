@@ -1,0 +1,388 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.27              +
+  + Code Modification Date: 02.04.2008      +
+  + Execution Time Stamp: 10.04.08 16.21.42 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!Example showing how to obtain linear part of PTC maps for each element in a layout
+
+!
+
+!Piotr Skowronski (CERN)
+
+!
+
+
+
+!option,-echo;
+
+!option,-info;
+
+
+
+LQL := 0.220; ! length of QL
+
+LQS := 0.124; ! length of QS
+
+CAVLENGTH := 2.4;
+
+QL  : QUADRUPOLE, L=LQL; ! QL quadrupole
+
+QS  : QUADRUPOLE, L=LQS; ! QS quadrupole
+
+
+
+!****** define the regular linac cell 
+
+
+
+TCAV      : TWCAVITY,  L=CAVLENGTH, VOLT=14.0d0, LAG=-10.d0/360., FREQ=3000.; 
+
+TCAVDrift      : DRIFT, L=CAVLENGTH; 
+
+meterdrif      : DRIFT, L=CAVLENGTH; 
+
+
+
+ds_ql     : drift, l=0.25;    ! short drift between quads in Daniels design
+
+ds_trip   : drift, l=(3.34-CAVLENGTH)/2.; ! long drift between quads in Daniels design
+
+cell_mrk  : marker;
+
+cell_q1   : marker;
+
+cell_q3   : marker;
+
+beforecav : marker;
+
+bc : marker;
+
+aftercav  : marker;
+
+k_ls1     := -1.53125*.56/LQL; ! weaker foc.
+
+k_ls2     :=  1.53125/LQL;     ! weaker foc.
+
+quad_l1   : quadrupole, l=LQL,   k1=k_ls1;
+
+quad_l2   : quadrupole, l=LQL/2, k1=k_ls2;
+
+LDLS      :=(LQL-LQS)/2.; ! half L difference of QL and QS
+
+dls       : DRIFT, L=LDLS; ! 0.048 m
+
+
+
+ctfcell  : line=( quad_l2,ds_ql,quad_l1,cell_q1,ds_trip ,cell_mrk,
+
+                  beforecav, 
+
+                  TCAV,
+
+                  aftercav,
+
+                  ds_trip,cell_q3,quad_l1,ds_ql,quad_l2);
+
+
+
+ctf   : line=(1*ctfcell);
+
+
+
+beam, PARTICLE=ELECTRON, ENERGY=0.02d0;
+
+
+
+USE, period=ctf;
+
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout, model=1, method=6, nst=100, exact=true, closed_layout=false;
+
+ MAD-X Beam Parameters
+                  Energy : 0.200000E-01
+          Kinetic Energy : 0.194890E-01
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.199935E-01
+ Setting MADx with 
+     energy         2.000000000000000E-02
+     method         6
+     Num. of steps  100
+     charge         -1.000000000000000
+  Length of machine:  4.500000000000000
+ The machine is a LINE
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Before   end:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After  start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After    end:  0.000000000000000E+00 0.000000000000000E+00 4.500000000000000
+
+
+ptc_setswitch, debuglevel=10, maxacceleration=true, exact_mis=true, time=true, totalpath=true, fringe=true;
+
+ Setting debug level to 10
+maxaccel is found and its value is 1.000000
+ Setting MAX ACCEL
+exact_mis is found and its value is 1.000000
+ Switching ON exact missaligment
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+radiation is found and its value is 0.000000
+ Switching OFF radiation
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+fringe is found and its value is 1.000000
+ Switching ON fringe
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+totalpath is found and its value is 1.000000
+ Switching ON totalpath (and switching OFF delta and only_4d)
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+time is found and its value is 1.000000
+ Switching ON time
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+nocavity is found and its value is 1.000000
+ Switching ON nocavity
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+obs_points pro_ptc_setswitch Done
+
+
+ptc_dumpmaps;
+
+ I am in setcavities 
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+ There are  1  Cavities in the line.
+ c_%feed_p0c =  F
+ START TRACKING TILL THE FIRST CAVITY
+ Current cavity no is j= 1
+ Setting beam momentum AND tracking 1.999347093733739E-02  till the cavity ( 9 )
+  i= 1  name=CTF$START        beta0  0.9996735468668694  newpos  0.000000000000000E+00  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  i= 2  name=QUAD_L2          beta0  0.9996735468668694  newpos  0.1100359215713533  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.1100
+  i= 3  name=DS_QL            beta0  0.9996735468668694  newpos  0.3601175615062485  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.3601
+  i= 4  name=QUAD_L1          beta0  0.9996735468668694  newpos  0.5801894046489632  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.5802
+  i= 5  name=CELL_Q1          beta0  0.9996735468668694  newpos  0.5801894046489632  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.5802
+  i= 6  name=DS_TRIP          beta0  0.9996735468668694  newpos  1.050342887726566  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+  i= 7  name=CELL_MRK         beta0  0.9996735468668694  newpos  1.050342887726566  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+  i= 8  name=BEFORECAV        beta0  0.9996735468668694  newpos  1.050342887726566  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+          i=    9 name=              TCAV              p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+ arrivtime =  3.503566749923262E-09
+    Max Energy to gain:  14.00000000000000  MeV, x(6) 1.050342887726566
+ Cavity settings:
+     Name   TCAV            
+     Charge           -1 max ene? T
+       Volt      5.83333       MV 
+     DELTAE      0.00000      GeV 
+     Length      2.40000         m
+      Phase      -64.295       rad
+       Freq  3000000000.       Hz 
+        Lag    -10.00000      deg      -0.1745      rad 
+        P0c      0.01999     GeV/c
+ Track parameters after cavity   0.00000000  0.00000000  0.00000000  0.00000000  0.68738486  3.45080712
+  Old Fibre: energy=    0.0200 momentum=    0.0200  kinetic=    0.0195
+  New Fibre: energy=    0.0337 momentum=    0.0337  kinetic=    0.0332
+    0.9999    0.0337    0.0332    0.0337    0.1125    0.0151    0.0002    0.0005 F  0
+Relative E  0.7052
+ beta0  0.9996735468668694  oldpos  0.000000000000000E+00  newpos  3.450807116511682  Current energy  3.374320916045987E-02
+ Finding patch for j= 1  TCAV            
+ Loop over cavities done
+ Current element is AFTERCAV        
+ Doing loop from the first element after the last cavity to the END
+  i= 10  name=AFTERCAV         beta0  0.9998853267629837  newpos  3.450807116511682  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.4508
+  i= 11  name=DS_TRIP          beta0  0.9998853267629837  newpos  3.920861019114265  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.9209
+  i= 12  name=CELL_Q3          beta0  0.9998853267629837  newpos  3.920861019114265  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.9209
+  i= 13  name=QUAD_L1          beta0  0.9998853267629837  newpos  4.140886250119723  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.1409
+  i= 14  name=DS_QL            beta0  0.9998853267629837  newpos  4.390914921716842  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.3909
+  i= 15  name=QUAD_L2          beta0  0.9998853267629837  newpos  4.500927537219539  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.5009
+  i= 16  name=CTF$END          beta0  0.9998853267629837  newpos  4.500927537219539  Current energy  3.374320916045987E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.5009
+ PARAMETERS AT THE END OF LINE:
+ Track parameters   0.0000  0.0000  0.0000  0.0000  0.0000  4.5009
+       START energy=    0.0200 momentum=    0.0200  kinetic=    0.0195
+         END energy=    0.0337 momentum=    0.0337  kinetic=    0.0332
+    0.9999    0.0337    0.0332    0.0337    0.1125    0.0151    0.0002    0.0005 F  0
+Relative E  0.7052
+ Name: CTF$START        Kind:  30
+ Name: QUAD_L2          Kind:  46
+ Name: DS_QL            Kind:  31
+ Name: QUAD_L1          Kind:  46
+ Name: CELL_Q1          Kind:  30
+ Name: DS_TRIP          Kind:  31
+ Name: CELL_MRK         Kind:  30
+ Name: BEFORECAV        Kind:  30
+ Name: TCAV             Kind:  51
+ Cavity  9  name TCAV             phase  -64.29534812552801  Volt  5.833333333333334  length  2.400000000000000
+ DELTAE  0.000000000000000E+00
+ Name: AFTERCAV         Kind:  30
+ Name: DS_TRIP          Kind:  31
+ Name: CELL_Q3          Kind:  30
+ Name: QUAD_L1          Kind:  46
+ Name: DS_QL            Kind:  31
+ Name: QUAD_L2          Kind:  46
+ Name: CTF$END          Kind:  30
+ <madx_ptc_module.f90 : ptc_dumpmaps> Maps are dumped to file ptcmaps.txt                                                                                                                                                                                             
+ ptcmaps.start-end.txt                                                                                                                                                                                   
+ no=1 mynd2= 2  npara= 0
+ Track Cavity...
+
+
+ptc_end;
+
+  killing last layout 
+  killed last layout 
+stop;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.27 finished normally +
+  +++++++++++++++++++++++++++++++++++

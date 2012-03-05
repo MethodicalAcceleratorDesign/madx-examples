@@ -1,0 +1,71 @@
+! apply measured errors to all MQML
+
+! written on 20/12/05 11:13:56 by T.Risselada
+
+ Rr = 0.017; ON_MQTL = 1;
+
+ exec, Efcomp_Measured_Quad(MQTLI.11R1);
+ exec, Efcomp_Measured_Quad(MQTLI.11L2);
+
+ exec, Efcomp_Measured_Quad(MQTLI.11R2);
+ exec, Efcomp_Measured_Quad(MQTLI.11L3);
+ exec, Efcomp_Measured_Quad(MQTLI.10L3);
+ exec, Efcomp_Measured_Quad(MQTLI.B9L3);
+ exec, Efcomp_Measured_Quad(MQTLI.A9L3);
+ exec, Efcomp_Measured_Quad(MQTLI.8L3 );
+ exec, Efcomp_Measured_Quad(MQTLI.7L3 );
+ exec, Efcomp_Measured_Quad(MQTLH.F6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.E6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.D6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.C6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.B6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.A6L3);
+ exec, Efcomp_Measured_Quad(MQTLH.A6R3);
+ exec, Efcomp_Measured_Quad(MQTLH.B6R3);
+ exec, Efcomp_Measured_Quad(MQTLH.C6R3);
+ exec, Efcomp_Measured_Quad(MQTLH.D6R3);
+ exec, Efcomp_Measured_Quad(MQTLH.E6R3);
+ exec, Efcomp_Measured_Quad(MQTLH.F6R3);
+ exec, Efcomp_Measured_Quad(MQTLI.7R3 );
+ exec, Efcomp_Measured_Quad(MQTLI.8R3 );
+ exec, Efcomp_Measured_Quad(MQTLI.A9R3);
+ exec, Efcomp_Measured_Quad(MQTLI.B9R3);
+ exec, Efcomp_Measured_Quad(MQTLI.10R3);
+ exec, Efcomp_Measured_Quad(MQTLI.11R3);
+ exec, Efcomp_Measured_Quad(MQTLI.11L4);
+ exec, Efcomp_Measured_Quad(MQTLI.11R4);
+ exec, Efcomp_Measured_Quad(MQTLI.11L5);
+
+ exec, Efcomp_Measured_Quad(MQTLI.11R5);
+ exec, Efcomp_Measured_Quad(MQTLI.11L6);
+ exec, Efcomp_Measured_Quad(MQTLI.11R6);
+ exec, Efcomp_Measured_Quad(MQTLI.11L7);
+ exec, Efcomp_Measured_Quad(MQTLI.10L7);
+ exec, Efcomp_Measured_Quad(MQTLI.B9L7);
+ exec, Efcomp_Measured_Quad(MQTLI.A9L7);
+ exec, Efcomp_Measured_Quad(MQTLI.8L7 );
+ exec, Efcomp_Measured_Quad(MQTLI.7L7 );
+ exec, Efcomp_Measured_Quad(MQTLH.F6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.E6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.D6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.C6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.B6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.A6L7);
+ exec, Efcomp_Measured_Quad(MQTLH.A6R7);
+ exec, Efcomp_Measured_Quad(MQTLH.B6R7);
+ exec, Efcomp_Measured_Quad(MQTLH.C6R7);
+ exec, Efcomp_Measured_Quad(MQTLH.D6R7);
+ exec, Efcomp_Measured_Quad(MQTLH.E6R7);
+ exec, Efcomp_Measured_Quad(MQTLH.F6R7);
+ exec, Efcomp_Measured_Quad(MQTLI.7R7 );
+ exec, Efcomp_Measured_Quad(MQTLI.8R7 );
+ exec, Efcomp_Measured_Quad(MQTLI.A9R7);
+ exec, Efcomp_Measured_Quad(MQTLI.B9R7);
+ exec, Efcomp_Measured_Quad(MQTLI.10R7);
+ exec, Efcomp_Measured_Quad(MQTLI.11R7);
+ exec, Efcomp_Measured_Quad(MQTLI.11L8);
+
+ exec, Efcomp_Measured_Quad(MQTLI.11R8);
+ exec, Efcomp_Measured_Quad(MQTLI.11L1);
+
+return;

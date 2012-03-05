@@ -1,0 +1,130 @@
+Option,  warn,-info;
+
+Title, "Matching chromaticity for the LHC 6.4 lattice with MADX";
+
+
+call, file = "../V6.5.coll.str";
+call, file = "../V6.5.seq";
+
+Beam, particle = proton, sequence=lhcb1, energy = 7000.0,
+          NPART=1.05E11, sige=      4.5e-4 ;
+
+! Generate a table of Q(deltap):
+
+use,sequence=lhcb1;
+twiss,deltap=-.001:.001:.0001;
+write,table=summ,file=summ.nat-chrom.data;
+
+! Match first order chromaticity:
+match,sequence=lhcb1;
+    vary, name=KSF.B1, step=0.00001;
+    vary, name=KSD.B1, step=0.00001;
+    global,sequence=lhcb1,dq1=2;
+    global,sequence=lhcb1,dq1=2;
+    jacobian, calls=10, tolerance=1.0e-21;
+endmatch;
+
+use,sequence=lhcb1;
+twiss,deltap=-.001:.001:.0001;
+write,table=summ,file=summ.first-chrom.data;
+
+
+
+! Define macro for second order chromaticity with ptc:
+ptcchrom2: macro={
+  ptc_create_universe;
+  ptc_create_layout,model=2,method=6,nst=1;
+  select_ptc_normal, q1=0, q2=0;
+  select_ptc_normal, dq1=1, dq2=1;
+  select_ptc_normal, dq1=2, dq2=2;
+  ptc_normal,closed_orbit,normal,icase=5,no=3;
+  ptc_end;
+  qx0 =table(normal_results,value,1);
+  qx1 =table(normal_results,value,3);
+  qx2 =table(normal_results,value,5);
+  qy0 =table(normal_results,value,2);
+  qy1 =table(normal_results,value,4);
+  qy2 =table(normal_results,value,6);
+};
+
+! Define macro for second order chromaticity with mad:
+madchrom: macro={
+  twiss;
+  qx0=table(summ,q1);
+  qx1=table(summ,dq1);
+  qy0=table(summ,q2);
+  qy1=table(summ,dq2);
+  dpp=.00001;
+  twiss,deltap=dpp;
+  qxpp=table(summ,q1);
+  qypp=table(summ,q2);
+  twiss,deltap=-dpp;
+  qxmp=table(summ,q1);
+  qymp=table(summ,q2);
+  qx2=(qxpp-2*qx0+qxmp)/dpp^2;
+  qy2=(qypp-2*qy0+qymp)/dpp^2;
+};
+
+ksd1.a12b1:=ksd1.b1;
+ksd1.a23b1:=ksd1.b1;
+ksd1.a34b1:=ksd1.b1;
+ksd1.a45b1:=ksd1.b1;
+ksd1.a56b1:=ksd1.b1;
+ksd1.a67b1:=ksd1.b1;
+ksd1.a78b1:=ksd1.b1;
+ksd1.a81b1:=ksd1.b1;
+ksd2.a12b1:=ksd2.b1;
+ksd2.a23b1:=ksd2.b1;
+ksd2.a34b1:=ksd2.b1;
+ksd2.a45b1:=ksd2.b1;
+ksd2.a56b1:=ksd2.b1;
+ksd2.a67b1:=ksd2.b1;
+ksd2.a78b1:=ksd2.b1;
+ksd2.a81b1:=ksd2.b1;
+ksf1.a12b1:=ksf1.b1;
+ksf1.a23b1:=ksf1.b1;
+ksf1.a34b1:=ksf1.b1;
+ksf1.a45b1:=ksf1.b1;
+ksf1.a56b1:=ksf1.b1;
+ksf1.a67b1:=ksf1.b1;
+ksf1.a78b1:=ksf1.b1;
+ksf1.a81b1:=ksf1.b1;
+ksf2.a12b1:=ksf2.b1;
+ksf2.a23b1:=ksf2.b1;
+ksf2.a34b1:=ksf2.b1;
+ksf2.a45b1:=ksf2.b1;
+ksf2.a56b1:=ksf2.b1;
+ksf2.a67b1:=ksf2.b1;
+ksf2.a78b1:=ksf2.b1;
+ksf2.a81b1:=ksf2.b1;
+
+ksd1.b1=KSD.B1;
+ksd2.b1=KSD.B1;
+ksf1.b1=KSF.B1;
+ksf2.b1=KSF.B1;
+
+
+
+! Match second order chromaticity:
+use,sequence=lhcb1;
+match,use_macro;
+vary, name=ksd1.b1;
+vary, name=ksd2.b1;
+vary, name=ksf1.b1;
+vary, name=ksf2.b1;
+use_macro,name=madchrom;
+!use_macro,name=ptcchrom2;
+constraint,expr= qx1=2;
+constraint,expr= qy1=2;
+constraint,expr= abs(qx2)<7;
+constraint,expr= abs(qy2)<7;
+jacobian,calls=15,bisec=3;
+lmdif,calls=20;
+endmatch;
+
+use,sequence=lhcb1;
+twiss,deltap=-.001:.001:.0001;
+write,table=summ,file=summ.second-chrom.data;
+
+stop;
+

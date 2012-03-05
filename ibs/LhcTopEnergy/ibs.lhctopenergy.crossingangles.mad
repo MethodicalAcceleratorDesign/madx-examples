@@ -1,0 +1,102 @@
+Option,  -warn,-info,-echo;
+
+
+! Option, echo;
+Title, "Compiling Optics for the LHC 6.5 lattice with MADX";
+
+!---------------------------------------------------------------;
+!           CALL IN SELECTION, SEQUENCE and OPTICS FILES;
+!---------------------------------------------------------------;
+!   Option, echo,warn,info;
+
+ call, file = "../V6.5.seq";
+! call, file = "db/V6.4.inj.str";
+ call, file = "../V6.5.coll.str";
+
+Beam, particle = proton, sequence=lhcb1, energy = 7000.0,
+          NPART=1.15E11, ex=5.025e-10, ey=5.025e-10,
+          et=8.25e-6, sige=1.1e-4, sigt=0.075, radiate=true ;
+
+ use, period=lhcb1;
+
+
+! crossing angles
+ on_x1                = 1;
+ on_x5                = 1;
+ on_x2                = 1;
+ on_x8                = 1;
+ on_alice= 1; on_lhcb = 1;
+
+!parallel separation
+on_sep1              :=  0;
+on_sep2              :=  0;
+on_sep5              :=  0;
+on_sep8              :=  0;
+
+vrf400:= 16.;
+! vrf400:= 64.;
+
+select, flag=twiss, clear;
+select, flag=twiss, column=name,s,dx,dy, range=all; 
+twiss,file=optics;
+
+select, flag=twiss, clear;
+twiss,table,file;
+
+! twiss, save;
+! plot,haxis=s,vaxis=dx,dy;
+
+ibs, file ; 
+
+stop; 
+
+touschek,file,iulimit=10000;
+
+a=table(touschek,tli);
+value,a;
+
+save,file="lhcoptics1";
+
+print,tape="lhcoptics";
+
+return;
+
+stop;
+
+
+
+!select, flag=twiss, range=#s/#e,               
+column=keyword,name,parent,k0l,k1l,s,betx,bety,dx,x,y,alfx,alfy,mux,muy,dpx,px,p
+y,apertype,aperture;
+!twiss,sequence=lhcb1,file=twiss.ip2.inj.b1.data;
+!stop;
+
+ select, flag=twiss, clear;
+ select, flag=twiss,
+ range=#s/#e,column=name,keyword,s,apertype;
+! ,aperture(1),aperture(2),aperture(3);
+ twiss,sequence=lhcb1,file=aperture.data;
+
+!  twiss,sequence=lhcb1,file=twiss.data;
+
+ select, flag=twiss, clear;
+ select, flag=twiss,
+ range=#s/#e,column=name,l,angle,k1l, 
+ alfx,betx,mux,dx,dpx,alfy,bety,muy,dy,dpy, 
+ x,px,y,py,s;
+ twiss,sequence=lhcb1,file=twiss.data.nominalsr;
+!
+!  select, flag=twiss, clear;
+! select, flag=twiss,
+! range=#s/#e,column=name,apertype;
+!  twiss,sequence=lhcb1,file=aperture.data;
+
+twiss, save;
+plot,haxis=s,vaxis=betx,bety;
+
+plot,haxis=s,vaxis=dx,dy;
+
+stop;
+
+
+

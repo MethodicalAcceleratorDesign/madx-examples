@@ -1,0 +1,62 @@
+! introduce the transverse offset of all D1 modules and slices
+ select, flag=error, clear;
+
+! saved on 24/05/07 15:08:18 by T.Risselada
+
+! D1 right of IP1:
+ select, flag=error, range=mbxw.a4r1;     ealign, dx=+0.000000000; select, flag=error, clear;
+ select, flag=error, range=mbxw.b4r1;     ealign, dx=+0.000802754; select, flag=error, clear;
+ select, flag=error, range=mbxw.c4r1;     ealign, dx=+0.002408261; select, flag=error, clear;
+ select, flag=error, range=mbxw.d4r1;     ealign, dx=+0.004816521; select, flag=error, clear;
+ select, flag=error, range=mbxw.e4r1;     ealign, dx=+0.008027536; select, flag=error, clear;
+ select, flag=error, range=mbxw.f4r1;     ealign, dx=+0.012041303; select, flag=error, clear;
+
+! D1 left  of IP2:
+ select, flag=error, range=mbx.4l2..1;    ealign, dx=+0.005792921; select, flag=error, clear;
+ select, flag=error, range=mbx.4l2..2;    ealign, dx=+0.002896486; select, flag=error, clear;
+ select, flag=error, range=mbx.4l2..3;    ealign, dx=+0.000965530; select, flag=error, clear;
+ select, flag=error, range=mbx.4l2..4;    ealign, dx=+0.000000051; select, flag=error, clear;
+
+! D1 right of IP2:
+ select, flag=error, range=mbx.4r2..1;    ealign, dx=+0.000000051; select, flag=error, clear;
+ select, flag=error, range=mbx.4r2..2;    ealign, dx=-0.000965427; select, flag=error, clear;
+ select, flag=error, range=mbx.4r2..3;    ealign, dx=-0.002896383; select, flag=error, clear;
+ select, flag=error, range=mbx.4r2..4;    ealign, dx=-0.005792818; select, flag=error, clear;
+
+! D1 left  of IP5:
+ select, flag=error, range=mbxw.f4l5;     ealign, dx=-0.012041200; select, flag=error, clear;
+ select, flag=error, range=mbxw.e4l5;     ealign, dx=-0.008027433; select, flag=error, clear;
+ select, flag=error, range=mbxw.d4l5;     ealign, dx=-0.004816419; select, flag=error, clear;
+ select, flag=error, range=mbxw.c4l5;     ealign, dx=-0.002408158; select, flag=error, clear;
+ select, flag=error, range=mbxw.b4l5;     ealign, dx=-0.000802651; select, flag=error, clear;
+ select, flag=error, range=mbxw.a4l5;     ealign, dx=+0.000000103; select, flag=error, clear;
+
+! D1 right of IP5:
+ select, flag=error, range=mbxw.a4r5;     ealign, dx=+0.000000103; select, flag=error, clear;
+ select, flag=error, range=mbxw.b4r5;     ealign, dx=+0.000802856; select, flag=error, clear;
+ select, flag=error, range=mbxw.c4r5;     ealign, dx=+0.002408363; select, flag=error, clear;
+ select, flag=error, range=mbxw.d4r5;     ealign, dx=+0.004816624; select, flag=error, clear;
+ select, flag=error, range=mbxw.e4r5;     ealign, dx=+0.008027638; select, flag=error, clear;
+ select, flag=error, range=mbxw.f4r5;     ealign, dx=+0.012041406; select, flag=error, clear;
+
+! D1 left  of IP8:
+ select, flag=error, range=mbx.4l8..1;    ealign, dx=+0.005793023; select, flag=error, clear;
+ select, flag=error, range=mbx.4l8..2;    ealign, dx=+0.002896588; select, flag=error, clear;
+ select, flag=error, range=mbx.4l8..3;    ealign, dx=+0.000965632; select, flag=error, clear;
+ select, flag=error, range=mbx.4l8..4;    ealign, dx=+0.000000154; select, flag=error, clear;
+
+! D1 right of IP8:
+ select, flag=error, range=mbx.4r8..1;    ealign, dx=+0.000000154; select, flag=error, clear;
+ select, flag=error, range=mbx.4r8..2;    ealign, dx=-0.000965325; select, flag=error, clear;
+ select, flag=error, range=mbx.4r8..3;    ealign, dx=-0.002896281; select, flag=error, clear;
+ select, flag=error, range=mbx.4r8..4;    ealign, dx=-0.005792715; select, flag=error, clear;
+
+! D1 left  of IP1:
+ select, flag=error, range=mbxw.f4l1;     ealign, dx=-0.012041098; select, flag=error, clear;
+ select, flag=error, range=mbxw.e4l1;     ealign, dx=-0.008027330; select, flag=error, clear;
+ select, flag=error, range=mbxw.d4l1;     ealign, dx=-0.004816316; select, flag=error, clear;
+ select, flag=error, range=mbxw.c4l1;     ealign, dx=-0.002408056; select, flag=error, clear;
+ select, flag=error, range=mbxw.b4l1;     ealign, dx=-0.000802548; select, flag=error, clear;
+ select, flag=error, range=mbxw.a4l1;     ealign, dx=+0.000000205; select, flag=error, clear;
+
+return;

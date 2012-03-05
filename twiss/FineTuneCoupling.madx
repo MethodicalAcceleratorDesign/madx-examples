@@ -1,0 +1,90 @@
+! fine tuning of coupling   (S.Fartoukh)
+
+! saved on 13/10/08 15:49:08 by T.Risselada
+
+! closest tune
+ kqf0=kqf;
+ kqd0=kqd;
+ qmid=(qx0-qx00+qy0-qy00)*0.5;
+
+ match;
+ global, q1=qx00+qmid,q2=qy00+qmid;
+ vary,   name=kqf, step=1.E-9;
+ vary,   name=kqd, step=1.E-9;
+ lmdif,  calls=50, tolerance=1.E-5;
+ endmatch;
+
+! Quick minimization based on linear machine
+ cmrskew0 = cmrskew;
+ cmiskew0 = cmiskew;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ cta0     = abs(qx-qy-tsplit);
+ closest0 = cta0;
+ cmrskew  = cmrskew0+cta0/2.;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ ctap     = abs(qx-qy-tsplit);
+ cmrskew  = cmrskew0-cta0/2.;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ ctam     = abs(qx-qy-tsplit);
+ cmrskew  = cmrskew0+(ctam^2-ctap^2)/2./cta0;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ cta0     = abs(qx-qy-tsplit);
+ cmiskew  = cmiskew0+cta0/2.;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ ctap     = abs(qx-qy-tsplit);
+ cmiskew  = cmiskew0-cta0/2.;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ ctam     = abs(qx-qy-tsplit);
+ cmiskew  = cmiskew0+(ctam^2-ctap^2)/2./cta0;
+ twiss; qx=table(summ,q1); qy=table(summ,q2);
+
+ closest1 =abs(qx-qy-tsplit);
+
+
+!Empirical minimisation
+ match;
+ global, q1=qx00+qmid, q2=qy00+qmid;
+ vary,   name=kqf, step=1.E-9;
+ vary,   name=kqd, step=1.E-9;
+ lmdif,  calls=100,tolerance=1.E-6;
+ endmatch;
+
+ match;
+ global, q1=qx00+qmid, q2=qy00+qmid;
+ vary,   name=cmrskew, step=1.E-9;
+ vary,   name=cmiskew, step=1.E-9;
+ lmdif,  calls=150, tolerance=2.E-6;
+ endmatch;
+
+ match;
+ global, q1=qx00+qmid, q2=qy00+qmid;
+ vary,   name=kqf, step=1.E-9;
+ vary,   name=kqd, step=1.E-9;
+ lmdif,  calls=100, tolerance=1.E-7;
+ endmatch;
+
+ match;
+ global, q1=qx00+qmid, q2=qy00+qmid;
+ vary,   name=cmrskew, step=1.E-9;
+ vary,   name=cmiskew, step=1.E-9;
+ lmdif,  calls=150, tolerance=2.E-7;
+ endmatch;
+
+ match;
+ global, q1=qx00+qmid, q2=qy00+qmid;
+ vary,   name=kqf, step=1.E-9;
+ vary,   name=kqd, step=1.E-9;
+ lmdif,  calls=100, tolerance=1.E-7;
+ endmatch;
+
+ twiss;  qx=table(summ,q1); qy=table(summ,q2);
+ closest2=abs(qx-qy-tsplit);
+ value, closest0, closest1, closest2, cmrskew, cmiskew;
+
+return;

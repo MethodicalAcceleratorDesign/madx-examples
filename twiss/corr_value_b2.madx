@@ -1,0 +1,114 @@
+option,-echo;
+
+! saved on 10/07/06 17:49:31 by T.Risselada
+
+nrj=beam%lhcb2->pc*1.0E09;
+value,NRJ;
+
+!MQS
+kMQSmax:=120*3.e8/NRJ;
+value,KQS.R8B2  /kMQSmax*100;value,KQS.L1B2 /kMQSmax*100;
+value,KQS.A78B2 /kMQSmax*100;
+value,KQS.R6B2  /kMQSmax*100;value,KQS.L7B2 /kMQSmax*100;
+value,KQS.A56B2 /kMQSmax*100;
+value,KQS.R4B2  /kMQSmax*100;value,KQS.L5B2 /kMQSmax*100;
+value,KQS.A34B2 /kMQSmax*100;
+value,KQS.R2B2  /kMQSmax*100;value,KQS.L3B2 /kMQSmax*100;
+value,KQS.A12B2 /kMQSmax*100;
+!MSS
+kMSSmax:=1.280*2/0.017^2*3.e8/NRJ;
+value,KSS.A12B2 /kMSSmax*100;
+value,KSS.A23B2 /kMSSmax*100;
+value,KSS.A34B2 /kMSSmax*100;
+value,KSS.A45B2 /kMSSmax*100;
+value,KSS.A56B2 /kMSSmax*100;
+value,KSS.A67B2 /kMSSmax*100;
+value,KSS.A78B2 /kMSSmax*100;
+value,KSS.A81B2 /kMSSmax*100;
+!MCS
+kMCSmax:=0.471*2/0.017^2*3.e8/NRJ;
+value,KCS.A12B2 /kMCSmax*100;
+value,KCS.A23B2 /kMCSmax*100;
+value,KCS.A34B2 /kMCSmax*100;
+value,KCS.A45B2 /kMCSmax*100;
+value,KCS.A56B2 /kMCSmax*100;
+value,KCS.A67B2 /kMCSmax*100;
+value,KCS.A78B2 /kMCSmax*100;
+value,KCS.A81B2 /kMCSmax*100;
+!MCO
+kMCOmax:=0.040*6/0.017^3*3.e8/NRJ;
+value,KCO.A12B2 /kMCOmax*100;
+value,KCO.A23B2 /kMCOmax*100;
+value,KCO.A34B2 /kMCOmax*100;
+value,KCO.A45B2 /kMCOmax*100;
+value,KCO.A56B2 /kMCOmax*100;
+value,KCO.A67B2 /kMCOmax*100;
+value,KCO.A78B2 /kMCOmax*100;
+value,KCO.A81B2 /kMCOmax*100;
+!MCD
+kMCDmax:=0.100*24/0.017^4*3.e8/NRJ;
+value,KCD.A12B2 /kMCDmax*100;
+value,KCD.A23B2 /kMCDmax*100;
+value,KCD.A34B2 /kMCDmax*100;
+value,KCD.A45B2 /kMCDmax*100;
+value,KCD.A56B2 /kMCDmax*100;
+value,KCD.A67B2 /kMCDmax*100;
+value,KCD.A78B2 /kMCDmax*100;
+value,KCD.A81B2 /kMCDmax*100;
+!MO
+kMOmax:=0.29*6/0.017^3*3.e8/NRJ;
+value,KOF.A12B2/kMOmax*100.;
+value,KOF.A23B2/kMOmax*100.;
+value,KOF.A34B2/kMOmax*100.;
+value,KOF.A45B2/kMOmax*100.;
+value,KOF.A56B2/kMOmax*100.;
+value,KOF.A67B2/kMOmax*100.;
+value,KOF.A78B2/kMOmax*100.;
+value,KOF.A81B2/kMOmax*100.;
+value,KOD.A12B2/kMOmax*100.;
+value,KOD.A23B2/kMOmax*100.;
+value,KOD.A34B2/kMOmax*100.;
+value,KOD.A45B2/kMOmax*100.;
+value,KOD.A56B2/kMOmax*100.;
+value,KOD.A67B2/kMOmax*100.;
+value,KOD.A78B2/kMOmax*100.;
+value,KOD.A81B2/kMOmax*100.;
+!MQSX
+kMQSXmax:=1.360/0.017*3.e8/NRJ;
+value,KQSX3.L1 /kMQSXmax*100;value,KQSX3.R1 /kMQSXmax*100;
+value,KQSX3.L2 /kMQSXmax*100;value,KQSX3.R2 /kMQSXmax*100;
+value,KQSX3.L5 /kMQSXmax*100;value,KQSX3.R5 /kMQSXmax*100;
+value,KQSX3.L8 /kMQSXmax*100;value,KQSX3.R8 /kMQSXmax*100;
+!MCSSX
+kMCSSXmax:=0.11*2/0.017^2*3.e8/NRJ;
+value,KCSSX3.L1 /kMCSSXmax*100;value,KCSSX3.R1 /kMCSSXmax*100;
+value,KCSSX3.L2 /kMCSSXmax*100;value,KCSSX3.R2 /kMCSSXmax*100;
+value,KCSSX3.L5 /kMCSSXmax*100;value,KCSSX3.R5 /kMCSSXmax*100;
+value,KCSSX3.L8 /kMCSSXmax*100;value,KCSSX3.R8 /kMCSSXmax*100;
+!MCOSX
+kMCOSXmax:=0.048*6/0.017^3*3.e8/NRJ;
+value,KCOSX3.L1 /kMCOSXmax*100;value,KCOSX3.R1 /kMCOSXmax*100;
+value,KCOSX3.L2 /kMCOSXmax*100;value,KCOSX3.R2 /kMCOSXmax*100;
+value,KCOSX3.L5 /kMCOSXmax*100;value,KCOSX3.R5 /kMCOSXmax*100;
+value,KCOSX3.L8 /kMCOSXmax*100;value,KCOSX3.R8 /kMCOSXmax*100;
+!MCOX
+kMCOXmax:=0.045*6/0.017^3*3.e8/NRJ;
+value,KCOX3.L1 /kMCOXmax*100;value,KCOX3.R1 /kMCOXmax*100;
+value,KCOX3.L2 /kMCOXmax*100;value,KCOX3.R2 /kMCOXmax*100;
+value,KCOX3.L5 /kMCOXmax*100;value,KCOX3.R5 /kMCOXmax*100;
+value,KCOX3.L8 /kMCOXmax*100;value,KCOX3.R8 /kMCOXmax*100;
+!MCSX
+kMCSXmax:=0.015*2/0.017^2*3.e8/NRJ*0.576/0.61;
+value,KCSX3.L1 /kMCSXmax*100;value,KCSX3.R1 /kMCSXmax*100;
+value,KCSX3.L2 /kMCSXmax*100;value,KCSX3.R2 /kMCSXmax*100;
+value,KCSX3.L5 /kMCSXmax*100;value,KCSX3.R5 /kMCSXmax*100;
+value,KCSX3.L8 /kMCSXmax*100;value,KCSX3.R8 /kMCSXmax*100;
+!MCTX
+kMCTXmax:=0.01*120/0.017^5*3.e8/NRJ;
+value,KCTX3.L1 /kMCTXmax*100;value,KCTX3.R1 /kMCTXmax*100;
+value,KCTX3.L2 /kMCTXmax*100;value,KCTX3.R2 /kMCTXmax*100;
+value,KCTX3.L5 /kMCTXmax*100;value,KCTX3.R5 /kMCTXmax*100;
+value,KCTX3.L8 /kMCTXmax*100;value,KCTX3.R8 /kMCTXmax*100;
+option,echo;
+
+return;

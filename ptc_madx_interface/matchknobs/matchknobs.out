@@ -1,0 +1,1933 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.27              +
+  + Code Modification Date: 02.04.2008      +
+  + Execution Time Stamp: 10.04.08 16.28.49 +
+  +++++++++++++++++++++++++++++++++++++++++++
+
+
+ptc_enforce6d, flag=true;
+
+
+
+dsel  :=1.2;!length of starting and ending drift
+
+dmid1l:=1.5;!length of middle drift
+
+dmid2l:=0.6;!length of middle drift
+
+ql    :=0.2;!length of quads
+
+qfstr := 6.7;!strength of quads
+
+qdstr :=-6.71;!strength of quads
+
+lbend:=2.0;
+
+
+
+sedft: drift, L:=dsel;
+
+middft1: drift, L:=dmid1l;
+
+middft2: drift, L:=dmid2l;
+
+
+
+angb = pi/6.;
+
+
+
+!bend1: MULTIPOLE, L=lbend,
+
+bend1: RBEND, L=lbend, ANGLE:=-angb, e1=angb/2, ptcrbend=true, APERTYPE=CIRCLE, APERTURE={10};             ! Deflection to the left
+
+qf1: quadrupole, l=ql, k1:=qfstr, APERTYPE=CIRCLE, APERTURE={10.0};
+
+qd:  quadrupole, l=ql, k1:=qdstr, APERTYPE=CIRCLE, APERTURE={10.0};
+
+qf2: quadrupole, l=ql, k1:=qfstr, APERTYPE=CIRCLE, APERTURE={10.0};
+
+bend2: RBEND, L=lbend, ANGLE=angb, e1=-angb/2, ptcrbend=true, APERTYPE=CIRCLE, APERTURE={10};              ! Deflection to the right
+
+theend: marker, APERTYPE=CIRCLE, APERTURE={10.0};
+
+
+
+
+
+chicane: line=(sedft,bend1,middft1,qf1,middft2,qd,middft2,qf2,middft1,bend2,sedft,theend);
+
+
+
+beam, PARTICLE=ELECTRON, ENERGY=0.11d0;
+
+use, period=chicane;
+
+
+
+
+
+ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+
+
+
+
+create, table=R3, withname, column="c51","c52","c55","c56","c66";
+
+Value of withname 1
+We add <<name>> column
+
+
+ptc_select, table=R3, column=c51, polynomial=5, monomial="100000",parametric;
+
+ptc_select, table=R3, column=c52, polynomial=5, monomial="010000",parametric;
+
+ptc_select, table=R3, column=c55, polynomial=5, monomial="000010",parametric;
+
+ptc_select, table=R3, column=c56, polynomial=5, monomial="000001",parametric;
+
+ptc_select, table=R3, column=c66, polynomial=6, monomial="000001",parametric;
+
+
+
+
+
+create, table=T2, withname, column="c111","c566","c556";
+
+Value of withname 1
+We add <<name>> column
+!instructs ptc to store given monomials cofficients in the just created table
+
+ptc_select, table=T2, column=c111, polynomial=1, monomial="200000",parametric;
+
+ptc_select, table=T2, column=c566, polynomial=5, monomial="000002",parametric;!In 6D, PTC 5th col. is dp/p
+
+ptc_select, table=T2, column=c556, polynomial=5, monomial="010001",parametric;!In 6D, PTC 5th col. is dp/p
+
+
+
+
+
+
+
+v1 = 0;
+
+v2 = 0;
+
+currentvalue = 0;
+
+vx = 1.0;
+
+
+
+while( vx > 0.001 )
+
+  {
+
+      ptc_create_universe;
+
+      ptc_create_layout, model=1, method=6, nst=10, exact=true, closed_layout=false;
+
+
+
+      ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+
+
+      ptc_setfieldcomp, element=qf1, kn=0, value=currentvalue;
+
+
+
+      ptc_knob, element=qf1, kn=0, exactmatch=false;
+
+      ptc_knob, element=qf2, kn=0, exactmatch=false;
+
+
+
+      ptc_twiss, table=ptc_twiss, icase=6, no=3, betx=10, alfx=.0,  bety=10., alfy=0, betz=10., alfz=0;
+
+
+
+
+
+      call, file="matches.madx";! matching
+
+     
+
+      v1 = table(R3,theend,c56);
+
+
+
+      ptc_end;
+
+      
+
+
+
+      ptc_create_universe;
+
+      ptc_create_layout, model=1, method=6, nst=10, exact=true, closed_layout=false;
+
+
+
+      ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+
+
+      currentvalue = currentvalue + qf1_kn0;
+
+
+
+      ptc_setfieldcomp, element=qf1, kn=0, value= currentvalue;
+
+
+
+      ptc_twiss, table=twiss, icase=6, no=1, betx=10, alfx=.0,  bety=10., alfy=0, betz=10., alfz=0;
+
+      ptc_end;
+
+      
+
+      v2 = table(R3,theend,c56);
+
+      
+
+!      vx = table(ptc_twiss,theend,beta11) - table(twiss,theend,beta11);
+
+      vx = abs(v1 - v2);      
+
+      value, v1,v2,vx;
+
+      
+
+      value, currentvalue;
+
+      value, qf1_kn0;
+
+      
+
+
+
+  };
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.28724389E+00
+
+
+reset parameter: qf1_kn0                 from -0.22198705E+01  to -0.80000000E-01
+call:       3   Penalty function =   0.25066188E+00
+reset parameter: qf1_kn0                 from -0.49825479E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.28912740E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.18456370E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.13228185E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.10614092E+00  to -0.93859075E-01
+call:       9   Penalty function =   0.24138056E+00
+reset parameter: qf1_kn0                 from -0.11701475E+00  to -0.82985247E-01
+reset parameter: qf1_kn0                 from -0.10196791E+00  to -0.98032089E-01
+call:      12   Penalty function =   0.23843698E+00
+reset parameter: qf1_kn0                 from -0.10586785E+00  to -0.94132151E-01
+reset parameter: qf1_kn0                 from -0.10067275E+00  to -0.99327246E-01
+call:      15   Penalty function =   0.23750986E+00
+reset parameter: qf1_kn0                 from -0.10193845E+00  to -0.98061551E-01
+reset parameter: qf1_kn0                 from -0.10020924E+00  to -0.99790759E-01
+call:      18   Penalty function =   0.23717651E+00
+reset parameter: qf1_kn0                 from -0.10066952E+00  to -0.99330476E-01
+reset parameter: qf1_kn0                 from -0.10007940E+00  to -0.99920600E-01
+call:      21   Penalty function =   0.23708299E+00
+reset parameter: qf1_kn0                 from -0.10020888E+00  to -0.99791124E-01
+reset parameter: qf1_kn0                 from -0.10002009E+00  to -0.99979909E-01
+call:      24   Penalty function =   0.23704025E+00
+reset parameter: qf1_kn0                 from -0.10007934E+00  to -0.99920663E-01
+reset parameter: qf1_kn0                 from -0.10001107E+00  to -0.99988935E-01
+call:      27   Penalty function =   0.23703375E+00
+reset parameter: qf1_kn0                 from -0.10002009E+00  to -0.99979911E-01
+reset parameter: qf1_kn0                 from -0.10000101E+00  to -0.99998988E-01
+call:      30   Penalty function =   0.23702650E+00
+reset parameter: qf1_kn0                 from -0.10002314E+00  to -0.99976858E-01
+ ++++++++++
+ ++++++++++ LMDIF ended: variables too close to limit
+ ++++++++++
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +8.86854e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +4.86854e-01
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91224e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +3.64260e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   2.37026502e-01
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -9.99990e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   2.37026502e-01
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.09999898826 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:      32   Penalty function =   0.23702650E+00
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.8868536757 ;
+v2 =        0.952586036 ;
+vx =      0.06573236032 ;
+currentvalue =     -0.09999898826 ;
+qf1_kn0 =     -0.09999898826 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.30535133E+00
+
+
+reset parameter: qf1_kn0                 from -0.95082774E+00  to -0.80000000E-01
+call:       3   Penalty function =   0.24151052E+00
+reset parameter: qf1_kn0                 from -0.37159026E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.22579513E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.15289757E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.11644878E+00  to -0.83551217E-01
+call:       8   Penalty function =   0.23818712E+00
+reset parameter: qf1_kn0                 from -0.10146320E+00  to -0.98536800E-01
+call:      10   Penalty function =   0.22381497E+00
+reset parameter: qf1_kn0                 from -0.12987835E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.10895142E+00  to -0.91048583E-01
+reset parameter: qf1_kn0                 from -0.10162625E+00  to -0.98373753E-01
+reset parameter: qf1_kn0                 from -0.10000680E+00  to -0.99993205E-01
+call:      15   Penalty function =   0.22239037E+00
+reset parameter: qf1_kn0                 from -0.10289473E+00  to -0.97105271E-01
+reset parameter: qf1_kn0                 from -0.10072493E+00  to -0.99275071E-01
+reset parameter: qf1_kn0                 from -0.10017814E+00  to -0.99821863E-01
+reset parameter: qf1_kn0                 from -0.10004122E+00  to -0.99958782E-01
+reset parameter: qf1_kn0                 from -0.10000719E+00  to -0.99992812E-01
+reset parameter: qf1_kn0                 from -0.10000000E+00  to -0.99999996E-01
+call:      22   Penalty function =   0.22238372E+00
+reset parameter: qf1_kn0                 from -0.10001359E+00  to -0.99986405E-01
+reset parameter: qf1_kn0                 from -0.10000340E+00  to -0.99996604E-01
+reset parameter: qf1_kn0                 from -0.10000085E+00  to -0.99999153E-01
+reset parameter: qf1_kn0                 from -0.10000021E+00  to -0.99999790E-01
+reset parameter: qf1_kn0                 from -0.10000005E+00  to -0.99999949E-01
+ ++++++++++
+ ++++++++++ LMDIF ended: variables too close to limit
+ ++++++++++
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +8.71576e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +4.71576e-01
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91237e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.79171e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   2.22383715e-01
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -1.00000e-01  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   2.22383715e-01
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.09999999557 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:      28   Penalty function =   0.22238372E+00
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.8715757791 ;
+v2 =       0.9457726824 ;
+vx =      0.07419690332 ;
+currentvalue =      -0.1999989838 ;
+qf1_kn0 =     -0.09999999557 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.29786782E+00
+
+
+reset parameter: qf1_kn0                 from -0.58492408E+00  to -0.80000000E-01
+call:       3   Penalty function =   0.20563305E+00
+reset parameter: qf1_kn0                 from -0.40989338E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.40989338E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.27852214E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.17926107E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.12963053E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.10481527E+00  to -0.95184733E-01
+call:      10   Penalty function =   0.18659314E+00
+reset parameter: qf1_kn0                 from -0.11746381E+00  to -0.82536186E-01
+reset parameter: qf1_kn0                 from -0.10265453E+00  to -0.97345472E-01
+call:      13   Penalty function =   0.18387039E+00
+reset parameter: qf1_kn0                 from -0.10470619E+00  to -0.95293814E-01
+reset parameter: qf1_kn0                 from -0.10024478E+00  to -0.99755216E-01
+call:      16   Penalty function =   0.18083167E+00
+reset parameter: qf1_kn0                 from -0.10539956E+00  to -0.94600438E-01
+reset parameter: qf1_kn0                 from -0.10125208E+00  to -0.98747922E-01
+reset parameter: qf1_kn0                 from -0.10020409E+00  to -0.99795905E-01
+call:      20   Penalty function =   0.18078033E+00
+reset parameter: qf1_kn0                 from -0.10002007E+00  to -0.99979933E-01
+call:      22   Penalty function =   0.18054820E+00
+reset parameter: qf1_kn0                 from -0.10042747E+00  to -0.99572530E-01
+reset parameter: qf1_kn0                 from -0.10009721E+00  to -0.99902789E-01
+reset parameter: qf1_kn0                 from -0.10001531E+00  to -0.99984685E-01
+call:      26   Penalty function =   0.18054220E+00
+reset parameter: qf1_kn0                 from -0.10000238E+00  to -0.99997624E-01
+call:      28   Penalty function =   0.18052588E+00
+reset parameter: qf1_kn0                 from -0.10001531E+00  to -0.99984686E-01
+reset parameter: qf1_kn0                 from -0.10000273E+00  to -0.99997268E-01
+ ++++++++++
+ ++++++++++ LMDIF ended: variables too close to limit
+ ++++++++++
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +8.24883e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +4.24883e-01
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91259e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +1.62387e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   1.80525876e-01
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -9.99976e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.80525876e-01
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.09999762377 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:      31   Penalty function =   0.18052588E+00
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.8248833675 ;
+v2 =       0.9105585333 ;
+vx =      0.08567516585 ;
+currentvalue =      -0.2999966076 ;
+qf1_kn0 =     -0.09999762377 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.26067002E+00
+
+
+reset parameter: qf1_kn0                 from -0.36026213E+00  to -0.80000000E-01
+call:       3   Penalty function =   0.13765402E+00
+reset parameter: qf1_kn0                 from -0.25911479E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.25911479E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.20324024E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.14162012E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.11081006E+00  to -0.89189940E-01
+call:       9   Penalty function =   0.12365137E+00
+reset parameter: qf1_kn0                 from -0.11737854E+00  to -0.82621458E-01
+reset parameter: qf1_kn0                 from -0.10123429E+00  to -0.98765711E-01
+call:      12   Penalty function =   0.10937381E+00
+reset parameter: qf1_kn0                 from -0.12201650E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.10512822E+00  to -0.94871780E-01
+reset parameter: qf1_kn0                 from -0.10073452E+00  to -0.99265485E-01
+call:      16   Penalty function =   0.10863913E+00
+reset parameter: qf1_kn0                 from -0.10122364E+00  to -0.98776362E-01
+reset parameter: qf1_kn0                 from -0.10005136E+00  to -0.99948636E-01
+call:      19   Penalty function =   0.10763672E+00
+reset parameter: qf1_kn0                 from -0.10150001E+00  to -0.98499989E-01
+reset parameter: qf1_kn0                 from -0.10035256E+00  to -0.99647441E-01
+reset parameter: qf1_kn0                 from -0.10006455E+00  to -0.99935450E-01
+reset parameter: qf1_kn0                 from -0.10000068E+00  to -0.99999320E-01
+call:      24   Penalty function =   0.10756243E+00
+reset parameter: qf1_kn0                 from -0.10010329E+00  to -0.99896709E-01
+reset parameter: qf1_kn0                 from -0.10002550E+00  to -0.99974497E-01
+reset parameter: qf1_kn0                 from -0.10000604E+00  to -0.99993957E-01
+reset parameter: qf1_kn0                 from -0.10000119E+00  to -0.99998810E-01
+ ++++++++++
+ ++++++++++ LMDIF ended: variables too close to limit
+ ++++++++++
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +7.27967e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +3.27967e-01
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91290e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +5.33633e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   1.07562428e-01
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -9.99993e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.07562428e-01
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.09999932019 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:      29   Penalty function =   0.10756243E+00
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.7279671142 ;
+v2 =       0.8304934918 ;
+vx =       0.1025263776 ;
+currentvalue =      -0.3999959278 ;
+qf1_kn0 =     -0.09999932019 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.18532465E+00
+
+
+reset parameter: qf1_kn0                 from -0.19481639E+00  to -0.80000000E-01
+call:       3   Penalty function =   0.44072093E-01
+reset parameter: qf1_kn0                 from -0.14353314E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.14353314E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.14353314E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.11257055E+00  to -0.87429451E-01
+call:       8   Penalty function =   0.34229689E-01
+reset parameter: qf1_kn0                 from -0.11904892E+00  to -0.80951078E-01
+reset parameter: qf1_kn0                 from -0.10045006E+00  to -0.99549940E-01
+call:      11   Penalty function =   0.20374008E-01
+reset parameter: qf1_kn0                 from -0.12437618E+00  to -0.80000000E-01
+reset parameter: qf1_kn0                 from -0.10595985E+00  to -0.94040152E-01
+reset parameter: qf1_kn0                 from -0.10122914E+00  to -0.98770858E-01
+reset parameter: qf1_kn0                 from -0.10012194E+00  to -0.99878060E-01
+call:      16   Penalty function =   0.20040707E-01
+reset parameter: qf1_kn0                 from -0.10044482E+00  to -0.99555179E-01
+reset parameter: qf1_kn0                 from -0.10005983E+00  to -0.99940168E-01
+call:      19   Penalty function =   0.19977880E-01
+reset parameter: qf1_kn0                 from -0.10012159E+00  to -0.99878411E-01
+reset parameter: qf1_kn0                 from -0.10000793E+00  to -0.99992069E-01
+call:      22   Penalty function =   0.19925443E-01
+reset parameter: qf1_kn0                 from -0.10012713E+00  to -0.99872872E-01
+reset parameter: qf1_kn0                 from -0.10002801E+00  to -0.99971992E-01
+reset parameter: qf1_kn0                 from -0.10000360E+00  to -0.99996397E-01
+call:      26   Penalty function =   0.19921072E-01
+reset parameter: qf1_kn0                 from -0.10000793E+00  to -0.99992070E-01
+reset parameter: qf1_kn0                 from -0.10000059E+00  to -0.99999410E-01
+call:      29   Penalty function =   0.19918026E-01
+reset parameter: qf1_kn0                 from -0.10000360E+00  to -0.99996400E-01
+ ++++++++++
+ ++++++++++ LMDIF ended: variables too close to limit
+ ++++++++++
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +5.41131e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +1.41131e-01
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91329e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +5.00062e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   1.99180258e-02
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -9.99994e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.99180258e-02
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =      -0.0999994101 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:      31   Penalty function =   0.19918026E-01
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.5411312362 ;
+v2 =       0.6698297682 ;
+vx =        0.128698532 ;
+currentvalue =      -0.4999953379 ;
+qf1_kn0 =      -0.0999994101 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.72808104E-01
+
+
+call:       3   Penalty function =   0.47195622E-02
+call:       5   Penalty function =   0.37432258E-05
+call:       7   Penalty function =   0.11189258E-11
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +3.99999e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    -1.05779e-06
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91357e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +1.89017e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   1.11892577e-12
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -6.12635e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.11892577e-12
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.06126352885 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       7   Penalty function =   0.11189258E-11
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.3999989422 ;
+v2 =       0.5018488196 ;
+vx =       0.1018498774 ;
+currentvalue =      -0.5612588668 ;
+qf1_kn0 =     -0.06126352885 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.10373182E-01
+
+
+call:       3   Penalty function =   0.56975008E-04
+call:       5   Penalty function =   0.92722402E-09
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +3.99970e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    -3.04504e-05
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91366e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.45592e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   9.27224021e-10
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -1.86279e-02  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   9.27224021e-10
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =     -0.01862793445 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       5   Penalty function =   0.92722402E-09
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.3999695496 ;
+v2 =       0.4350695966 ;
+vx =      0.03510004699 ;
+currentvalue =      -0.5798868012 ;
+qf1_kn0 =     -0.01862793445 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.12298766E-02
+
+
+call:       3   Penalty function =   0.69277596E-06
+call:       5   Penalty function =   0.40445667E-13
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +4.00000e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    -2.01111e-07
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91369e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.65370e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   4.04456667e-14
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -6.00438e-03  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   4.04456667e-14
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =    -0.006004383937 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       5   Penalty function =   0.40445667E-13
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.3999997989 ;
+v2 =       0.4116233433 ;
+vx =      0.01162354442 ;
+currentvalue =      -0.5858911851 ;
+qf1_kn0 =    -0.006004383937 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.13510211E-03
+
+
+call:       3   Penalty function =   0.84636839E-08
+call:       5   Penalty function =   0.29019544E-14
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +4.00000e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    +5.38698e-08
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91370e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.72024e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   2.90195438e-15
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -1.94871e-03  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   2.90195438e-15
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =    -0.001948714739 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       5   Penalty function =   0.29019544E-14
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.4000000539 ;
+v2 =       0.4037983942 ;
+vx =     0.003798340317 ;
+currentvalue =      -0.5878398999 ;
+qf1_kn0 =    -0.001948714739 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.14427798E-04
+
+
+call:       3   Penalty function =   0.11505700E-09
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +3.99989e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    -1.07265e-05
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91370e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.74222e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   1.15057003e-10
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -6.34302e-04  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.15057003e-10
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =   -0.0006343018318 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       3   Penalty function =   0.11505700E-09
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.3999892735 ;
+v2 =       0.4012280946 ;
+vx =     0.001238821106 ;
+currentvalue =      -0.5884742017 ;
+qf1_kn0 =   -0.0006343018318 ;
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+
+qf1_kn0 = 0;
+
+++++++ info: qf1_kn0 redefined
+
+
+match, use_macro;
+
+  vary, name=qf1_kn0, step=0.01, lower=-0.1,upper=0.1;
+
+
+
+  m1: macro=
+
+   {
+
+      ptc_setknobvalue, element=qf1, kn=0, value= qf1_kn0;
+
+      ptc_setknobvalue, element=qf2, kn=0, value=-qf1_kn0;
+
+   };
+
+++++++ warning: macro redefined: m1
+
+
+
+
+   constraint, expr=table(R3,theend,c56) = 0.4;
+
+
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,   qf1,beta12)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta11)>  0.0;
+
+   constraint, weight=10000, expr=table(ptc_twiss,theend,beta12)>  0.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta11)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,qf1,beta12)   <200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta11)<200.0;
+
+!   constraint, weight=10,    expr=table(ptc_twiss,theend,beta12)<200.0;
+
+
+
+
+
+   lmdif,  tolerance=1e-09 ,calls=200;
+
+number of variables:    1
+user given constraints: 0
+total constraints:      5
+
+START LMDIF:
+
+Initial Penalty Function =   0.15082165E-05
+
+
+call:       3   Penalty function =   0.20694650E-11
+ ++++++++++ LMDIF ended: converged successfully
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: table(r3,theend,c56)=0.4                
+  values:     +3.99999e-01=+4.00000e-01
+  weight:     +1.00000e+00
+  penalty:    -1.43856e-06
+
+  constraint: table(ptc_twiss,qf1,beta11)>0.0         
+  values:     +1.91370e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,qf1,beta12)>0.0         
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta11)>0.0      
+  values:     +2.74926e+01>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+  constraint: table(ptc_twiss,theend,beta12)>0.0      
+  values:     +0.00000e+00>+0.00000e+00
+  weight:     +1.00000e+04
+  penalty:    +0.00000e+00
+
+
+
+Final Penalty Function =   2.06946497e-12
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+qf1_kn0                  -2.04295e-04  0.00000e+00 -1.00000e-01  1.00000e-01
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   2.06946497e-12
+
+
+
+
+value, qf1_kn0;
+
+qf1_kn0 =   -0.0002042946875 ;
+print, text="End of matches.madx";
+
+End of matches.madx
+
+
+++++++ info: v1 redefined
+call:       3   Penalty function =   0.20694650E-11
+  killing last layout 
+  killed last layout 
+++++++ info: currentvalue redefined
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  killing last layout 
+  killed last layout 
+++++++ info: v2 redefined
+++++++ info: vx redefined
+v1 =       0.3999985614 ;
+v2 =       0.4003978036 ;
+vx =    0.0003992421304 ;
+currentvalue =      -0.5886784964 ;
+qf1_kn0 =   -0.0002042946875 ;
+
+
+value, v1,v2,vx;
+
+v1 =       0.3999985614 ;
+v2 =       0.4003978036 ;
+vx =    0.0003992421304 ;
+
+
+value, qf1_kn0;
+
+qf1_kn0 =   -0.0002042946875 ;
+
+
+value, currentvalue;
+
+currentvalue =      -0.5886784964 ;
+
+
+
+
+stop;
+
+
+  Number of warnings: 10
+10 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.27 finished normally +
+  +++++++++++++++++++++++++++++++++++

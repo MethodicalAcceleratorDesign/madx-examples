@@ -1,0 +1,1 @@
+ Contains location of each fibre and the magnet within the fibre 

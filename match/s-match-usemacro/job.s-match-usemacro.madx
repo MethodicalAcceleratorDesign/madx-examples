@@ -1,0 +1,48 @@
+mkr : marker;
+qf1: quadrupole,k1:=kq1,l=0.5;
+qf2: quadrupole,k1:=kq2,l=0.5;
+
+kq2=-1.4;
+kq1=1.09;
+posq1=1.5;
+posq2=3;
+lseq=5;
+
+smach1: sequence,l:=lseq;
+qf1,at:=posq1;
+qf2,at:=posq2;
+mkr,at:=lseq;
+endsequence;
+
+beam,particle=proton,energy=450,exn=1e-6,eyn=1e-6;
+use,period=smach1;
+select,flag=twiss, clear;
+select,flag=twiss,column=name,s,l,k1l,betx,alfx,bety,alfy;
+twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+system,"cat twj";
+
+moveandtwiss: macro={
+use,sequence=smach1;
+twiss,betx=4.94687,alfx= -1.32058,bety=4.94687,alfy=1.32058;
+};
+
+
+kq1=0.91;
+posq2=3.1;
+kq2=-1.1;
+lseq=3.4;
+match,use_macro;
+vary,name=kq1;
+vary,name=posq2;
+vary,name=kq2;
+vary,name=lseq;
+use_macro,name=moveandtwiss;
+constraint,expr= table(twiss,mkr,betx)=4.91062;
+constraint,expr= table(twiss,mkr,alfx)= -1.32332;
+constraint,expr= table(twiss,mkr,bety)=4.94687;
+constraint,expr= table(twiss,mkr,alfy)=1.32058;
+jacobian;
+endmatch;
+
+!twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+!system,"cat twj";

@@ -1,0 +1,613 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 03.02.11 19.51.50 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!TITLE,'Test input for MAD-X';
+
+
+
+ eg   :=  100000000000;
+
+ bg   :=  eg/pmass;
+
+ en   := 3.75e-06;
+
+ epsx := en/bg;
+
+ epsy := en/bg;
+
+beam, particle = proton, energy =   eg        , 
+
+                         sigt=      0.077     , 
+
+                         sige=      1.1e-4    , 
+
+                         npart=     1.05e11   , 
+
+                         exn=4*en,  eyn=4*en  , 
+
+                         kbunch = 10,
+
+                         et = 0.002, !bv = -1,
+
+                         ex=epsx,   ey=epsy;
+
+value,epsx,epsy;
+
+epsx =    3.518520049e-17 ;
+epsy =    3.518520049e-17 ;
+option,-echo;
+
+
+
+use,sequence=fivecell;
+
+select,flag=makethin,slice=200;
+
+makethin,sequence=fivecell;
+
+makethin: slicing sequence : fivecell
+makethin: slicing sequence : ins
+use,period=fivecell;
+
+// alignment errors
+
+
+
+/*
+
+select,flag=error,clear;
+
+select,flag=error,pattern="q.*",range=qf.1;
+
+ealign,dx=0.0001;
+
+select,flag=error,class=quadrupole,range=qf.4/qf.5;
+
+ealign,dy=0.0002,dtheta=0.0003;
+
+*/
+
+
+
+/*
+
+select,flag=error,clear;
+
+
+
+// field errors
+
+gcutr=3.0;
+
+b1r=1.e-4;
+
+b2r=2.e-4;
+
+b3r=3.e-4;
+
+b4r=4.e-4;
+
+b5r=5.e-4;
+
+a1r=1.e-4;
+
+a2r=2.e-4;
+
+a3r=3.e-4;
+
+a4r=4.e-4;
+
+a5r=5.e-4;
+
+
+
+Select, flag=error, clear = true;
+
+select, flag=error, pattern="q.*\..*";
+
+efcomp, order:=1, radius:=0.010, 
+
+dknr={0,1e-1*b2r},
+
+dksr={0,1e-1*a2r};
+
+esave;
+
+*/
+
+
+
+select,flag=sectormap,class=drift;
+
+
+
+!select,flag=my_table,class=quadrupole,
+
+!column=name,parent,keyword,s,betx,bety,dx,dy,k1l,
+
+!re11,re12,re13,re14;
+
+
+
+select,flag=sectormap,clear;
+
+select,flag=sectormap,pattern="bloed";
+
+select,flag=twiss,clear;
+
+!select,flag=twiss,column=name,parent,s,assembly_id,beam_sep;!betx,bety,dmux,dmuy;
+
+!select,flag=twiss,column=name,s,betx,bety,mux,muy;
+
+select,flag=twiss,column=name,s,betx,bety,r11,r12,r21,r22;
+
+!twiss,rmatrix,deltap=-0.001:0.001:0.001;!,
+
+twiss,chrom,file=twiss_fv9t;!,deltap=0.001;
+
+enter Twiss module
+  
+iteration:   1 error:   2.173939E-06 deltap:   1.000000E-06
+orbit:   2.118739E-06  2.878593E-08 -3.888805E-10  1.006037E-10  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   6.352747E-21 deltap:   1.000000E-06
+orbit:   2.118739E-06  2.878593E-08 -3.888805E-10  1.006037E-10  0.000000E+00  0.000000E+00
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004414826374        47.59301147 
+
+                q1                dq1            betxmax              dxmax 
+       1.257305846        -1.60760419        185.3259205        2.257601197 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.638578064                  0                  0        1.254871169 
+
+               dq2            betymax              dymax              dyrms 
+      -1.600339998        182.1094039     0.005612907321     0.003633332087 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+betx:=table(twiss,FIVECELL$START,BETX);
+
+bety:=table(twiss,FIVECELL$START,BETY);
+
+alfx:=table(twiss,FIVECELL$START,ALFX);
+
+alfy:=table(twiss,FIVECELL$START,ALFY);
+
+value, betx,bety;
+
+betx =        174.0334934 ;
+bety =        32.73445873 ;
+!stop;
+
+value,tabstring(twiss,48,0);
+
+_void_ =                  0 ;
+value,tabstring(twiss,48,1);
+
+_void_ =                  0 ;
+value,tabstring(twiss,148,0);
+
+_void_ =                  0 ;
+value,tabstring(twiss,148,1);
+
+_void_ =                  0 ;
+!stop;
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=6,nst=1;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+12
+          Kinetic Energy : 0.100000E+12
+      Particle Rest Mass : 0.938272E+00
+                Momentum : 0.100000E+12
+ Setting MADx with 
+     energy           100000000000.000     
+     method                   6
+     Num. of steps            1
+     charge           1.00000000000000     
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+ switch solenoid to dubious thin multipole 
+++++++ warning: Potential problem for very large structure:  More than 20'000 elements found
+  Length of machine:    534.600000000042     
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:   0.000000000000000E+000  0.000000000000000E+000   534.600000000026     
+ptc_align;
+
+!PTC_SETSWITCH,debuglevel =1,time=true;
+
+!ptc_enforce6d;
+
+!select,flag=ptc_twiss,column=name,s,mu1,mu2,beta11,beta12,beta21;
+
+select,flag=ptc_twiss,column=name,s,betx,bety,alfx,alfy,beta11,beta12,beta21,beta22,alfa11,alfa12,alfa21,alfa22;
+
+ptc_twiss,closed_orbit,icase=5,no=3,file=ptc_twiss2t;!,deltap=0.025;
+
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps      1
+  Real Pill Box Cavities 
+ This is a proton 
+       EXACT_MODEL =  FALSE
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  TRUE 
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ Closed orbit:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000029       0.1746920750417269E-16   0.6314393452555578E-15
+   -1.000000000000029        0.000000000000000      -0.1383441972091504E-14  -0.4835021272242557E-13
+  -0.1745565497701662E-16   0.1382574610353515E-14    0.000000000000000        1.000000000000116    
+  -0.6314393452555578E-15   0.4832245714680994E-13   -1.000000000000116        0.000000000000000    
+ Deviation from symplecticity  0.9801475291657848E-11 %                                                                  
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :       20562
+  NUMBER OF THIN OBJECTS :      102810
+  TOTAL IDEAL LENGTH OF STRUCTURE :   534.600000000042     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   534.600000000042     
+ Check of the symplectic condition on the linear part                    
+
+    0.000000000000000        1.000000000000029       0.1746920750417269E-16   0.6314393452555578E-15
+   -1.000000000000029        0.000000000000000      -0.1383441972091504E-14  -0.4835021272242557E-13
+  -0.1745565497701662E-16   0.1382574610353515E-14    0.000000000000000        1.000000000000116    
+  -0.6314393452555578E-15   0.4832245714680994E-13   -1.000000000000116        0.000000000000000    
+ Deviation from symplecticity  0.9801475291657848E-11 %                                                                  
+ sd= -0.751402836675180       disp=   2.92610228268347     
+ sd= -0.697318913829377       disp=  3.719835291635640E-002
+ sd= -0.781232822397734       disp= -1.739227010930714E-002
+ sd= -0.781232819598224       disp=  8.798399199792353E-004
+ sd= -0.781232832106493     
+
+++++++ table: ptc_twiss_summary
+
+            length            alpha_c          alpha_c_p         alpha_c_p2 
+             534.6    0.0004414826374    -0.001461340876                  0 
+
+        alpha_c_p3              eta_c           gamma_tr                 q1 
+                 0    0.0004414826374        47.59301147       0.2573058456 
+
+                q2                dq1                dq2                 qs 
+      0.2548711691        -1.60725809       -1.600334634                  0 
+
+        beta_x_min         beta_x_max         beta_y_min         beta_y_max 
+       29.77630854        179.3622816        29.68782294          176.24927 
+
+            deltap            orbit_x           orbit_px            orbit_y 
+                 0                  0                  0                  0 
+
+          orbit_py           orbit_pt          orbit_-cT             xcorms 
+                 0                  0                  0                  0 
+
+            ycorms            pxcorms            pycorms             xcomax 
+                 0                  0                  0                  0 
+
+            ycomax            pxcomax            pycomax 
+                 0                  0                  0 
+
+
+betx_ptc_twiss:=table(ptc_twiss,FIVECELL$START,BETX);
+
+bety_ptc_twiss:=table(ptc_twiss,FIVECELL$START,BETY);
+
+alfx_ptc_twiss:=table(ptc_twiss,FIVECELL$START,ALFX);
+
+alfy_ptc_twiss:=table(ptc_twiss,FIVECELL$START,ALFY);
+
+
+
+beta11:=table(ptc_twiss,FIVECELL$START,BETA11);
+
+beta12:=table(ptc_twiss,FIVECELL$START,BETA12);
+
+beta21:=table(ptc_twiss,FIVECELL$START,BETA21);
+
+beta22:=table(ptc_twiss,FIVECELL$START,BETA22);
+
+alfa11:=table(ptc_twiss,FIVECELL$START,ALFA11);
+
+alfa12:=table(ptc_twiss,FIVECELL$START,ALFA12);
+
+alfa21:=table(ptc_twiss,FIVECELL$START,ALFA21);
+
+alfa22:=table(ptc_twiss,FIVECELL$START,ALFA22);
+
+kx:=sqrt(beta12/beta11);
+
+ky:=sqrt(beta21/beta22);
+
+ax:=kx*alfa11-alfa12/kx;
+
+ay:=ky*alfa22-alfa21/ky;
+
+kxy2:=kx*kx*ky*ky;
+
+u1:=(-kxy2+sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+
+!u2:=(-kxy2-sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+
+value, betx,bety,alfx,alfy;
+
+betx =        174.0334934 ;
+bety =        32.73445873 ;
+alfx =        -2.34473554 ;
+alfy =       0.4912925409 ;
+value, beta11,beta22,beta12,beta21;
+
+beta11 =        168.4332357 ;
+beta22 =         31.6810902 ;
+beta12 =        5.611490436 ;
+beta21 =        1.066306687 ;
+value, alfa11,alfa22,alfa12,alfa21;
+
+alfa11 =       -2.269283838 ;
+alfa22 =       0.4754831425 ;
+alfa12 =     -0.07600159189 ;
+alfa21 =      0.01591158784 ;
+value, u1;
+
+u1 =      0.03217919483 ;
+value, beta11/(1-u1);
+
+beta11/(1-u1) =        174.0334934 ;
+value, beta22/(1-u1);
+
+beta22/(1-u1) =        32.73445873 ;
+value, alfa11/(1-u1);
+
+alfa11/(1-u1) =        -2.34473554 ;
+value, alfa22/(1-u1);
+
+alfa22/(1-u1) =       0.4912925409 ;
+value, betx_ptc_twiss, bety_ptc_twiss, alfx_ptc_twiss, alfy_ptc_twiss;
+
+betx_ptc_twiss =        174.0334934 ;
+bety_ptc_twiss =        32.73445873 ;
+alfx_ptc_twiss =        -2.34473554 ;
+alfy_ptc_twiss =       0.4912925409 ;
+
+
+
+
+
+
+
+
+stop;
+
+
+  Number of warnings: 1
+0 in C and 1 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

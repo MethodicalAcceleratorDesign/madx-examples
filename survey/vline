@@ -1,0 +1,47 @@
+// *** TEST MADX ***** single Vbend for a test
+option,-echo;
+dip45 : sbend,l=10,angle=3.14159265359*0.25; ! radius=12.73239545
+diptu : sbend,l=10,angle=0.1,tilt=3.14159265359*0.5 ;
+seqend: marker;  ! bending radius = 19.098593
+
+musr1 : SEQUENCE, REFER=CENTRE ,l=30;
+diptu , at=5;  
+dip1 : dip45, at=15;
+dip2 : dip45, at=25;
+ENDSEQUENCE;
+
+beam,particle=proton;
+use,period=musr1;
+select,flag=survey,column=name,x,y,z,phi,psi,globaltilt;
+survey,psi0=0.0,x0=0.0;
+write,table=survey;
+!********************************************************
+!****   TEST : PHI=-0.1 at DIPTU , PSI=-0.1 at DIP2  ****
+!********************************************************
+makethin,sequence=musr1;
+use,period=musr1;
+select,flag=survey,column=name,x,y,z,phi,psi,globaltilt;
+survey,psi0=0.0;
+write,table=survey;
+
+return;
+******************************************    END  ********************
+
+
+call,file="/afs/cern.ch/group/si/slap/share/mad-X_test_suite/survey/V1.11/vline";
+
+survey,psi0=0.0,file="prtsurv";
+system,"cat prtsurv";
+system,"rm prtsurv";
+value,diptu->angle;
+
+! Check of coordinate transformation with twiss.
+! Both x and y at the end scale with x0^2
+! Surprise : px at the end is exactly equal to -pi*x0/2/Ldip
+! NORMAL : m21 = 1/rho
+
+x0=0.1; y0=0.0; 
+select,flag=twiss,clear;select,flag=twiss,column=name,s,x,px,y,py;
+twiss,betx=10,bety=10,x=x0,y=y0;write,table=twiss;
+
+value,-pi*x0*x0/80, -pi*x0/40, x0*x0/12.7324/12.732/6;

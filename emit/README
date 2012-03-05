@@ -1,0 +1,19 @@
+R. Tomas                                        November the 30th, 2005
+
+
+                        EMIT examples for MAD-X
+                        ********************************
+
+A standard usage of EMIT is given in the LEP directory.
+
+The example in the ALBA directory illustrates a limitation
+of the EMIT module. This module assumes nearly constant
+lattice functions inside elements. This leads to wrong
+equilibrium emittances in certain machines like the
+Spanish light source ALBA. The solution is trivial. The
+bending magnets need to be sliced to properly account
+for the variation of the lattice functions.
+
+
+ 
+

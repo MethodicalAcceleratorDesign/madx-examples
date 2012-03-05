@@ -1,0 +1,123 @@
+// create the lattice with a skew quadrupole to create coupling
+// between the x and y degrees of freedom
+
+deltapValue = -1e-19;
+deltapValue = 1e-7;
+deltapValue = 1e-5;
+
+beam;
+
+b:     sbend,l=35.09, angle = 0.011306116;
+qf:    quadrupole,l=1.6,k1=-0.02268553;
+qd:    quadrupole,l=1.6,k1=0.022683642;
+sf:    sextupole,l=0.4,k2=-0.13129;
+sd:    sextupole,l=0.76,k2=0.26328;
+
+! define the cell as a sequence:
+sequ:  sequence,l=79;
+b1:    b,      at=19.115;
+sf1:   sf,     at=37.42;
+qf1:   qf,     at=38.70;
+b2:    b,      at=58.255,angle=b1->angle;
+sd1:   sd,     at=76.74;
+qd1:   qd,     at=78.20;
+endm:  marker, at=79.0;
+endsequence;
+
+
+! skew quadrupole
+!qfs:	quadrupole,l=1.6, k1s=-0.02268553;
+!qds:	quadrupole,l=1.6,k1s=0.022683642;
+qfs:	quadrupole,l=0, k1s=-5e-8;
+qds:	quadrupole,l=0,k1s=3e-7;
+
+! sequence with a skew quadrupole
+sequSkew: sequence,l=79;
+b1:	b,	at=19.115;
+sf1:   sf,     at=37.42;
+qf1:   qf,     at=38.70;
+qfs1:  qfs,    at=38.70+1.6/2;
+b2:    b,      at=58.255,angle=b1->angle;
+sd1:   sd,     at=76.74;
+qd1:   qd,     at=78.20;
+!qds1:  qds,    at=78.20+1.6/2;
+endm:  marker, at=79.0;
+endsequence;
+
+use  period=sequ;
+
+select flag=twiss,column=name,betx,bety;
+twiss, deltap=deltapValue, file=ringTwiss;
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10,exact;
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+ptc_twiss, deltap=deltapValue,closed_orbit,icase=5,file=ring,no=3;
+ptc_end;
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10,exact;
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+ptc_twiss, deltap=0.0,closed_orbit,icase=5,file=ring0,no=3;
+ptc_end;
+
+
+
+use period=sequSkew;
+
+select flag=twiss,column=name,betx,bety;
+twiss, deltap=deltapValue, file=coupledRingTwiss;
+
+eps=0.001;
+ptc_create_universe;
+ptc_create_layout,model=2,method=2,nst=1,exact,resplit,thin=eps,xbend=eps;
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+ptc_twiss, deltap=deltapValue,closed_orbit,icase=5,file=coupledRing,no=3;
+ptc_end;
+
+
+
+
+betx:=table(twiss,SEQUSKEW$START,BETX);
+bety:=table(twiss,SEQUSKEW$START,BETY);
+alfx:=table(twiss,SEQUSKEW$START,ALFX);
+alfy:=table(twiss,SEQUSKEW$START,ALFY);
+value, betx,bety;
+
+beta11:=table(ptc_twiss,SEQUSKEW$START,BETA11);
+beta12:=table(ptc_twiss,SEQUSKEW$START,BETA12);
+beta21:=table(ptc_twiss,SEQUSKEW$START,BETA21);
+beta22:=table(ptc_twiss,SEQUSKEW$START,BETA22);
+alfa11:=table(ptc_twiss,SEQUSKEW$START,ALFA11);
+alfa12:=table(ptc_twiss,SEQUSKEW$START,ALFA12);
+alfa21:=table(ptc_twiss,SEQUSKEW$START,ALFA21);
+alfa22:=table(ptc_twiss,SEQUSKEW$START,ALFA22);
+kx:=sqrt(beta12/beta11);
+ky:=sqrt(beta21/beta22);
+ax:=kx*alfa11-alfa12/kx;
+ay:=ky*alfa22-alfa21/ky;
+kxy2:=kx*kx*ky*ky;
+u1:=(-kxy2+sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+!u2:=(-kxy2-sqrt(kxy2*(1+(ax*ax-ay*ay)/(kx*kx-ky*ky)*(1-kxy2))))/(1-kxy2);
+value, betx,bety,alfx,alfy;
+value, beta11,beta22,beta12,beta21;
+value, alfa11,alfa22,alfa12,alfa21;
+value, u1;
+value, beta11/(1-u1);
+value, beta22/(1-u1);
+value, alfa11/(1-u1);
+value, alfa22/(1-u1);
+
+
+
+
+
+
+
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=2,nst=1,exact,resplit,thin=eps,xbend=eps;
+select flag=ptc_twiss,column=name,betx,beta11,bety,beta22,beta12,beta21,mu1,mu2;
+ptc_twiss, deltap=0.0,closed_orbit,icase=5,file=coupledRing0,no=3;
+ptc_end;
+

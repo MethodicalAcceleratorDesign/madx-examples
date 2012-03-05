@@ -1,0 +1,82 @@
+================== Test files for PTC_TRACK =================== 
+====================== V.Kapin & F.Schmidt ====================  
+========================= 2005-2007 ===========================
+
+/afs/cern.ch/eng/sl/MAD-X/dev/test_suite/ptc_track/V3.00.06
+
+Examples for PTC_TRACK_RUN are tested under Linux
+
+Run: "madxp < FV9_*.madx" with appropriate number instead of *
+
+For the observation point 1 at START of ring, 
+the graphical output created by the MADX command <plot> is written to  
+fv9_*_START.ps (we also converted into PDF files fv9_*_START.pdf);
+
+Also, graphical output can be created with another plotting program.
+Commands for running "GNUPLOT ver.4 for LINUX" in a batch mode are 
+collected in the script (*.plt) files. 
+
+Results are in appropriate subdirectories, namely 
+no_1, no_4, or observ1, observ2, ....
+
+Plots can be also drawn under Windows using "GNUPLOT ver.4.0 for Windows" 
+(http://www.gnuplot.info/download.html). 
+The script files should be slightly corrected.
+For example, a terminal type in all "set terminal" commands must be changed 
+from "x11" to "windows" and etc.  
+
+---------------------------------------------------------------------
+EXAMPLE 1: Multiturn tracking using PTC for the turn-by-turn tracking 
+
+   Input file: FV9_1.madx
+      Input in standard coordinates; 6 particles;
+      icase=4; closed_orbit; turns=1000;
+      Output in standard_coordinates
+
+-----------------------------------------------------------------------
+EXAMPLE 2: Multiturn tracking with PTC as in Example 1 
+   using Normal Forms for a conversion 
+   the output coordinates to normalized ones
+
+   Input file: FV9_2.madx
+       Input in standard coordinates; 6 particles;
+       icase=4; closed_orbit; turns=1000; norm_no=1; 
+       Output in normalized coordinates
+
+   Parameter <norm_no> defines the order of Normal Forms
+   The linear normalization (norm_no=1) gives an idea of the 
+   resonance order.
+
+-----------------------------------------------------------------------
+EXAMPLE 3: Multiturn tracking with PTC as in Example 2 using 
+   different orders of Normal Forms utilized for 
+   a conversion the output coordinates to normalized ones.
+
+   Input file: FV9_3.madx
+      Input in standard coordinates; 4 particles;
+      icase=4; closed_orbit; turns=1000; no=1,4,8; 
+      Output in normalized coordinates
+
+   One can compare the plots with different order of Normal Forms.
+
+-----------------------------------------------------------------------
+EXAMPLE 4: Multiturn tracking using PTC for element-by-element tracking 
+   with the data outputs at several observation points 
+
+   Input file: FV9_4.madx
+      Input in standard coordinates; 3 particles;
+      icase=4; closed_orbit; turns=1000; 
+      Output in standard_coordinates 
+
+-----------------------------------------------------------------------
+EXAMPLE 5: Multiturn tracking using PTC for turn-by-turn tracking 
+   with the data outputs at several observation points 
+
+   Input file: FV9_5.madx
+       Input in standard coordinates; 3 particles;
+       icase=4; closed_orbit; turns=1000; 
+       Output in standard_coordinates  
+
+-----------------------------------------------------------------------
+EXAMPLE 6: Comparison of results for Examples 4 and 5, i.e 
+   for the turn-by-turn and the element-by-element tracking.

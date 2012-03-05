@@ -1,0 +1,77 @@
+!--------1---------2---------3---------4---------5---------6---------7---------8 
+!-- This job should be run with madX 
+!   Derived from nov28o.txt 
+!system,"rm dec03o.eco"; 
+!system,"rm dec03o.lis"; 
+!setplot,ascale=1,lscale=1.5,sscale=3,rscale=1.5,xsize=28,ysize=20, 
+        post=1 font=-4,lwidth=5; 
+!setplot,ascale=2,lscale=2,sscale=1.5,rscale=2,xsize=28,ysize=20, 
+        post=1,font=-4,lwidth=10; 
+setplot,ascale=1.5,lscale=2,sscale=1.5,rscale=2,xsize=28,ysize=20, 
+        post=1,font=-4,lwidth=10;  
+!-- Define triplet lattice for electron model 
+title,"Triplet lattice for e model - dec03o"; 
+beam,particle=electron,energy=0.015,exn=1.2e-3,eyn=1.2e-3; 
+periodL:=0.3; 
+periodN:=36; 
+fang:=-0.0648938; 
+dang:=pi/periodN-fang; 
+fk1:=+2.602827E+02; 
+dk1:=-1.313776E+02; 
+bf: rbend,l=0.03,angle=fang,k1=FK1; 
+bd1: sbend,l=0.05,angle=dang,k1=DK1,e1=dang,e2=0; 
+bd2: sbend,l=0.05,angle=dang,k1=DK1,e1=0,e2=dang; 
+bd: line=(bd1,bd2); 
+d1: drift,l=0.02; 
+d2: drift,l=0.025; 
+rfvolt:=0; 
+rfc: drift,l=0.05; 
+!col: ecollimator,xsize=0.2,ysize=0.1; 
+!col: drift,l=0;
+tri: line=(bf,d1,bd,d1,bf); 
+rfs: line=(d2,rfc,d2); 
+cell: line=(tri,rfs); 
+use,period=cell; 
+select,flag=twiss,clear; 
+select,flag=twiss,range=#s,column=name,keyword,s,betx,alfx,mux,dx,dpx,x,px, 
+bety,alfy,muy,dy,dpy,y,py; 
+select,flag=twiss,range=#e,column=name,keyword,s,betx,alfx,mux,dx,dpx,x,px, 
+bety,alfy,muy,dy,dpy,y,py; 
+twiss, deltap = 0.0, file=tmp.lis; 
+plot,file="dec03o",haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,spline,colour=100;
+twiss, deltap = 0.0, file=tmp.lis; 
+plot,file="dec03o",haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,spline,colour=100;  
+system,"cp tmp.lis dec03o.lis"; 
+value,fang,dang; 
+value,beam->beta,beam->gamma; 
+value,bf->k1*beam->pc*1e9/clight,bd1->k1*beam->pc*1e9/clight; 
+value,bf->angle*beam->pc*1e9/clight/bf->l; 
+value,bd1->angle*beam->pc*1e9/clight/bd1->l; 
+ 
+!-- Prepare graphs of the aperture 
+sigN:=3; 
+dpp:=0; 
+use,period=cell; 
+! ax: string,"+sigN*sqrt(beam[exn]*betx/beam[beta]/beam[gamma]/4/(1+dpp))+x)"; 
+! ay: string,"+sigN*sqrt(beam[eyn]*bety/beam[beta]/beam[gamma]/4/(1+dpp))"; 
+while (dpp < 0.35) 
+{ 
+dpp=dpp+0.05; 
+twiss,deltap=dpp,save,file="tmp.lis"; 
+system,"cat tmp.lis >> dec03o.lis"; 
+! plot,haxis=s,vaxis1=x,ax,ay,colour=100; 
+plot,haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,colour=100; 
+} 
+! ax: string,"-sigN*sqrt(beam[exn]*betx/beam[beta]/beam[gamma]/4/(1+dpp))+x)"; 
+! ay: string,"-sigN*sqrt(beam[eyn]*bety/beam[beta]/beam[gamma]/4/(1+dpp))"; 
+dpp:=0; 
+while (dpp > -0.35) 
+{ 
+dpp=dpp-0.05; 
+twiss,deltap=dpp,save,file="tmp.lis"; 
+system,"cat tmp.lis >> dec03o.lis"; 
+! plot,haxis=s,vaxis1=x,ax,ay,colour=100; 
+plot,haxis=s,vaxis1=rbetx,rbety,vaxis2=dx,colour=100; 
+} 
+ 
+return; 

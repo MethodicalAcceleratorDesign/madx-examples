@@ -1,0 +1,41 @@
+! saved on 19/06/06 17:15:43 by T.Risselada
+
+
+ Efcomp_measured_MQ(cellnumber,leri,ipnumber,inout) : macro = {
+
+ if (mylhcbeam < 2 && inout == 1) { exec, Set_Quadru_Mult(mq.cellnumberleriipnumber.b1, mq.cellnumberleriipnumber.v1); };
+ if (mylhcbeam < 2 && inout == 2) { exec, Set_Quadru_Mult(mq.cellnumberleriipnumber.b1, mq.cellnumberleriipnumber.v2); };
+
+ if (mylhcbeam > 1 && inout == 1) { exec, Set_Quadru_Mult(mq.cellnumberleriipnumber.b2, mq.cellnumberleriipnumber.v2); };
+ if (mylhcbeam > 1 && inout == 2) { exec, Set_Quadru_Mult(mq.cellnumberleriipnumber.b2, mq.cellnumberleriipnumber.v1); };
+     };
+
+
+
+ ON_MQ:= 1;  Rr = 0.017;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,1,1); nmq=nmq+1;} ;  // ARC 12
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,2,1); nmq=nmq-1;} ;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,2,2); nmq=nmq+1;} ;  // ARC 23
+ nmq = 33; while (nmq >=  7) {exec, Efcomp_measured_MQ($nmq,L,3,2); nmq=nmq-1;} ;
+
+ nmq =  7; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,3,2); nmq=nmq+1;} ;  // ARC 34
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,4,2); nmq=nmq-1;} ;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,4,2); nmq=nmq+1;} ;  // ARC 45
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,5,2); nmq=nmq-1;} ;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,5,1); nmq=nmq+1;} ;  // ARC 56
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,6,1); nmq=nmq-1;} ;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,6,1); nmq=nmq+1;} ;  // ARC 67
+ nmq = 33; while (nmq >=  7) {exec, Efcomp_measured_MQ($nmq,L,7,1); nmq=nmq-1;} ;
+
+ nmq =  7; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,7,1); nmq=nmq+1;} ;  // ARC 78
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,8,1); nmq=nmq-1;} ;
+
+ nmq = 11; while (nmq <= 34) {exec, Efcomp_measured_MQ($nmq,R,8,2); nmq=nmq+1;} ;  // ARC 81
+ nmq = 33; while (nmq >= 11) {exec, Efcomp_measured_MQ($nmq,L,1,2); nmq=nmq-1;} ;
+
+return;

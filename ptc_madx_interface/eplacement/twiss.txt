@@ -1,0 +1,68 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %07s "CHICANE"
+@ PARTICLE         %08s "ELECTRON"
+@ MASS             %le       0.00051099891
+@ CHARGE           %le                  -1
+@ ENERGY           %le                0.11
+@ PC               %le        0.1099988131
+@ GAMMA            %le          215.264647
+@ KBUNCH           %le                   1
+@ BCURRENT         %le                   0
+@ SIGE             %le                   0
+@ SIGT             %le                   0
+@ NPART            %le                   0
+@ EX               %le                   1
+@ EY               %le                   1
+@ ET               %le                   1
+@ DELTAP           %le                   0
+@ LENGTH           %le         11.24606064
+@ ALPHA_C          %le      -0.05026490369
+@ ALPHA_C_P        %le        0.2012159843
+@ ALPHA_C_P2       %le        -2.333806318
+@ ALPHA_C_P3       %le                   0
+@ ETA_C            %le      -0.05028648385
+@ GAMMA_TR         %le                 nan
+@ Q1               %le        0.6530934725
+@ Q2               %le        0.2180024649
+@ DQ1              %le        -1.747187132
+@ DQ2              %le        -1.477318734
+@ QS               %le                   0
+@ BETA_X_MIN       %le        0.2253011774
+@ BETA_X_MAX       %le         10.15459997
+@ BETA_Y_MIN       %le         6.877331207
+@ BETA_Y_MAX       %le         26.69361763
+@ ORBIT_X          %le                   0
+@ ORBIT_PX         %le                   0
+@ ORBIT_Y          %le                   0
+@ ORBIT_PY         %le                   0
+@ ORBIT_PT         %le                   0
+@ ORBIT_-CT        %le                   0
+@ XCORMS           %le                   0
+@ PXCORMS          %le                   0
+@ YCORMS           %le                   0
+@ PYCORMS          %le                   0
+@ XCOMAX           %le                   0
+@ PXCOMAX          %le                   0
+@ YCOMAX           %le                   0
+@ PYCOMAX          %le                   0
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 4.01.34 Linux"
+@ DATE             %08s "18/11/10"
+@ TIME             %08s "16.14.55"
+* NAME                                S              MYVAR             BETA11             BETA12             ALFA11             ALFA12 
+$ %s                                %le                %le                %le                %le                %le                %le 
+ "CHICANE$START"                      0                  0                 10                  0                 -0                 -0
+ "SEDFT"                            1.2      3.8845538e-05             10.144                  0              -0.12                 -0
+ "BEND1"                     3.22303032    0.0001013894823        8.382732908                  0      -0.3430710146                 -0
+ "MIDDFT1"                   4.72303032       0.2501580392        9.711945952                  0      -0.5430710146                 -0
+ "QF1"                       4.92303032       0.3132530122        7.510175021                  0        10.49606012                 -0
+ "MIDDFT2"                   5.52303032        1.023489496       0.2256462031                  0        1.529727164                 -0
+ "QD"                        5.72303032        1.249773234       0.2253011774                  0       -1.526232365                 -0
+ "MIDDFT2"                   6.32303032        2.011077532        7.942805406                  0       -10.78771079                 -0
+ "QF2"                       6.52303032        2.087666837        10.15459997                  0       0.8928518228                 -0
+ "MIDDFT1"                   8.02303032        2.826840529        7.792847385                  0        0.615788918                 -0
+ "BEND2"                    10.04606064        5.216706133        5.443312582                  0         0.21564746                 -0
+ "SEDFT"                    11.24606064        6.000000221        5.205287986                  0     -0.02724736031                 -0
+ "THEEND"                   11.24606064        6.000000221        5.205287986                  0     -0.02724736031                 -0
+ "CHICANE$END"              11.24606064        6.000000221        5.205287986                  0     -0.02724736031                 -0

@@ -1,0 +1,32 @@
+Option,  warn,info,echo;
+
+System,"mkdir temp";
+
+Option, -echo,-warn;
+!SU=1.0;
+
+call file="../thin62.madx";
+
+call,file="../K450Is64-59nV6.2.opt";
+! injection Optics:
+Call,file="../kinj.b1b2.v6.2.thin";
+Call,file="../kinj.corr.ir2.ir8.thin";
+Call,file="../kinj.corr.ir1.ir5.thin";
+! collision Optics:
+!call,file="kcol.b1b2.v6.2.thin";
+!Call,file="kcol.corr.ir1.ir5.thin";
+
+twiss, sequence=lhcb1,file=twiss_thin.dat;
+
+nucleon=208;
+charge=82;
+
+beam,particle=ion,charge=charge,
+energy=450*charge,mass=nucleon*nmass,npart=1.1e7,
+ex=7.82e-09,ey=7.82e-09,
+sigt=0.115,sige=4.68e-4,bunched;
+Use, period=lhcb1;
+twiss;
+ibs,file;
+
+stop;

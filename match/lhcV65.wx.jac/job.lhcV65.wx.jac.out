@@ -1,0 +1,190 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.00.09              +
+  +           Production Version            +
+  + Code Modification Date: 27.03.2009      +
+  + Execution Time Stamp: 14.07.09 10.51.02 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|---8;
+
+Option,  warn,info,echo;
+
+!set,format="22.18e";
+
+
+
+Title, "Compiling Optics for the LHC 6.5 lattice with MADX";
+
+
+
+option, -echo, -info,  warn;
+
+
+
+beam, particle = proton, sequence=lhcb1, energy = 7000.0;
+
+beam, particle = proton, sequence=lhcb2, energy = 7000.0, bv = -1;
+
+
+
+!  set switches to 1 if crossing scheme is required
+
+on_x1   := 0; on_x2   := 0; on_x5   := 0; on_x8   := 0;
+
+++++++ info: on_x1 redefined
+++++++ info: on_x2 redefined
+++++++ info: on_x5 redefined
+++++++ info: on_x8 redefined
+on_sep1 := 0; on_sep2 := 0; on_sep5 := 0; on_sep8 := 0;
+
+++++++ info: on_sep1 redefined
+++++++ info: on_sep2 redefined
+++++++ info: on_sep5 redefined
+++++++ info: on_sep8 redefined
+on_alice:= 0; on_lhcb := 0;
+
+++++++ info: on_alice redefined
+++++++ info: on_lhcb redefined
+
+
+
+
+Option, -echo,-warn,-info;
+
+enter Twiss module
+  
+iteration:   1 error:   3.979087E-12 deltap:   1.000000E-06
+orbit:   7.287327E-13  2.008203E-12  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+        26658.8832                  0    0.0003217709602        55.74765154 
+
+                q1                dq1            betxmax              dxmax 
+       64.30999981        1.000358537        4401.740438        2.860323339 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.402674124                  0                  0        59.32000122 
+
+               dq2            betymax              dymax              dyrms 
+      0.9988230829        4401.734262                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0         8.61624895 
+
+           synch_2            synch_3            synch_4            synch_5 
+    0.002244883795     7.99769003e-07                  0    2.114883702e-08 
+START MATCHING
+
+number of sequences: 1
+sequence name: lhcb1
+ JACOBIAN Strategy =           3
+number of variables:    3
+user given constraints: 1
+total constraints:      1
+
+START JACOBIAN:
+
+Initial Penalty Function =   0.4909652313432229E+05
+
+
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length   1.04284304635352     
+call:     2 Dx =   0.10428430E+01  Penalty function =  0.1325249866083097E+02
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  1.609576693472601E-002
+call:     3 Dx =   0.16095767E-01  Penalty function =  0.2517675502579218E-02
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  2.361768190891212E-004
+call:     4 Dx =   0.23617682E-03  Penalty function =  0.3970791862466377E-06
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  2.129559493679677E-006
+call:     5 Dx =   0.21295595E-05  Penalty function =  0.1306701047005660E-06
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  1.393771929733029E-006
+ Bisec iteration           1
+call:     6 Dx =   0.13937726E-05  Penalty function =  0.1468725016137273E-06
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  1.729398907126738E-006
+ Bisec iteration           1
+call:     7 Dx =   0.17294000E-05  Penalty function =  0.2432540821087416E-06
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  2.582694859314157E-006
+ Bisec iteration           1
+call:     8 Dx =   0.25826976E-05  Penalty function =  0.5138073007354869E-06
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  4.173379862838597E-006
+ Bisec iteration           1
+call:     9 Dx =   0.41733872E-05  Penalty function =  0.1178291146613507E-05
+ Solve system with            1 con,           3 var
+ Rank             1   Condition number   1.00000000000000     
+ Step length  7.311294172366107E-006
+ Bisec iteration           1
+call:    10 Dx =   0.73113163E-05  Penalty function =  0.2930238166964441E-05
+ ++++++++++ JACOBIAN ended: call limit
+ Final difference norm:   1.82997698029114     
+
+MATCH SUMMARY
+
+Node_Name                  Constraint   Type  Target Value       Final Value        Penalty
+--------------------------------------------------------------------------------------------------
+ip5:1                      wx           4     0.00000000E+00     3.61483201E-04     1.30670105E-07
+
+
+Final Penalty Function =   1.30670105e-07
+
+
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+ksf.b1                   -3.15000e+00  1.02546e-01 -1.00000e+20  1.00000e+20
+ksd.b1                    6.25846e-01 -1.69632e-01 -1.00000e+20  1.00000e+20
+kcs.b1                   -5.24160e-02  0.00000e+00 -1.00000e+20  1.00000e+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   1.30670105e-07
+enter Twiss module
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+        26658.8832                  0    0.0003217709602        55.74765154 
+
+                q1                dq1            betxmax              dxmax 
+       64.30999981       -5168.902855        4401.740438        2.860323339 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.402674124                  0                  0        59.32000122 
+
+               dq2            betymax              dymax              dyrms 
+       287.5049885        4401.734262                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.00.09 finished normally +
+  +++++++++++++++++++++++++++++++++++

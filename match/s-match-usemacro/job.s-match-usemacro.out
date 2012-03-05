@@ -1,0 +1,251 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %06s "SMACH1"
+@ PARTICLE         %06s "PROTON"
+@ MASS             %le         0.938271998
+@ CHARGE           %le                   1
+@ ENERGY           %le                 450
+@ PC               %le         449.9990218
+@ GAMMA            %le         479.6050622
+@ KBUNCH           %le                   1
+@ BCURRENT         %le                   0
+@ SIGE             %le                   0
+@ SIGT             %le                   0
+@ NPART            %le                   0
+@ EX               %le     5.212633542e-10
+@ EY               %le     5.212633542e-10
+@ ET               %le                   1
+@ LENGTH           %le                   5
+@ ALFA             %le                   0
+@ ORBIT5           %le                  -0
+@ GAMMATR          %le                   0
+@ Q1               %le        0.1398034313
+@ Q2               %le        0.2768289926
+@ DQ1              %le                   0
+@ DQ2              %le                   0
+@ DXMAX            %le                   0
+@ DYMAX            %le                   0
+@ XCOMAX           %le                   0
+@ YCOMAX           %le                   0
+@ BETXMAX          %le         9.115008032
+@ BETYMAX          %le          5.30901356
+@ XCORMS           %le                   0
+@ YCORMS           %le                   0
+@ DXRMS            %le                   0
+@ DYRMS            %le                   0
+@ DELTAP           %le                   0
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 3.04.19 Linux"
+@ DATE             %08s "21/02/08"
+@ TIME             %08s "10.13.30"
+* NAME                                S                  L                K1L               BETX               ALFX               BETY               ALFY 
+$ %s                                %le                %le                %le                %le                %le                %le                %le 
+ "SMACH1$START"                       0                  0                  0            4.94687           -1.32058            4.94687            1.32058
+ "DRIFT_0"                         1.25               1.25                  0        9.115008032       -2.013930426        2.512108032       0.6272295743
+ "QF1"                             1.75                0.5              0.545        8.642763393        2.871028475        2.665323703      -0.9610022173
+ "DRIFT_1"                         2.75                  1                  0        3.970133441        1.801601478         5.30901356       -1.682687639
+ "QF2"                             3.25                0.5               -0.7        3.577190783      -0.9260999936        5.134752129        1.989567971
+ "DRIFT_2"                            5               1.75                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+ "MKR"                                5                  0                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+ "SMACH1$END"                         5                  0                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 21.02.08 10.13.22 +
+  +++++++++++++++++++++++++++++++++++++++++++
+mkr : marker;
+
+qf1: quadrupole,k1:=kq1,l=0.5;
+
+qf2: quadrupole,k1:=kq2,l=0.5;
+
+
+
+kq2=-1.4;
+
+kq1=1.09;
+
+posq1=1.5;
+
+posq2=3;
+
+lseq=5;
+
+
+
+smach1: sequence,l:=lseq;
+
+qf1,at:=posq1;
+
+qf2,at:=posq2;
+
+mkr,at:=lseq;
+
+endsequence;
+
+
+
+beam,particle=proton,energy=450,exn=1e-6,eyn=1e-6;
+
+use,period=smach1;
+
+select,flag=twiss, clear;
+
+select,flag=twiss,column=name,s,l,k1l,betx,alfx,bety,alfy;
+
+twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+                 5                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+      0.1398034313                  0        9.115008032                  0 
+
+             dxrms             xcomax             xcorms                 q2 
+                 0                  0                  0       0.2768289926 
+
+               dq2            betymax              dymax              dyrms 
+                 0         5.30901356                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+system,"cat twj";
+
+
+
+moveandtwiss: macro={
+
+use,sequence=smach1;
+
+twiss,betx=4.94687,alfx= -1.32058,bety=4.94687,alfy=1.32058;
+
+};
+
+
+
+
+
+kq1=0.91;
+
+++++++ info: kq1 redefined
+posq2=3.1;
+
+++++++ info: posq2 redefined
+kq2=-1.1;
+
+++++++ info: kq2 redefined
+lseq=3.4;
+
+++++++ info: lseq redefined
+match,use_macro;
+
+vary,name=kq1;
+
+vary,name=posq2;
+
+vary,name=kq2;
+
+vary,name=lseq;
+
+use_macro,name=moveandtwiss;
+
+constraint,expr= table(twiss,mkr,betx)=4.91062;
+
+constraint,expr= table(twiss,mkr,alfx)= -1.32332;
+
+constraint,expr= table(twiss,mkr,bety)=4.94687;
+
+constraint,expr= table(twiss,mkr,alfy)=1.32058;
+
+jacobian;
+
+number of variables:    4
+user given constraints: 0
+total constraints:      4
+
+START JACOBIAN:
+
+ JACOBIAN Strategy = 3
+Initial Penalty Function =   0.1123018854395426E+00
+
+
+ Solve system with  4con, 4var
+ Rank   4  Condition number  139.58712
+ Step length  0.0117305226
+call:     2 Dx =   0.11730523E-01  Penalty function =  0.5174931697601303E-04
+ Solve system with  4con, 4var
+ Rank   4  Condition number  148.170726
+ Step length  0.00547105178
+call:     3 Dx =   0.54710518E-02  Penalty function =  0.7291009957921825E-07
+ ++++++++++ JACOBIAN ended: converged successfully
+ Final difference norm:  0.196894089
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: moveandtwiss        
+  constraint: table(twiss,mkr,betx)=4.91062           
+  values:     +4.91086e+00=+4.91062e+00
+  weight:     +1.00000e+00
+  penalty:    +2.41537e-04
+
+  constraint: table(twiss,mkr,alfx)=-1.32332          
+  values:     -1.32343e+00=-1.32332e+00
+  weight:     +1.00000e+00
+  penalty:    -1.06200e-04
+
+  constraint: table(twiss,mkr,bety)=4.94687           
+  values:     +4.94682e+00=+4.94687e+00
+  weight:     +1.00000e+00
+  penalty:    -5.21143e-05
+
+  constraint: table(twiss,mkr,alfy)=1.32058           
+  values:     +1.32056e+00=+1.32058e+00
+  weight:     +1.00000e+00
+  penalty:    -2.39905e-05
+
+
+
+Final Penalty Function =   7.29100996e-08
+
+
+
+Variable                   Final Value        Lower Limit        Upper Limit
+-------------------------------------------------------------------------------
+kq1                        9.13440107E-01    -1.00000000E+20     1.00000000E+20
+posq2                      3.13792882E+00    -1.00000000E+20     1.00000000E+20
+kq2                       -1.10712453E+00    -1.00000000E+20     1.00000000E+20
+lseq                       3.40130891E+00    -1.00000000E+20     1.00000000E+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   7.29100996e-08
+
+
+!twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+
+!system,"cat twj";
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.19 finished normally +
+  +++++++++++++++++++++++++++++++++++

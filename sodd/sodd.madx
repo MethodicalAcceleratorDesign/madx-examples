@@ -1,0 +1,34 @@
+beam, particle=positron, energy=0.5,bunched,npart=4.2E+09, 
+      kbunch=1386, EX = 1.3052E-10, EY = 1.15750E-12 ,
+      SIGT=0.00131321, SIGE=0.00135; !,radiate
+
+ang := pi/10.0D0;
+
+GRAD :=0.0;
+ALPHA  := 15 * RADDEG;
+   LL     := 150 * RADDEG;
+   PFR    := 0.0;
+LEN := 1.1;
+tilt_angle := pi/2.0D0;
+
+SFODO : SBEND, L=LEN, ANGLE=ALPHA, E1=PFR, E2=PFR;
+
+QD  :  QUADRUPOLE,  L=0.2, K1=-2.972910E+00; 
+QF  : QUADRUPOLE,  L=0.2, K1=4.161160E+00;    
+WD : DRIFT, L=0.2;
+SX: sextupole, L=.001,k2=.001;
+OX: octupole, L=.001,k3=100.;
+
+FODO : LINE=(QD,SX,WD,SFODO,WD,QF,SX,OX,WD,SFODO,WD);
+
+USE, PERIOD=FODO;
+makethin,sequence=FODO;
+USE, PERIOD=FODO;
+
+TWISS;
+
+sodd, detune,distort1,distort2,multipole_order_range=3,4,start_stop= 0.,26000.,
+      print_all, print_at_end;
+
+sixtrack;
+STOP;

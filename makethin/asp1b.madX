@@ -1,0 +1,128 @@
+!hbu originally received from vrd@mail.cern.ch Date: 	29 September, 2004 17:10:23 GMT+02:00
+! modified for makethin for madX version 3   and improved plotting
+! asp1a.madX = machine with standard definition of dipoles with edges
+! asp1b.madX = same machine prepared for makethin       also provided as  /afs/cern.ch/user/f/frs/public_html/mad-X_examples/makethin
+
+TITLE "ASP storage ring"; ! ~vrd/public/kolabo/04
+
+twiss_tol = 1e-006;
+s1: sextupole,l= 0.1,k2= 14*2;
+q1: quadrupole,l= 0.355,k1= 1.761741068;
+s2: sextupole,l= 0.1,k2= -14*2;
+dip: sbend,l= 1.726,angle= 0.2243994753,k1= -0.3349992455;
+! Definition of end quadrupole due to angle (SBEND)
+! CORRECT DEFINITION FOR MAKETHIN
+e1dip = 0.1121997376 ; e2dip=0.1121997376;
+endip1 : multipole,knl={0,-tan(e1dip)*0.2243994753/1.726};
+endip2 : multipole,knl={0,-tan(e2dip)*0.2243994753/1.726};
+s3: sextupole,l= 0.1,k2= -7.014634658*2;
+q2: quadrupole,l= 0.18,k1= -1.038377057;
+q3: quadrupole,l= 0.355,k1= 1.533801635;
+s4: sextupole,l= 0.1,k2= 7.189345716*2;
+
+cel: sequence, l=15.428572;
+bpm1: monitor, at = 2.304;
+s1, at = 2.748286;
+s1, at = 2.848286;
+q1, at = 3.265786;
+s2, at = 3.658286;
+s2, at = 3.758286;
+bpm2: monitor, at = 3.884;
+endip1,at=-1.726/2,from=dip1;
+dip1 : dip, at = 4.946286;
+endip2,at= 1.726/2,from=dip1;
+bpm3: monitor, at = 6.020;
+s3, at = 6.134286;
+s3, at = 6.234286;
+q2, at = 6.529286;
+q3, at = 7.246786;
+s4, at = 7.664286;
+s4, at = 7.764286;
+bpm4: monitor, at = 7.901;
+q3, at = 8.181786;
+q2, at = 8.899286;
+s3, at = 9.194286;
+s3, at = 9.294286;
+bpm5: monitor, at = 9.420;
+endip1,at=-1.726/2,from=dip2;
+dip2 : dip, at = 10.482286;
+endip2,at= 1.726/2,from=dip2;
+bpm6: monitor, at = 11.556;
+s2, at = 11.670286;
+s2, at = 11.770286;
+q1, at = 12.162786;
+s1, at = 12.580286;
+s1, at = 12.680286;
+bpm7: monitor, at = 13.125;
+endsequence;
+
+fullring: sequence,refer=start,l=216.000008;
+cel, at =   0.0000000;
+cel, at =  15.4285720;
+cel, at =  30.8571440;
+cel, at =  46.2857160;
+cel, at =  61.7142880;
+cel, at =  77.1428600;
+cel, at =  92.5714320;
+cel, at = 108.0000040;
+cel, at = 123.4285760;
+cel, at = 138.8571480;
+cel, at = 154.2857200;
+cel, at = 169.7142920;
+cel, at = 185.1428640;
+cel, at = 200.5714360;
+endsequence;
+
+
+beam,particle=electron,energy=3,radiate=false;
+
+!---- Start using a sequence/line ----
+use,sequence=fullring;twiss;
+!---- Select and print out twiss parameters ----
+select,flag=twiss,clear;
+select,flag=twiss,column=name,betx,alfx,bety,alfy,dx,s;
+!---- TWISS calculations ----
+twiss,file=b_optics;
+!---- Set plot defaults ----
+! setplot, post=2; ! eps, many files  01, 02 to filename madx01.eps ...
+setplot, post=1; ! single ps
+!---- Plot the output to a ps file ----
+plot,file=b_tw,table=twiss,vaxis1=betx,bety,vaxis2=dx,
+  haxis=s,hmin=0,hmax=15.5,vmin=0,vmax=35,1,style=100,colour=100,interpolate=true,
+  title="Optical Function for the ASP Storage Ring",noversion=true; ! plot the first 15.5 meters (1st cell)
+
+!---- Slice and track with one cell
+! beam,particle=electron,energy=3,radiate=false;
+use,sequence=cel;twiss;
+select,flag=makethin,slice=2;
+makethin, sequence=cel;
+use,sequence=cel;twiss;
+! save,sequence=cel,file="cel_thin.seq";use,sequence=cel;stop;
+plot,vaxis1=betx,bety,vaxis2=dx,haxis=s,hmin=0,hmax=15.5,vmin=0,vmax=35,1,style=100,colour=100,interpolate=true;
+track,onetable,file=b_track;
+  start,x=0.000,px=0.0,y=0.0,py=0.0,t=0.0,pt=0.0;
+  run,turns=1;
+endtrack;
+
+!---- Slice and track with fullring
+use,sequence=fullring;
+select,flag=makethin,slice=4;
+makethin, sequence=fullring;
+use,sequence=fullring;
+track,onetable,file=b_track;
+  start,x=0.001,px=0,y=0,py=0,t=0,pt=0; ! 1mm offset in x
+  observe,place=bpm1;
+  observe,place=bpm2;
+  observe,place=bpm3;
+  observe,place=bpm4;
+  observe,place=bpm5;
+  observe,place=bpm6;
+  observe,place=bpm7;
+  run,turns=50;
+endtrack;
+
+!---- Plot tracking info ----
+plot,file=b_track,table=trackone,vaxis=px,haxis=x,style=0,symbol=4,noline=true,
+title="Horizontal phase space",noversion=true;
+
+stop;

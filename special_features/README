@@ -1,0 +1,6 @@
+Examples for special features
+
+1) Table manipulations
+
+madx < setvars.madx > setvars.out
+

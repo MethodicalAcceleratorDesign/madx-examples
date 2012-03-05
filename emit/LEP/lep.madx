@@ -1,0 +1,19 @@
+Title " LEP for survey comp";
+option,trace,rbarc=false;
+option,echo = false;
+call,file='lep.seq9';
+call,file="lep.opt9";
+option, echo = true;
+beam, particle = positron, energy = 98.0, radiate;
+use, period=lep;
+vrfc:=2.;
+vrfsc:=45.;
+select,flag=twiss,column=name,s,betx,bety,re11,re12,re13,re14,re15,re16,
+re21,re22,re23,re24,re25,re26,
+re31,re32,re33,re34,re35,re36,
+re41,re42,re43,re44,re45,re46,
+re51,re52,re53,re54,re55,re56,
+re61,re62,re63,re64,re65,re66;
+twiss,chrom,centre,rmatrix,file=twiss_lep;
+EMIT,DELTAP=0.;
+stop;

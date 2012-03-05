@@ -1,0 +1,75 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 21.02.08 10.14.44 +
+  +++++++++++++++++++++++++++++++++++++++++++
+match,use_macro;
+
+vary,name=x1;
+
+vary,name=x2;
+
+m1: macro={;};
+
+constraint,expr= x1+3*x2=1;
+
+constraint,expr= x1+1*x2=1;
+
+jacobian,calls=20,tolerance=1.e-21;
+
+number of variables:    2
+user given constraints: 0
+total constraints:      2
+
+START JACOBIAN:
+
+ JACOBIAN Strategy = 3
+Initial Penalty Function =   0.2000000000000000E+01
+
+
+ Solve system with  2con, 2var
+ Rank   2  Condition number  5.82842712
+ Step length  1.
+call:     2 Dx =   0.10000000E+01  Penalty function =  0.5509393530336825E-23
+ ++++++++++ JACOBIAN ended: converged successfully
+ Final difference norm:  1.
+endmatch;
+
+
+MATCH SUMMARY
+
+--------------------------------------------------------------------
+macro: m1                  
+  constraint: x1+3*x2=1                               
+  values:     +1.00000e+00=+1.00000e+00
+  weight:     +1.00000e+00
+  penalty:    -1.65956e-12
+
+  constraint: x1+1*x2=1                               
+  values:     +1.00000e+00=+1.00000e+00
+  weight:     +1.00000e+00
+  penalty:    -1.65989e-12
+
+
+
+Final Penalty Function =   5.50939353e-24
+
+
+
+Variable                   Final Value        Lower Limit        Upper Limit
+-------------------------------------------------------------------------------
+x1                         1.00000000E+00    -1.00000000E+20     1.00000000E+20
+x2                         1.64081562E-16    -1.00000000E+20     1.00000000E+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   5.50939353e-24
+
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.19 finished normally +
+  +++++++++++++++++++++++++++++++++++

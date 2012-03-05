@@ -1,0 +1,23 @@
+! apply measured errors to all MQMC
+
+! written on 20/12/05 10:47:25 by T.Risselada
+
+ Rr = 0.017; ON_MQMC = 1;
+
+ exec, Efcomp_Measured_Quad(MQMC.9R1);
+ exec, Efcomp_Measured_Quad(MQMC.9L2);
+
+ exec, Efcomp_Measured_Quad(MQMC.9R2);
+ exec, Efcomp_Measured_Quad(MQMC.9L4);
+ exec, Efcomp_Measured_Quad(MQMC.9R4);
+ exec, Efcomp_Measured_Quad(MQMC.9L5);
+
+ exec, Efcomp_Measured_Quad(MQMC.9R5);
+ exec, Efcomp_Measured_Quad(MQMC.9L6);
+ exec, Efcomp_Measured_Quad(MQMC.9R6);
+ exec, Efcomp_Measured_Quad(MQMC.9L8);
+
+ exec, Efcomp_Measured_Quad(MQMC.9R8);
+ exec, Efcomp_Measured_Quad(MQMC.9L1);
+
+return;

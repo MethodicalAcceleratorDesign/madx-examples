@@ -1,0 +1,81 @@
+Option,  warn,info;
+
+System,"rm -rf db";
+System,"rm -rf lt";
+
+System,"ln -fns /afs/cern.ch/eng/lhc/optics/V6.4 db";
+System,"ln -fns /afs/cern.ch/eng/lhc/optics/V6.4/toolkit lt";
+
+Option, echo;
+Title, "Compiling Optics for the LHC 6.4 lattice with MADX";
+
+!---------------------------------------------------------------;
+!           CALL IN SELECTION, SEQUENCE and OPTICS FILES;
+!---------------------------------------------------------------;
+   Option, -echo,-warn,-info;
+
+ call, file = "db/V6.4.seq";
+ call, file = "db/V6.4.inj.str";
+!call, file = "db/V6.4.coll.str";
+
+! crossing schemes and experimental magnets
+ on_x1   := 1; on_x2   := 1; on_x5   := 1; on_x8   := 1;
+ on_sep1 := 1; on_sep2 := 1; on_sep5 := 1; on_sep8 := 1;
+ on_alice:= 1; on_lhcb := 1;
+
+Option, echo;
+
+Beam, particle = proton, sequence=lhcb1, energy = 450.0,
+          NPART=1.05E11, sige=      4.5e-4 ;
+Beam, particle = proton, sequence=lhcb2, energy = 450.0,
+          bv = -1, NPART=1.05E11, sige=      4.5e-4;         !<<<<
+! the 'bv' parameter indicates that beam2 rotates counter-clockwise
+
+
+
+ use, period=lhcb1;
+ select, flag=twiss, clear;
+ select, flag=twiss, pattern="IP\.*",   column=name,s,betx,bety,alfx,alfy,dx,dpx,x,px,y,py,mux,muy;
+ select, flag=twiss, pattern="MQ.33\.*",column=name,s,betx,bety,alfx,alfy,dx,dpx,x,px,y,py,mux,muy;
+ twiss,sequence=lhcb1,file=twiss.b1.data,save;
+ system,"cat twiss.b1.data";
+ !call,file="lt/plot.madx";
+
+
+!call,file="lt/select.ir2.b1.madx";
+!call,file="lt/twissini.ir2.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir3.b1.madx";
+!call,file="lt/twissini.ir3.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir4.b1.madx";
+!call,file="lt/twissini.ir4.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir5.b1.madx";
+!call,file="lt/twissini.ir5.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir6.b1.madx";
+!call,file="lt/twissini.ir6.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir7.b1.madx";
+!call,file="lt/twissini.ir7.b1.madx";
+!call,file="lt/plot.madx";
+
+!call,file="lt/select.ir8.b1.madx";
+!call,file="lt/twissini.ir8.b1.madx";
+!call,file="lt/plot.madx";
+
+ use, period=lhcb2;
+ select, flag=twiss, clear;
+ select, flag=twiss, pattern="IP\.*",   column=name,s,betx,bety,alfx,alfy,dx,dpx,x,px,y,py,mux,muy;
+ select, flag=twiss, pattern="MQ.33\.*",column=name,s,betx,bety,alfx,alfy,dx,dpx,x,px,y,py,mux,muy;
+ twiss,sequence=lhcb2,file=twiss.b2.data,save;
+ system,"cat twiss.b2.data";
+ !call,file="lt/plot.madx";
+
+stop;

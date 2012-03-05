@@ -1,0 +1,30 @@
+chrom: launch twiss with chrom option. rembeber to include the desired varaibles in the twiss table with the select command
+
+
+jacobian: Matching routine. It is a simple implementation of the newton methods, the jacobian of the system is calculated and the linear problem is solved. 
+A QR or LQ  decomposition is performed when the system is over or under-determined. Several strategies are implemented for dealing with the constrained variables:
+
+strategy=1, when a variable exceeds a limit it is reseted to the limit
+strategy=2, no actual matching, the jacobian is printed
+strategy=3, when a variable exceeds a limit it is excluded from the set of variables unless the number of variables equals the constraint otherwise it is reseted.
+
+It is possible to apply a transformation to set of variables before each matching assing to the parameters "cool" and "random" the followin values:
+
+cool   cooling factor. Apply a transformation to the variables
+        before perform the matching. The transformation is:
+        if "balance" >=0
+         newval=(1-cool)*oldval+cool*((1-balance)*maxval+balance*minval)
+        else
+         newval=(1-cool)*oldval+cool*opt
+
+        "opt" is the optimal values specified in the vary command.
+
+random apply a random  transformation to the variables
+        newval= (1+ random *( rand() - 0.5) ) * oldval
+
+repeat=n the matching routine n times
+
+
+slope   arguments: 1,0,-1. Allows the variable only to increase (1), decreas(-1), both (0)
+opt     Optimal value use with "cool" option, balance has to be set -1
+

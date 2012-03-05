@@ -1,0 +1,81 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 03.02.11 17.02.05 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!TITLE,'Test input for MAD-X';
+
+
+
+ eg   :=  100;
+
+ bg   :=  eg/pmass;
+
+ en   := 3.75e-06;
+
+ epsx := en/bg;
+
+ epsy := en/bg;
+
+beam, particle = proton, energy =   eg        , 
+
+                         sigt=      0.077     , 
+
+                         sige=      1.1e-4    , 
+
+                         npart=     1.05e11   , 
+
+                         exn=4*en,  eyn=4*en  , 
+
+                         kbunch = 10,
+
+                         et = 0.002, bv = -1,
+
+                         ex=epsx,   ey=epsy;
+
+value,epsx,epsy;
+
+epsx =    3.518520049e-08 ;
+epsy =    3.518520049e-08 ;
+option,-echo;
+
+++++++ warning: implicit element re-definition ignored: bb
+SXF -- sequence fivecell: declared length = 5.346000e+02; element l_sum = 5.346000e+02
+enter Twiss module
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004431832894        47.50160804 
+
+                q1                dq1            betxmax              dxmax 
+       1.254459671       -7.806096655        177.6982659        2.176740606 
+
+             dxrms             xcomax             xcorms                 q2 
+       1.646343543                  0                  0        1.254524491 
+
+               dq2            betymax              dymax              dyrms 
+      -2.007682522        177.6832142                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+ GXPLOT-X11  1.50 initialized
+
+ plot number =            1
+ plot number =            2
+
+  Number of warnings: 1
+1 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++

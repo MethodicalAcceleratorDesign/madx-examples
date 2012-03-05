@@ -1,0 +1,17 @@
+Example of NormalForm analysis with PTC in MAD-X.
+
+A table is printed that gives:
+-dispersion
+-tunes
+-first and second order chromaticity
+-anharmonicities
+-Hamiltonian terms(Resonances) up to fourth order.
+
+The run command is:
+
+madxp < test_5frs.madx >! test_5frs.out
+
+A sodd analysis is done within MAD-X as well (output in
+distort_1_H_end). This analytical treatment of SODD agrees 
+perfectly with the PTC NormalForm analysis. Compare the
+Hamiltonian terms in "distort_1_H_end" and "test_5frs.out".

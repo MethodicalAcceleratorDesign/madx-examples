@@ -1,0 +1,17 @@
+!  Switch off b2 correction using the MQT in the arcs
+
+ if (mylhcbeam == 1){
+ kqtf.a12b1:=0; kqtf.a23b1:=0; kqtf.a34b1:=0; kqtf.a45b1:=0;
+ kqtf.a56b1:=0; kqtf.a67b1:=0; kqtf.a78b1:=0; kqtf.a81b1:=0;
+ kqtd.a12b1:=0; kqtd.a23b1:=0; kqtd.a34b1:=0; kqtd.a45b1:=0;
+ kqtd.a56b1:=0; kqtd.a67b1:=0; kqtd.a78b1:=0; kqtd.a81b1:=0;
+ }
+
+ if (mylhcbeam >  1){
+ kqtf.a12b2:=0; kqtf.a23b2:=0; kqtf.a34b2:=0; kqtf.a45b2:=0;
+ kqtf.a56b2:=0; kqtf.a67b2:=0; kqtf.a78b2:=0; kqtf.a81b2:=0;
+ kqtd.a12b2:=0; kqtd.a23b2:=0; kqtd.a34b2:=0; kqtd.a45b2:=0;
+ kqtd.a56b2:=0; kqtd.a67b2:=0; kqtd.a78b2:=0; kqtd.a81b2:=0;
+ }
+
+return;

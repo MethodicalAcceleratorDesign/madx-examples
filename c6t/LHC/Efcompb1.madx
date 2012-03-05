@@ -1,0 +1,1077 @@
+
+!---|----1----|----2----|----3----|----4----|----5----|----6----|----7----|----8
+!-------------------------------------------------------------------------------
+!
+!           Specifications of field imperfections for LHC v6.-2
+!                   -----------------------------------
+!-------------------------------------------------------------------------------
+!-------------------------------HISTORY-----------------------------------------
+! 06/03/96/AFG-JPK 17:15 created following the strategy defined by AP/MA W.G.
+! 08/03/96/jpk     14:30 MQX(T) random distribution cut at 2 sigmas (3 before)
+!                        Uncertainties now added quadratically
+!                        ON_BDOT treated like a scaling factor
+!                        SET_ERR_MAX: set worst case for each multipole
+! 11/03/96/jpk     12:10 Fix a bug with drawing the systematic per arc:
+!                        No statist. consequence but the random gen. slips
+!                        Improve clarity (selection ranges, names of subroutines)
+!                        Suppress redundancies in the calculation of the sigmas
+!                        of the random components.
+! 14/04/96/jpk     13:45 Bug corrected in setting the seed for randoms; before that
+!                        time, all octants had the same suite of randoms.
+! 13/08/96/jpk     09:40 Improve the control output of set_err_max
+! 24/05/97/jm            Converted from v4.2 to v5.-1 (THIN Lens)
+! 06/06/97/jm            Updated to v5.0 (THIN Lens)
+! 16/10/98/jm            Updated to V6.-2 (THIN Lens)
+! 01/07/00/ew            Updated to V6.2 (THIN Lens)
+! 18/02/02/ew            This version has been modified and tested by hg and ew
+!                        for the triplet study and for the whole machine by fs
+!------------------------------ENDHISTORY---------------------------------------
+!
+!1/ SET ALL IMPERFECTIONS FOR ALL MAGNETS:
+!---------------
+! ON_ALL                     ! select all magnets and all multipolar orders
+!
+!2/ SET A SELECTION OF IMPERF. FOR A SELECTION OF MAGNETS:
+!---------------
+!   The selection is carried out thru switches described later.
+! <select a class of magnets, e.g. MB's>
+!    Set, ON_MB, 1;
+! <select the imperfections: normal, skew, order for this class>
+!    Set, ON_B1s, 1;         ! normal (B) systematic (s) order 1
+!       etc....
+!
+! <select another class of magnets, e.g. MQ's>
+! Set, ON_MQ, 1;
+! <select the imperfections for the MQ's>
+!    Set, ON_B1s, 0;
+!       etc....
+!
+!3/ SET ALL IMPERFECTIONS FOR A SELECTION OF MAGNETS
+!---------------------------------------------------
+! <select a class of magnets, e.g. MB's>
+!    Set, ON_MB, 1;
+! ON_MULT                    ! select all imperfection orders
+!
+!--------------------------------SWITCHES----------------------------------------
+!
+!SELECTION OF A CLASS OF ELEMENTS (on=1/off=0, default value)
+! *Main and Disp. Suppr. Dipoles (MB)                                   : ON_MB
+! *Separator: single channel RHIC dipoles (MBX, MBRS)                   : ON_MBXR
+! *Separator: 2-1 RHIC dipoles (MBR)                                    : ON_MBR
+! *Separator: single channel (MBXW) and 2-1  warm Dipoles (MBW)         : ON_MBW
+!
+! *Arc (MQ) and DS Quadrupoles (MQML, MQM, MQMC)                        : ON_MQ
+! *Insertion 2-1 Quadrupoles (MQ, MQML, MQM, MQMC)                      : ON_MQIP
+! *Arc Tune shift (MQT), DS (MQT) and DS trim Quads(MQTL)               : ON_MQTL
+! *Single apertureRF/Quadrupoles(MQR, MQRL)                             : ON_MQR
+! *Low-Beta Quadupoles (MQX, MQXL)                                      : ON_MQX
+! *Wide Aperture Quadrupoles (MQY)                                      : ON_MQY
+! *Warm Quadrupoles (MQW)                                               : ON_MQW
+!
+!SELECTION OF IMPERFECTION ORDERS (i=1..11)
+! *normal systematic                                                    : ON_BiS
+! *normal random                                                        : ON_BiR
+! *skew systematic                                                      : ON_AiS
+! *skew random                                                          : ON_AiR
+!
+!SELECTION OF RAMP INDUCED IMPERFECTIONS                                : ON_BDOT
+!
+!SUBROUTINES FOR FAST SELECTIONS
+! *ALL multipole orders  set to 1                                       : ON_MULT
+! *ALL multipole orders for ALL elements  set to 1                      : ON_ALL
+!
+!---------------------STRATEGY FOR SETTING ERRORS A LA V4.2----------------------
+!
+! Random and systematic imperfections are defined for each production line
+! of magnets.
+! Production lines defined:
+!  - MB's  : 8 lines, one per arc
+!  - MQ's  : 8 lines, one per arc
+!  - all others: 1 line per kind of magnet
+!
+! Each line is defined by systematic (mean) and random (spread) imperfections:
+! - RANDOM imperfections: The spread  is assumed the same for all production
+!   lines of a given kind of magnets. For each magnet, an imperfection is
+!   drawn from a gaussian distribution with sigma= Bir(Air),
+!   cut a GCUTR sigma (3 by default). Bir(Air) is formed by quadratic addition of
+!   persistent current (pc), geometric (g) and ramp induced (t) contributions
+!   the latter depending on the switch ON_BDOT.
+! - SYSTEMATIC imperfections: they are computed for each production line from
+!   the MEAN value for the OUTER channel and the UNCERTAINTY found in the table.
+!   The UNCERTAIN part is computed by adding quadratically the uncertainties for
+!   pc, g, t; the value obtained is considered to be 1.5 sigmas of a gaussian
+!   distribution cut at 1.5 sigmas; the uncertainty is drawn from this
+!   distribution for each line.
+!   The MEAN part is computed by adding linearly the pc, g, t components for
+!   the OUTER channel. For the INNER channel the GEOMETRIC MEAN component is
+!   deduced from that of the outer channel; it follows the following sign rules:
+!      * dipoles:  -  b2, b4        (2-1 design)
+!                  -  other b(2n)   (assumption; no consequence)
+!                  +  b(2n+1)       (design)
+!                  +  a(2n)         (wild assumption; no consequence)
+!                  -  a(2n+1)       (wild assumption; no consequence)
+!      * quads     +  b(2[2n+1])    (design)
+!                  +  b(4n), a(2n+1)(wild assumption; no consequence)
+!                  -  b(2n+1), a(2n)(wild assumption; no consequence)
+!   The other MEAN components (PERSISTENT CURRENT, RAMP) keep the sign of the
+!   tables for both channels.
+!---------------------STRATEGY FOR THE WORST CASE------------------------------
+! For each component (pc, g, t), the uncertainty and 3 rms (2 for MQX) of the
+! bias due to randoms are
+! added to the mean in such  a way as to produce the largest number in
+! absolute value with the sign of the dominant component.
+! The contributions of the three components are then added linearly
+! THE SIGN RULE IS APPLIED to the mean b2 in the dipoles which is the only one
+! to change sign for sure.
+!------------------------------------------------------------------------------
+!
+!----------------------------------------------------
+ R_ALL =  3.0;    !default cut of the distribution (RANDOM);
+ R_MQX =  2.0;    !default cut of the distribution (RANDOM) for MQX;
+ GCUTR =  R_ALL;
+ GCUTS =  1.5;    !default cut of the distribution (SYSTEMATIC);
+
+!============ FIRST DO THE BENDS ======================================
+
+if (ON_MB <> 0) {
+!****************Main and Disp. Suppr. Dipoles (MB)*******************
+ System,"echo ' Efcomp : Main and Disp. Suppr. Dipoles (MB)'";
+! Define sigma for random componentSet, bscale, 10E-4;
+ B1r  =  ON_MB*sqrt( b1pR_MB^2  + b1gR_MB^2  + (b1tR_MB * ON_BDOT)^2 );
+ B2r  =  ON_MB*sqrt( b2pR_MB^2  + b2gR_MB^2  + (b2tR_MB * ON_BDOT)^2 );
+ B3r  =  ON_MB*sqrt( b3pR_MB^2  + b3gR_MB^2  + (b3tR_MB * ON_BDOT)^2 );
+ B4r  =  ON_MB*sqrt( b4pR_MB^2  + b4gR_MB^2  + (b4tR_MB * ON_BDOT)^2 );
+ B5r  =  ON_MB*sqrt( b5pR_MB^2  + b5gR_MB^2  + (b5tR_MB * ON_BDOT)^2 );
+ B6r  =  ON_MB*sqrt( b6pR_MB^2  + b6gR_MB^2  + (b6tR_MB * ON_BDOT)^2 );
+ B7r  =  ON_MB*sqrt( b7pR_MB^2  + b7gR_MB^2  + (b7tR_MB * ON_BDOT)^2 );
+ B8r  =  ON_MB*sqrt( b8pR_MB^2  + b8gR_MB^2  + (b8tR_MB * ON_BDOT)^2 );
+ B9r  =  ON_MB*sqrt( b9pR_MB^2  + b9gR_MB^2  + (b9tR_MB * ON_BDOT)^2 );
+ B10r =  ON_MB*sqrt( b10pR_MB^2 + b10gR_MB^2 + (b10tR_MB* ON_BDOT)^2 );
+ B11r =  ON_MB*sqrt( b11pR_MB^2 + b11gR_MB^2 + (b11tR_MB* ON_BDOT)^2 );
+
+ A1r  =  ON_MB*sqrt( a1pR_MB^2  + a1gR_MB^2  + (a1tR_MB * ON_BDOT)^2 );
+ A2r  =  ON_MB*sqrt( a2pR_MB^2  + a2gR_MB^2  + (a2tR_MB * ON_BDOT)^2 );
+ A3r  =  ON_MB*sqrt( a3pR_MB^2  + a3gR_MB^2  + (a3tR_MB * ON_BDOT)^2 );
+ A4r  =  ON_MB*sqrt( a4pR_MB^2  + a4gR_MB^2  + (a4tR_MB * ON_BDOT)^2 );
+ A5r  =  ON_MB*sqrt( a5pR_MB^2  + a5gR_MB^2  + (a5tR_MB * ON_BDOT)^2 );
+ A6r  =  ON_MB*sqrt( a6pR_MB^2  + a6gR_MB^2  + (a6tR_MB * ON_BDOT)^2 );
+ A7r  =  ON_MB*sqrt( a7pR_MB^2  + a7gR_MB^2  + (a7tR_MB * ON_BDOT)^2 );
+ A8r  =  ON_MB*sqrt( a8pR_MB^2  + a8gR_MB^2  + (a8tR_MB * ON_BDOT)^2 );
+ A9r  =  ON_MB*sqrt( a9pR_MB^2  + a9gR_MB^2  + (a9tR_MB * ON_BDOT)^2 );
+ A10r =  ON_MB*sqrt( a10pR_MB^2 + a10gR_MB^2 + (a10tR_MB* ON_BDOT)^2 );
+ A11r =  ON_MB*sqrt( a11pR_MB^2 + a11gR_MB^2 + (a11tR_MB* ON_BDOT)^2 );
+
+! Define systematic component per arc and set errors for MB's
+   select, flag=error, clear; select, flag=error,  range= IP1/IP2,   class= MB;
+      eoption, seed= SEEDSYS    ; exec NewFamily_MB; exec Outer_MB;
+      eoption, seed= SEEDRAN    ; exec SetEfcomp_B;
+
+      !Eprint;
+   select, flag=error ,clear; select, flag=error,  range= IP2/IP3.B1,   class= MB;
+      eoption, seed= SEEDSYS+100; exec NewFamily_MB; exec Inner_MB;
+      eoption, seed= SEEDRAN+1100; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error, clear; select, flag=error,  range= IP3.B1/IP4.B1,   class= MB;
+      eoption, seed= SEEDSYS+200; exec NewFamily_MB; exec Inner_MB;
+      eoption, seed= SEEDRAN+1200; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error ,clear; select, flag=error , range= IP4.B1/IP5,   class= MB;
+      eoption, seed= SEEDSYS+300; exec NewFamily_MB; exec Inner_MB;
+      eoption, seed= SEEDRAN+1300; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error, clear; select, flag=error,  range= IP5/IP6.B1,   class= MB;
+      eoption, seed= SEEDSYS+400; exec NewFamily_MB; exec Outer_MB;
+      eoption, seed= SEEDRAN+1400; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error, clear; select, flag=error,  range= IP6.B1/IP7.B1,   class= MB;
+      eoption, seed= SEEDSYS+500; exec NewFamily_MB; exec Outer_MB;
+      eoption, seed= SEEDRAN+1500; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error, clear; select, flag=error,  range= IP7.B1/IP8,   class= MB;
+      eoption, seed= SEEDSYS+600; exec NewFamily_MB; exec Outer_MB;
+      eoption, seed= SEEDRAN+1600; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error ,clear; select, flag=error , range= IP8/IP1.L1,class= MB;
+      eoption, seed= SEEDSYS+700; exec NewFamily_MB; exec Inner_MB;
+      eoption, seed= SEEDRAN+1700; exec SetEfcomp_B;
+      !Eprint;
+}
+
+
+if (ON_MBXR <> 0) {
+!****************Separator: single channel Dipoles (MBX)**************
+!****************Separator: single channel/RF Dipoles (MBRS)**********
+!***RHIC magnets : Aggregation based on BNL LHC Dipole Magnet Review**
+!***               July 16, 1998                                    **
+!***               "Field and Alignment Quality Issues", Jie Wei    **
+!*********************************************************************
+ System,"echo ' Efcomp : Separator: single channel Dipoles (MBX,MBRS)'";
+! Define sigma for random component
+
+ B1r  =  ON_MBXR*sqrt(b1pR_MBXR^2  + b1gR_MBXR^2  +(b1tR_MBXR * ON_BDOT)^2);
+ B2r  =  ON_MBXR*sqrt(b2pR_MBXR^2  + b2gR_MBXR^2  +(b2tR_MBXR * ON_BDOT)^2);
+ B3r  =  ON_MBXR*sqrt(b3pR_MBXR^2  + b3gR_MBXR^2  +(b3tR_MBXR * ON_BDOT)^2);
+ B4r  =  ON_MBXR*sqrt(b4pR_MBXR^2  + b4gR_MBXR^2  +(b4tR_MBXR * ON_BDOT)^2);
+ B5r  =  ON_MBXR*sqrt(b5pR_MBXR^2  + b5gR_MBXR^2  +(b5tR_MBXR * ON_BDOT)^2);
+ B6r  =  ON_MBXR*sqrt(b6pR_MBXR^2  + b6gR_MBXR^2  +(b6tR_MBXR * ON_BDOT)^2);
+ B7r  =  ON_MBXR*sqrt(b7pR_MBXR^2  + b7gR_MBXR^2  +(b7tR_MBXR * ON_BDOT)^2);
+ B8r  =  ON_MBXR*sqrt(b8pR_MBXR^2  + b8gR_MBXR^2  +(b8tR_MBXR * ON_BDOT)^2);
+ B9r  =  ON_MBXR*sqrt(b9pR_MBXR^2  + b9gR_MBXR^2  +(b9tR_MBXR * ON_BDOT)^2);
+ B10r =  ON_MBXR*sqrt(b10pR_MBXR^2 + b10gR_MBXR^2 +(b10tR_MBXR* ON_BDOT)^2);
+ B11r =  ON_MBXR*sqrt(b11pR_MBXR^2 + b11gR_MBXR^2 +(b11tR_MBXR* ON_BDOT)^2);
+
+ A1r  =  ON_MBXR*sqrt(a1pR_MBXR^2  + a1gR_MBXR^2  +(a1tR_MBXR * ON_BDOT)^2);
+ A2r  =  ON_MBXR*sqrt(a2pR_MBXR^2  + a2gR_MBXR^2  +(a2tR_MBXR * ON_BDOT)^2);
+ A3r  =  ON_MBXR*sqrt(a3pR_MBXR^2  + a3gR_MBXR^2  +(a3tR_MBXR * ON_BDOT)^2);
+ A4r  =  ON_MBXR*sqrt(a4pR_MBXR^2  + a4gR_MBXR^2  +(a4tR_MBXR * ON_BDOT)^2);
+ A5r  =  ON_MBXR*sqrt(a5pR_MBXR^2  + a5gR_MBXR^2  +(a5tR_MBXR * ON_BDOT)^2);
+ A6r  =  ON_MBXR*sqrt(a6pR_MBXR^2  + a6gR_MBXR^2  +(a6tR_MBXR * ON_BDOT)^2);
+ A7r  =  ON_MBXR*sqrt(a7pR_MBXR^2  + a7gR_MBXR^2  +(a7tR_MBXR * ON_BDOT)^2);
+ A8r  =  ON_MBXR*sqrt(a8pR_MBXR^2  + a8gR_MBXR^2  +(a8tR_MBXR * ON_BDOT)^2);
+ A9r  =  ON_MBXR*sqrt(a9pR_MBXR^2  + a9gR_MBXR^2  +(a9tR_MBXR * ON_BDOT)^2);
+ A10r =  ON_MBXR*sqrt(a10pR_MBXR^2 + a10gR_MBXR^2 +(a10tR_MBXR* ON_BDOT)^2);
+ A11r =  ON_MBXR*sqrt(a11pR_MBXR^2 + a11gR_MBXR^2 +(a11tR_MBXR* ON_BDOT)^2);
+
+! Define systematic component and set errors for MBX's
+   select, flag=error, clear;
+   select, flag=error,  range= #s/#e, class= MBX;
+      eoption, seed= SEEDSYS+2000; exec NewFamily_MBX; exec Single_MBX;
+      eoption, seed= SEEDRAN+2100; exec SetEfcomp_B;
+      !Eprint;
+! Define systematic component and set errors for MBRS's
+   select, flag=error, clear;
+   select, flag=error, range= S.IR4.B1/E.IR4.B1, class= MBRS;
+      eoption, seed= SEEDSYS+5000; exec NewFamily_MBRS; exec Single_MBRS;
+      eoption, seed= SEEDRAN+5100; exec SetEfcomp_B;
+      !Eprint;
+
+}
+
+
+if (ON_MBW <> 0) {
+!****************Separator: single channel warm Dipoles (MBXW)********
+ System,"echo ' Efcomp : Separator: single channel warm Dipoles (MBXW)'";
+! Assume only 1 production line for MBXW and MBW
+! Neverthless, take 2 different uncertainties
+! Define sigma for random component
+
+ B1r  =  ON_MBW*sqrt( b1pR_MBW^2  + b1gR_MBW^2  + (b1tR_MBW * ON_BDOT)^2 );
+ B2r  =  ON_MBW*sqrt( b2pR_MBW^2  + b2gR_MBW^2  + (b2tR_MBW * ON_BDOT)^2 );
+ B3r  =  ON_MBW*sqrt( b3pR_MBW^2  + b3gR_MBW^2  + (b3tR_MBW * ON_BDOT)^2 );
+ B4r  =  ON_MBW*sqrt( b4pR_MBW^2  + b4gR_MBW^2  + (b4tR_MBW * ON_BDOT)^2 );
+ B5r  =  ON_MBW*sqrt( b5pR_MBW^2  + b5gR_MBW^2  + (b5tR_MBW * ON_BDOT)^2 );
+ B6r  =  ON_MBW*sqrt( b6pR_MBW^2  + b6gR_MBW^2  + (b6tR_MBW * ON_BDOT)^2 );
+ B7r  =  ON_MBW*sqrt( b7pR_MBW^2  + b7gR_MBW^2  + (b7tR_MBW * ON_BDOT)^2 );
+ B8r  =  ON_MBW*sqrt( b8pR_MBW^2  + b8gR_MBW^2  + (b8tR_MBW * ON_BDOT)^2 );
+ B9r  =  ON_MBW*sqrt( b9pR_MBW^2  + b9gR_MBW^2  + (b9tR_MBW * ON_BDOT)^2 );
+ B10r =  ON_MBW*sqrt( b10pR_MBW^2 + b10gR_MBW^2 + (b10tR_MBW* ON_BDOT)^2 );
+ B11r =  ON_MBW*sqrt( b11pR_MBW^2 + b11gR_MBW^2 + (b11tR_MBW* ON_BDOT)^2 );
+
+ A1r  =  ON_MBW*sqrt( a1pR_MBW^2  + a1gR_MBW^2  + (a1tR_MBW * ON_BDOT)^2 );
+ A2r  =  ON_MBW*sqrt( a2pR_MBW^2  + a2gR_MBW^2  + (a2tR_MBW * ON_BDOT)^2 );
+ A3r  =  ON_MBW*sqrt( a3pR_MBW^2  + a3gR_MBW^2  + (a3tR_MBW * ON_BDOT)^2 );
+ A4r  =  ON_MBW*sqrt( a4pR_MBW^2  + a4gR_MBW^2  + (a4tR_MBW * ON_BDOT)^2 );
+ A5r  =  ON_MBW*sqrt( a5pR_MBW^2  + a5gR_MBW^2  + (a5tR_MBW * ON_BDOT)^2 );
+ A6r  =  ON_MBW*sqrt( a6pR_MBW^2  + a6gR_MBW^2  + (a6tR_MBW * ON_BDOT)^2 );
+ A7r  =  ON_MBW*sqrt( a7pR_MBW^2  + a7gR_MBW^2  + (a7tR_MBW * ON_BDOT)^2 );
+ A8r  =  ON_MBW*sqrt( a8pR_MBW^2  + a8gR_MBW^2  + (a8tR_MBW * ON_BDOT)^2 );
+ A9r  =  ON_MBW*sqrt( a9pR_MBW^2  + a9gR_MBW^2  + (a9tR_MBW * ON_BDOT)^2 );
+ A10r =  ON_MBW*sqrt( a10pR_MBW^2 + a10gR_MBW^2 + (a10tR_MBW* ON_BDOT)^2 );
+ A11r =  ON_MBW*sqrt( a11pR_MBW^2 + a11gR_MBW^2 + (a11tR_MBW* ON_BDOT)^2 );
+
+! Define systematic component and set errors for MBXW's
+   select, flag=error, clear;
+   select, flag=error, range= #s/#e, class= MBXW;
+      eoption, seed= SEEDSYS+4000; exec NewFamily_MBW; exec Single_MBW;
+      eoption, seed= SEEDRAN+4100; exec SetEfcomp_B;
+      !Eprint;
+
+!*********************Separator: 2-1 warm Dipoles (MBW)***************
+ System,"echo ' Efcomp : Separator: 2-1 warm Dipoles (MBW)'";
+! Same sigma for random component as MBXW
+! Assume only 1 production line
+! Define systematic component and set errors for MBW's
+   select, flag=error, clear;
+   select, flag=error, range= S.IR3.B1/#E, class= MBW;
+   select, flag=error, range= #S/E.IR3.B1, class= MBW;
+      eoption, seed= SEEDSYS+4500; exec NewFamily_MBW; exec Inner_MBW;
+      eoption, seed= SEEDRAN+4600; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= S.IR7.B1/E.IR7.B1, class= MBW;
+ exec Outer_MBW;
+      eoption, seed= SEEDRAN + 4700; exec SetEfcomp_B;
+      !Eprint;
+}
+
+
+if (ON_MBR <> 0) {
+!*********************Separator: 2-1 Dipoles (MBR)********************
+!***RHIC magnets : Aggregation based on BNL LHC Dipole Magnet Review**
+!***               July 16, 1998                                    **
+!***               "Field and Alignment Quality Issues", Jie Wei    **
+!*********************************************************************
+ System,"echo ' Efcomp : Separator: 2-1 Dipoles (MBR)'";
+! Assume only 1 production line for MBR
+! Define sigma for random component
+
+ B1r  =  ON_MBR*sqrt( b1pR_MBR^2  + b1gR_MBR^2  + (b1tR_MBR * ON_BDOT)^2 );
+ B2r  =  ON_MBR*sqrt( b2pR_MBR^2  + b2gR_MBR^2  + (b2tR_MBR * ON_BDOT)^2 );
+ B3r  =  ON_MBR*sqrt( b3pR_MBR^2  + b3gR_MBR^2  + (b3tR_MBR * ON_BDOT)^2 );
+ B4r  =  ON_MBR*sqrt( b4pR_MBR^2  + b4gR_MBR^2  + (b4tR_MBR * ON_BDOT)^2 );
+ B5r  =  ON_MBR*sqrt( b5pR_MBR^2  + b5gR_MBR^2  + (b5tR_MBR * ON_BDOT)^2 );
+ B6r  =  ON_MBR*sqrt( b6pR_MBR^2  + b6gR_MBR^2  + (b6tR_MBR * ON_BDOT)^2 );
+ B7r  =  ON_MBR*sqrt( b7pR_MBR^2  + b7gR_MBR^2  + (b7tR_MBR * ON_BDOT)^2 );
+ B8r  =  ON_MBR*sqrt( b8pR_MBR^2  + b8gR_MBR^2  + (b8tR_MBR * ON_BDOT)^2 );
+ B9r  =  ON_MBR*sqrt( b9pR_MBR^2  + b9gR_MBR^2  + (b9tR_MBR * ON_BDOT)^2 );
+ B10r =  ON_MBR*sqrt( b10pR_MBR^2 + b10gR_MBR^2 + (b10tR_MBR* ON_BDOT)^2 );
+ B11r =  ON_MBR*sqrt( b11pR_MBR^2 + b11gR_MBR^2 + (b11tR_MBR* ON_BDOT)^2 );
+
+ A1r  =  ON_MBR*sqrt( a1pR_MBR^2  + a1gR_MBR^2  + (a1tR_MBR * ON_BDOT)^2 );
+ A2r  =  ON_MBR*sqrt( a2pR_MBR^2  + a2gR_MBR^2  + (a2tR_MBR * ON_BDOT)^2 );
+ A3r  =  ON_MBR*sqrt( a3pR_MBR^2  + a3gR_MBR^2  + (a3tR_MBR * ON_BDOT)^2 );
+ A4r  =  ON_MBR*sqrt( a4pR_MBR^2  + a4gR_MBR^2  + (a4tR_MBR * ON_BDOT)^2 );
+ A5r  =  ON_MBR*sqrt( a5pR_MBR^2  + a5gR_MBR^2  + (a5tR_MBR * ON_BDOT)^2 );
+ A6r  =  ON_MBR*sqrt( a6pR_MBR^2  + a6gR_MBR^2  + (a6tR_MBR * ON_BDOT)^2 );
+ A7r  =  ON_MBR*sqrt( a7pR_MBR^2  + a7gR_MBR^2  + (a7tR_MBR * ON_BDOT)^2 );
+ A8r  =  ON_MBR*sqrt( a8pR_MBR^2  + a8gR_MBR^2  + (a8tR_MBR * ON_BDOT)^2 );
+ A9r  =  ON_MBR*sqrt( a9pR_MBR^2  + a9gR_MBR^2  + (a9tR_MBR * ON_BDOT)^2 );
+ A10r =  ON_MBR*sqrt( a10pR_MBR^2 + a10gR_MBR^2 + (a10tR_MBR* ON_BDOT)^2 );
+ A11r =  ON_MBR*sqrt( a11pR_MBR^2 + a11gR_MBR^2 + (a11tR_MBR* ON_BDOT)^2 );
+
+! Define systematic component and set errors for MBR's
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2,    class= MBRA;
+   !select, flag=error, range= IP1/IP2,    class= MBRB;
+   select, flag=error, range= IP1/IP2,    class= MBRC;
+   select, flag=error, range= IP5/IP8,    class= MBRA;
+   !select, flag=error, range= IP5/IP8,    class= MBRB;
+   select, flag=error, range= IP5/IP8,    class= MBRC;
+      eoption, seed= SEEDSYS+3000; exec NewFamily_MBR; exec Outer_MBR;
+      eoption, seed= SEEDRAN+3100; exec SetEfcomp_B;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP2/IP5,    class= MBRA;
+   !select, flag=error, range= IP2/IP5,    class= MBRB;
+   select, flag=error, range= IP2/IP5,    class= MBRC;
+   select, flag=error, range= IP8/IP1.L1, class= MBRA;
+   !select, flag=error, range= IP8/IP1.L1, class= MBRB;
+   select, flag=error, range= IP8/IP1.L1, class= MBRC;
+ exec Inner_MBR;
+      eoption, seed= SEEDRAN + 3200; exec SetEfcomp_B;
+      !Eprint;
+}
+
+!============ NOW DO THE QUADS ========================================
+
+if (ON_MQ <> 0) {
+!*******************************Arc Quadrupoles(MQ)*******************
+ System,"echo ' Efcomp : Arc Quadrupoles(MQ)'";
+! Assume 8 different production lines for MQ
+! Define sigma for random component
+
+ B1r  =  ON_MQ*sqrt( b1pR_MQ^2  + b1gR_MQ^2  + (b1tR_MQ * ON_BDOT)^2 );
+ B2r  =  ON_MQ*sqrt( b2pR_MQ^2  + b2gR_MQ^2  + (b2tR_MQ * ON_BDOT)^2 );
+ B3r  =  ON_MQ*sqrt( b3pR_MQ^2  + b3gR_MQ^2  + (b3tR_MQ * ON_BDOT)^2 );
+ B4r  =  ON_MQ*sqrt( b4pR_MQ^2  + b4gR_MQ^2  + (b4tR_MQ * ON_BDOT)^2 );
+ B5r  =  ON_MQ*sqrt( b5pR_MQ^2  + b5gR_MQ^2  + (b5tR_MQ * ON_BDOT)^2 );
+ B6r  =  ON_MQ*sqrt( b6pR_MQ^2  + b6gR_MQ^2  + (b6tR_MQ * ON_BDOT)^2 );
+ B7r  =  ON_MQ*sqrt( b7pR_MQ^2  + b7gR_MQ^2  + (b7tR_MQ * ON_BDOT)^2 );
+ B8r  =  ON_MQ*sqrt( b8pR_MQ^2  + b8gR_MQ^2  + (b8tR_MQ * ON_BDOT)^2 );
+ B9r  =  ON_MQ*sqrt( b9pR_MQ^2  + b9gR_MQ^2  + (b9tR_MQ * ON_BDOT)^2 );
+ B10r =  ON_MQ*sqrt( b10pR_MQ^2 + b10gR_MQ^2 + (b10tR_MQ* ON_BDOT)^2 );
+ B11r =  ON_MQ*sqrt( b11pR_MQ^2 + b11gR_MQ^2 + (b11tR_MQ* ON_BDOT)^2 );
+
+ A1r  =  ON_MQ*sqrt( a1pR_MQ^2  + a1gR_MQ^2  + (a1tR_MQ * ON_BDOT)^2 );
+ A2r  =  ON_MQ*sqrt( a2pR_MQ^2  + a2gR_MQ^2  + (a2tR_MQ * ON_BDOT)^2 );
+ A3r  =  ON_MQ*sqrt( a3pR_MQ^2  + a3gR_MQ^2  + (a3tR_MQ * ON_BDOT)^2 );
+ A4r  =  ON_MQ*sqrt( a4pR_MQ^2  + a4gR_MQ^2  + (a4tR_MQ * ON_BDOT)^2 );
+ A5r  =  ON_MQ*sqrt( a5pR_MQ^2  + a5gR_MQ^2  + (a5tR_MQ * ON_BDOT)^2 );
+ A6r  =  ON_MQ*sqrt( a6pR_MQ^2  + a6gR_MQ^2  + (a6tR_MQ * ON_BDOT)^2 );
+ A7r  =  ON_MQ*sqrt( a7pR_MQ^2  + a7gR_MQ^2  + (a7tR_MQ * ON_BDOT)^2 );
+ A8r  =  ON_MQ*sqrt( a8pR_MQ^2  + a8gR_MQ^2  + (a8tR_MQ * ON_BDOT)^2 );
+ A9r  =  ON_MQ*sqrt( a9pR_MQ^2  + a9gR_MQ^2  + (a9tR_MQ * ON_BDOT)^2 );
+ A10r =  ON_MQ*sqrt( a10pR_MQ^2 + a10gR_MQ^2 + (a10tR_MQ* ON_BDOT)^2 );
+ A11r =  ON_MQ*sqrt( a11pR_MQ^2 + a11gR_MQ^2 + (a11tR_MQ* ON_BDOT)^2 );
+
+! Define systematic component per arc and set errors for MQ's
+!   Select, error, clear; Select, error, range= E.IR1.b1/S.IR2.b1, class= MQ;
+    select, flag=error, clear; select, flag=error, range= IP1/IP2, class= MQ;
+      eoption, seed= SEEDSYS+7000; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+8000; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error ,clear; Select, error, range= E.IR2.b1/S.IR3.b1, class= MQ;
+!                        Select, error, range= #s/#e, pattern="MQ.7L3.b1";
+   select, flag=error ,clear; select, flag=error, range= IP2/IP3.B1, class= MQ;
+      eoption, seed= SEEDSYS+7100; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+8100; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error, clear; Select, error, range= E.IR3.b1/S.IR4.b1, class= MQ;
+!                        Select, error, range= #s/#e, pattern="MQ.7R3.b1";
+select, flag=error, clear; select, flag=error, range= IP3.b1/IP4.b1, class= MQ;
+      eoption, seed= SEEDSYS+7200; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+8200; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error ,clear; Select, error, range= E.IR4.b1/S.IR5.b1, class= MQ;
+   select, flag=error ,clear; select, flag=error, range= IP4.B1/IP5, class= MQ;
+      eoption, seed= SEEDSYS+7300; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+8300; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error, clear; Select, error, range= E.IR5.b1/S.IR6.b1, class= MQ;
+    select, flag=error ,clear; select, flag=error, range= IP5/IP6.B1, class= MQ;
+      eoption, seed= SEEDSYS+7400; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+8400; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error, clear; Select, error, range= E.IR6.b1/S.IR7.b1, class= MQ;
+!                        Select, error, range= #s/#e, pattern="MQ.7L7.b1";
+    select, flag=error ,clear; select, flag=error, range= IP6.B1/IP7.B1, class= MQ;
+      eoption, seed= SEEDSYS+7500; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+8500; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error, clear; Select, error, range= E.IR7.b1/S.IR8.b1, class= MQ;
+ !                       select, flag=error, range= #s/#e, pattern="^MQ.7R7.b1$";
+    select, flag=error ,clear; select, flag=error, range= IP7.B1/IP8, class= MQ;
+      eoption, seed= SEEDSYS+7600; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+8600; exec SetEfcomp_Q;
+      !Eprint;
+!   Select, error ,clear; Select, error, range= E.IR8.b1/S.IR1.b1, class=MQ;
+    select, flag=error ,clear; select, flag=error, range= IP8/IP1.L1, class= MQ;
+      eoption, seed= SEEDSYS+7700; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+8700; exec SetEfcomp_Q;
+      !Eprint;
+
+!****************Disp. Suppr. Quadrupoles(MQML,MQM,MQMC)**************
+ System,"echo ' Efcomp : Disp. Suppr. Quadrupoles(MQM Series)'";
+! Assume 8 different production lines for MQM Series
+! Same sigma for random component as MQ
+! These magnets are not split
+! More of these magnets between Q7L and Q7R, but split into 2 (MQIP)
+! None of them in ir3 & ir7
+! Note that these magnets are new to v6
+
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R1.b1/E.DS.R1.b1, class= MQML;
+   select, flag=error, range= S.DS.L2.b1/E.DS.L2.b1, class= MQML;
+   select, flag=error, range= S.DS.R1.b1/E.DS.R1.b1, class= MQM;
+   select, flag=error, range= S.DS.L2.b1/E.DS.L2.b1, class= MQM;
+   select, flag=error, range= S.DS.R1.b1/E.DS.R1.b1, class= MQMC;
+   select, flag=error, range= S.DS.L2.b1/E.DS.L2.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9000; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+19000; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R2.b1/E.DS.R2.b1, class= MQML;
+   select, flag=error, range= S.DS.R2.b1/E.DS.R2.b1, class= MQM;
+   select, flag=error, range= S.DS.R2.b1/E.DS.R2.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9100; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+19100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.L4.b1/E.DS.L4.b1, class= MQML;
+   select, flag=error, range= S.DS.L4.b1/E.DS.L4.b1, class= MQM;
+   select, flag=error, range= S.DS.L4.b1/E.DS.L4.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9200; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+19200; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R4.b1/E.DS.R4.b1, class= MQML;
+   select, flag=error, range= S.DS.L5.b1/E.DS.L5.b1, class= MQML;
+   select, flag=error, range= S.DS.R4.b1/E.DS.R4.b1, class= MQM;
+   select, flag=error, range= S.DS.L5.b1/E.DS.L5.b1, class= MQM;
+   select, flag=error, range= S.DS.R4.b1/E.DS.R4.b1, class= MQMC;
+   select, flag=error, range= S.DS.L5.b1/E.DS.L5.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9300; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+19300; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R5.b1/E.DS.R5.b1, class= MQML;
+   select, flag=error, range= S.DS.L6.b1/E.DS.L6.b1, class= MQML;
+   select, flag=error, range= S.DS.R5.b1/E.DS.R5.b1, class= MQM;
+   select, flag=error, range= S.DS.L6.b1/E.DS.L6.b1, class= MQM;
+   select, flag=error, range= S.DS.R5.b1/E.DS.R5.b1, class= MQMC;
+   select, flag=error, range= S.DS.L6.b1/E.DS.L6.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9400; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+19400; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R6.b1/E.DS.R6.b1, class= MQML;
+   select, flag=error, range= S.DS.R6.b1/E.DS.R6.b1, class= MQM;
+   select, flag=error, range= S.DS.R6.b1/E.DS.R6.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9500; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+19500; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.L8.b1/E.DS.L8.b1, class= MQML;
+   select, flag=error, range= S.DS.L8.b1/E.DS.L8.b1, class= MQM;
+   select, flag=error, range= S.DS.L8.b1/E.DS.L8.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9600; exec NewFamily_MQ; exec Outer_MQ;
+      eoption, seed= SEEDRAN+19600; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= S.DS.R8.b1/E.DS.R8.b1, class= MQML;
+   select, flag=error, range= S.DS.L1.b1/E.DS.L1.b1, class= MQML;
+   select, flag=error, range= S.DS.R8.b1/E.DS.R8.b1, class= MQM;
+   select, flag=error, range= S.DS.L1.b1/E.DS.L1.b1, class= MQM;
+   select, flag=error, range= S.DS.R8.b1/E.DS.R8.b1, class= MQMC;
+   select, flag=error, range= S.DS.L1.b1/E.DS.L1.b1, class= MQMC;
+      eoption, seed= SEEDSYS+ 9700; exec NewFamily_MQ; exec Inner_MQ;
+      eoption, seed= SEEDRAN+19700; exec SetEfcomp_Q;
+      !Eprint;
+}
+
+if (ON_MQTL <> 0) {
+!******************Arc tune shift Quadrupoles(MQT)********************
+!******************Disp. Suppr. trim Quadrupoles(MQTL)****************
+ System,"echo ' Efcomp : Arc tune shift '";
+! same sigma for random component as MQ
+! These were called MQLT in V4.3
+! Define systematic component and set errors for MQTL's
+
+! Define sigma for random component
+ B1r  = ON_MQTL*sqrt( b1pR_MQ^2  + b1gR_MQ^2  + (b1tR_MQ * ON_BDOT)^2 );
+ B2r  = ON_MQTL*sqrt( b2pR_MQ^2  + b2gR_MQ^2  + (b2tR_MQ * ON_BDOT)^2 );
+ B3r  = ON_MQTL*sqrt( b3pR_MQ^2  + b3gR_MQ^2  + (b3tR_MQ * ON_BDOT)^2 );
+ B4r  = ON_MQTL*sqrt( b4pR_MQ^2  + b4gR_MQ^2  + (b4tR_MQ * ON_BDOT)^2 );
+ B5r  = ON_MQTL*sqrt( b5pR_MQ^2  + b5gR_MQ^2  + (b5tR_MQ * ON_BDOT)^2 );
+ B6r  = ON_MQTL*sqrt( b6pR_MQ^2  + b6gR_MQ^2  + (b6tR_MQ * ON_BDOT)^2 );
+ B7r  = ON_MQTL*sqrt( b7pR_MQ^2  + b7gR_MQ^2  + (b7tR_MQ * ON_BDOT)^2 );
+ B8r  = ON_MQTL*sqrt( b8pR_MQ^2  + b8gR_MQ^2  + (b8tR_MQ * ON_BDOT)^2 );
+ B9r  = ON_MQTL*sqrt( b9pR_MQ^2  + b9gR_MQ^2  + (b9tR_MQ * ON_BDOT)^2 );
+ B10r = ON_MQTL*sqrt( b10pR_MQ^2 + b10gR_MQ^2 + (b10tR_MQ* ON_BDOT)^2 );
+ B11r = ON_MQTL*sqrt( b11pR_MQ^2 + b11gR_MQ^2 + (b11tR_MQ* ON_BDOT)^2 );
+
+ A1r  = ON_MQTL*sqrt( a1pR_MQ^2  + a1gR_MQ^2  + (a1tR_MQ * ON_BDOT)^2 );
+ A2r  = ON_MQTL*sqrt( a2pR_MQ^2  + a2gR_MQ^2  + (a2tR_MQ * ON_BDOT)^2 );
+ A3r  = ON_MQTL*sqrt( a3pR_MQ^2  + a3gR_MQ^2  + (a3tR_MQ * ON_BDOT)^2 );
+ A4r  = ON_MQTL*sqrt( a4pR_MQ^2  + a4gR_MQ^2  + (a4tR_MQ * ON_BDOT)^2 );
+ A5r  = ON_MQTL*sqrt( a5pR_MQ^2  + a5gR_MQ^2  + (a5tR_MQ * ON_BDOT)^2 );
+ A6r  = ON_MQTL*sqrt( a6pR_MQ^2  + a6gR_MQ^2  + (a6tR_MQ * ON_BDOT)^2 );
+ A7r  = ON_MQTL*sqrt( a7pR_MQ^2  + a7gR_MQ^2  + (a7tR_MQ * ON_BDOT)^2 );
+ A8r  = ON_MQTL*sqrt( a8pR_MQ^2  + a8gR_MQ^2  + (a8tR_MQ * ON_BDOT)^2 );
+ A9r  = ON_MQTL*sqrt( a9pR_MQ^2  + a9gR_MQ^2  + (a9tR_MQ * ON_BDOT)^2 );
+ A10r = ON_MQTL*sqrt( a10pR_MQ^2 + a10gR_MQ^2 + (a10tR_MQ* ON_BDOT)^2 );
+ A11r = ON_MQTL*sqrt( a11pR_MQ^2 + a11gR_MQ^2 + (a11tR_MQ* ON_BDOT)^2 );
+
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2,    class= MQT;
+   select, flag=error, range= IP1/IP2,    class= MQTL;
+   select, flag=error, range= IP5/IP8,    class= MQT;
+   select, flag=error, range= IP5/IP8,    class= MQTL;
+      eoption, seed= SEEDSYS+10000; exec NewFamily_MQ; exec Outer_MQTL;
+      eoption, seed= SEEDRAN+10100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP2/IP5,    class= MQT;
+   select, flag=error, range= IP2/IP5,    class= MQTL;
+   select, flag=error, range= IP8/IP1.L1, class= MQT;
+   select, flag=error, range= IP8/IP1.L1, class= MQTL;
+      eoption, seed= SEEDSYS+10200; exec NewFamily_MQ; exec Inner_MQTL;
+      eoption, seed= SEEDRAN+10300; exec SetEfcomp_Q;
+      !Eprint;
+
+}
+
+
+if (ON_MQIP <> 0) {
+!*****************Insertion Quadrupoles(MQML,MQM,MQ)******************
+ System,"echo ' Efcomp : Insertion Quadrupoles(MQM Series)'";
+! these run from Q7.L to Q7.R, but exclude the MQX & MQXL
+! note that IP's 3 & 7 are a bit special
+! same sigma for random component as MQ
+ B1r  = ON_MQIP*sqrt( b1pR_MQ^2  + b1gR_MQ^2  + (b1tR_MQ * ON_BDOT)^2 );
+ B2r  = ON_MQIP*sqrt( b2pR_MQ^2  + b2gR_MQ^2  + (b2tR_MQ * ON_BDOT)^2 );
+ B3r  = ON_MQIP*sqrt( b3pR_MQ^2  + b3gR_MQ^2  + (b3tR_MQ * ON_BDOT)^2 );
+ B4r  = ON_MQIP*sqrt( b4pR_MQ^2  + b4gR_MQ^2  + (b4tR_MQ * ON_BDOT)^2 );
+ B5r  = ON_MQIP*sqrt( b5pR_MQ^2  + b5gR_MQ^2  + (b5tR_MQ * ON_BDOT)^2 );
+ B6r  = ON_MQIP*sqrt( b6pR_MQ^2  + b6gR_MQ^2  + (b6tR_MQ * ON_BDOT)^2 );
+ B7r  = ON_MQIP*sqrt( b7pR_MQ^2  + b7gR_MQ^2  + (b7tR_MQ * ON_BDOT)^2 );
+ B8r  = ON_MQIP*sqrt( b8pR_MQ^2  + b8gR_MQ^2  + (b8tR_MQ * ON_BDOT)^2 );
+ B9r  = ON_MQIP*sqrt( b9pR_MQ^2  + b9gR_MQ^2  + (b9tR_MQ * ON_BDOT)^2 );
+ B10r = ON_MQIP*sqrt( b10pR_MQ^2 + b10gR_MQ^2 + (b10tR_MQ* ON_BDOT)^2 );
+ B11r = ON_MQIP*sqrt( b11pR_MQ^2 + b11gR_MQ^2 + (b11tR_MQ* ON_BDOT)^2 );
+
+ A1r  = ON_MQIP*sqrt( a1pR_MQ^2  + a1gR_MQ^2  + (a1tR_MQ * ON_BDOT)^2 );
+ A2r  = ON_MQIP*sqrt( a2pR_MQ^2  + a2gR_MQ^2  + (a2tR_MQ * ON_BDOT)^2 );
+ A3r  = ON_MQIP*sqrt( a3pR_MQ^2  + a3gR_MQ^2  + (a3tR_MQ * ON_BDOT)^2 );
+ A4r  = ON_MQIP*sqrt( a4pR_MQ^2  + a4gR_MQ^2  + (a4tR_MQ * ON_BDOT)^2 );
+ A5r  = ON_MQIP*sqrt( a5pR_MQ^2  + a5gR_MQ^2  + (a5tR_MQ * ON_BDOT)^2 );
+ A6r  = ON_MQIP*sqrt( a6pR_MQ^2  + a6gR_MQ^2  + (a6tR_MQ * ON_BDOT)^2 );
+ A7r  = ON_MQIP*sqrt( a7pR_MQ^2  + a7gR_MQ^2  + (a7tR_MQ * ON_BDOT)^2 );
+ A8r  = ON_MQIP*sqrt( a8pR_MQ^2  + a8gR_MQ^2  + (a8tR_MQ * ON_BDOT)^2 );
+ A9r  = ON_MQIP*sqrt( a9pR_MQ^2  + a9gR_MQ^2  + (a9tR_MQ * ON_BDOT)^2 );
+ A10r = ON_MQIP*sqrt( a10pR_MQ^2 + a10gR_MQ^2 + (a10tR_MQ* ON_BDOT)^2 );
+ A11r = ON_MQIP*sqrt( a11pR_MQ^2 + a11gR_MQ^2 + (a11tR_MQ* ON_BDOT)^2 );
+
+! Define systematic component per insertion and set errors for MQ's
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2,   pattern= "^MQM.*21$";
+   select, flag=error, range= IP1/IP2,   pattern= "^MQML.*21$";
+      eoption, seed= SEEDSYS+ 9000; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17000; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP2/IP3.B1,   pattern= "^MQM.*21$";
+!  Select, error, range= IP2/IP3.B1,   class= MQML1;  No Magnets
+   select, flag=error, range= S.IR3.B1/IP3.B1,  pattern= "^MQ.*21$";
+      eoption, seed= SEEDSYS+ 9100; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP3.B1/IP4.B1, pattern= "^MQM.*21$";
+!  Select, error, range= IP3.B1/IP4.B1,   class= MQML1;  No Magnets
+   select, flag=error, range= IP3.B1/E.IR3.B1, pattern= "^MQ.*21$";
+      eoption, seed= SEEDSYS+ 9200; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17200; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP4.B1/IP5,   pattern= "^MQM.*21$";
+   select, flag=error, range= IP4.B1/IP5,   pattern= "^MQML.*21$";
+      eoption, seed= SEEDSYS+ 9300; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17300; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP5/IP6.B1,   pattern= "^MQM.*21$";
+   select, flag=error, range= IP5/IP6.B1,   pattern= "^MQML.*21$";
+      eoption, seed= SEEDSYS+ 9400; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17400; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+!  Select, error, range= IP6.B1/IP7.B1,   pattern= "MQM.*21";   No Magnets
+!  Select, error, range= IP6.B1/IP7.B1,   class= MQML1;  No Magnets
+   select, flag=error, range= S.IR7.B1/IP7.B1, pattern= "^MQ.*21$";
+      eoption, seed= SEEDSYS+ 9500; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17500; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP7.B1/IP8,   pattern= "^MQM.*21$";
+!  Select, error, range= IP7.B1/IP8,   class= MQML1;  No Magnets
+   select, flag=error, range= IP7.B1/E.IR7.B1, pattern= "^MQ.*21$";
+      eoption, seed= SEEDSYS+ 9600; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17600; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP8/IP1.L1, pattern= "^MQM.*21$";
+   select, flag=error, range= IP8/IP1.L1, pattern= "^MQML.*21$";
+      eoption, seed= SEEDSYS+ 9700; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17700; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2,   pattern= "^MQM.*22$";
+   select, flag=error, range= IP1/IP2,   pattern= "^MQML.*22$";
+      eoption, seed= SEEDSYS+ 9000; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17000; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP2/IP3.B1,   pattern= "^MQM.*22$";
+!  Select, error, range= IP2/IP3.B1,   pattern= "MQML.*22";  No Magnets
+   select, flag=error, range= S.IR3.B1/IP3.B1, pattern= "^MQ.*22$";
+      eoption, seed= SEEDSYS+ 9100; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP3.B1/IP4.B1,   pattern= "^MQM.*22$";
+!  Select, error, range= IP3.B1/IP4.B1,   class= MQML2;  No Magnets
+   select, flag=error, range= IP3.B1/E.IR3.B1, pattern= "^MQ.*22$";
+      eoption, seed= SEEDSYS+ 9200; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17200; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP4.B1/IP5,   pattern= "^MQM.*22$";
+   select, flag=error, range= IP4.B1/IP5,   pattern= "^MQML.*22$";
+      eoption, seed= SEEDSYS+ 9300; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17300; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP5/IP6.B1,   pattern= "^MQM.*22$";
+   select, flag=error, range= IP5/IP6.B1,   pattern= "^MQML.*22$";
+      eoption, seed= SEEDSYS+ 9400; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17400; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+!  Select, error, range= IP6.B1/IP7.B1,   pattern= "MQM.*22";   No Magnets
+!  Select, error, range= IP6.B1/IP7.B1,   pattern= "MQML.*22";  No Magnets
+   select, flag=error, range= S.IR7.B1/IP7.B1, pattern= "^MQ.*22$";
+      eoption, seed= SEEDSYS+ 9500; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17500; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP7.B1/IP8,   pattern= "^MQM.*22$";
+!  Select, error, range= IP7.B1/IP8,   pattern= "MQML.*22";  No Magnets
+   select, flag=error, range= IP7.B1/E.IR7.B1, pattern= "^MQ.*22$";
+      eoption, seed= SEEDSYS+ 9600; exec NewFamily_MQ; exec Outer_MQIP;
+      eoption, seed= SEEDRAN+17600; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= IP8/IP1.L1, pattern= "^MQM.*22$";
+   select, flag=error, range= IP8/IP1.L1, pattern= "^MQML.*22$";
+      eoption, seed= SEEDSYS+ 9700; exec NewFamily_MQ; exec Inner_MQIP;
+      eoption, seed= SEEDRAN+17700; exec SetEfcomp_Q;
+      !Eprint;
+
+}
+
+
+if (ON_MQR <> 0) {
+!******************Single aperture RF Quadrupoles(MQR,MQRL)***********
+ System,"echo ' Efcomp : Single aperture RF Quadrupoles(MQR Series)'";
+! Define sigma for random component
+
+ B1r  =  ON_MQR*sqrt( b1pR_MQ^2  + b1gR_MQ^2  + (b1tR_MQ * ON_BDOT)^2 );
+ B2r  =  ON_MQR*sqrt( b2pR_MQ^2  + b2gR_MQ^2  + (b2tR_MQ * ON_BDOT)^2 );
+ B3r  =  ON_MQR*sqrt( b3pR_MQ^2  + b3gR_MQ^2  + (b3tR_MQ * ON_BDOT)^2 );
+ B4r  =  ON_MQR*sqrt( b4pR_MQ^2  + b4gR_MQ^2  + (b4tR_MQ * ON_BDOT)^2 );
+ B5r  =  ON_MQR*sqrt( b5pR_MQ^2  + b5gR_MQ^2  + (b5tR_MQ * ON_BDOT)^2 );
+ B6r  =  ON_MQR*sqrt( b6pR_MQ^2  + b6gR_MQ^2  + (b6tR_MQ * ON_BDOT)^2 );
+ B7r  =  ON_MQR*sqrt( b7pR_MQ^2  + b7gR_MQ^2  + (b7tR_MQ * ON_BDOT)^2 );
+ B8r  =  ON_MQR*sqrt( b8pR_MQ^2  + b8gR_MQ^2  + (b8tR_MQ * ON_BDOT)^2 );
+ B9r  =  ON_MQR*sqrt( b9pR_MQ^2  + b9gR_MQ^2  + (b9tR_MQ * ON_BDOT)^2 );
+ B10r =  ON_MQR*sqrt( b10pR_MQ^2 + b10gR_MQ^2 + (b10tR_MQ* ON_BDOT)^2 );
+ B11r =  ON_MQR*sqrt( b11pR_MQ^2 + b11gR_MQ^2 + (b11tR_MQ* ON_BDOT)^2 );
+
+ A1r  =  ON_MQR*sqrt( a1pR_MQ^2  + a1gR_MQ^2  + (a1tR_MQ * ON_BDOT)^2 );
+ A2r  =  ON_MQR*sqrt( a2pR_MQ^2  + a2gR_MQ^2  + (a2tR_MQ * ON_BDOT)^2 );
+ A3r  =  ON_MQR*sqrt( a3pR_MQ^2  + a3gR_MQ^2  + (a3tR_MQ * ON_BDOT)^2 );
+ A4r  =  ON_MQR*sqrt( a4pR_MQ^2  + a4gR_MQ^2  + (a4tR_MQ * ON_BDOT)^2 );
+ A5r  =  ON_MQR*sqrt( a5pR_MQ^2  + a5gR_MQ^2  + (a5tR_MQ * ON_BDOT)^2 );
+ A6r  =  ON_MQR*sqrt( a6pR_MQ^2  + a6gR_MQ^2  + (a6tR_MQ * ON_BDOT)^2 );
+ A7r  =  ON_MQR*sqrt( a7pR_MQ^2  + a7gR_MQ^2  + (a7tR_MQ * ON_BDOT)^2 );
+ A8r  =  ON_MQR*sqrt( a8pR_MQ^2  + a8gR_MQ^2  + (a8tR_MQ * ON_BDOT)^2 );
+ A9r  =  ON_MQR*sqrt( a9pR_MQ^2  + a9gR_MQ^2  + (a9tR_MQ * ON_BDOT)^2 );
+ A10r =  ON_MQR*sqrt( a10pR_MQ^2 + a10gR_MQ^2 + (a10tR_MQ* ON_BDOT)^2 );
+ A11r =  ON_MQR*sqrt( a11pR_MQ^2 + a11gR_MQ^2 + (a11tR_MQ* ON_BDOT)^2 );
+
+! Define systematic component and set errors for MQR's
+   select, flag=error, clear;
+   select, flag=error, range= s.IR4.B1/e.IR4.B1, pattern = "^MQR.*21$";
+   select, flag=error, range= s.IR4.B1/e.IR4.B1, pattern = "^MQRL.*21$";
+      eoption, seed= SEEDSYS+11000; exec NewFamily_MQR; exec Single_MQR;
+      eoption, seed= SEEDRAN+11100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= s.IR4.B1/e.IR4.B1, pattern = "^MQR.*22$";
+   select, flag=error, range= s.IR4.B1/e.IR4.B1, pattern = "^MQRL.*22$";
+      eoption, seed= SEEDSYS+11000; exec NewFamily_MQR; exec Single_MQR;
+      eoption, seed= SEEDRAN+11100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= s.IR4.B1/e.IR4.B1, pattern = "^MQR.3.*4.B1$";
+      eoption, seed= SEEDSYS+11200; exec NewFamily_MQR; exec Single_MQR;
+      eoption, seed= SEEDRAN+11300; exec SetEfcomp_Q;
+      !Eprint;
+}
+
+
+
+if (ON_MQX <> 0) {
+!**************************Low-Beta Quadrupoles (MQXA)*****************
+ System,"echo ' Efcomp : Low-Beta Quadrupoles (MQXA)'";
+! Define sigma for random component
+
+ B1r  =  ON_MQX*sqrt( b1pR_MQXA^2  + b1gR_MQXA^2  +
+ (b1tR_MQXA * ON_BDOT)^2 );
+ B2r  =  ON_MQX*sqrt( b2pR_MQXA^2  + b2gR_MQXA^2  +
+ (b2tR_MQXA * ON_BDOT)^2 );
+ B3r  =  ON_MQX*sqrt( b3pR_MQXA^2  + b3gR_MQXA^2  +
+ (b3tR_MQXA * ON_BDOT)^2 );
+ B4r  =  ON_MQX*sqrt( b4pR_MQXA^2  + b4gR_MQXA^2  +
+ (b4tR_MQXA * ON_BDOT)^2 );
+ B5r  =  ON_MQX*sqrt( b5pR_MQXA^2  + b5gR_MQXA^2  +
+ (b5tR_MQXA * ON_BDOT)^2 );
+ B6r  =  ON_MQX*sqrt( b6pR_MQXA^2  + b6gR_MQXA^2  +
+ (b6tR_MQXA * ON_BDOT)^2 );
+ B7r  =  ON_MQX*sqrt( b7pR_MQXA^2  + b7gR_MQXA^2  +
+ (b7tR_MQXA * ON_BDOT)^2 );
+ B8r  =  ON_MQX*sqrt( b8pR_MQXA^2  + b8gR_MQXA^2  +
+ (b8tR_MQXA * ON_BDOT)^2 );
+ B9r  =  ON_MQX*sqrt( b9pR_MQXA^2  + b9gR_MQXA^2  +
+ (b9tR_MQXA * ON_BDOT)^2 );
+ B10r =  ON_MQX*sqrt( b10pR_MQXA^2 + b10gR_MQXA^2 +
+ (b10tR_MQXA* ON_BDOT)^2 );
+ B11r =  ON_MQX*sqrt( b11pR_MQXA^2 + b11gR_MQXA^2 +
+ (b11tR_MQXA* ON_BDOT)^2 );
+
+ A1r  =  ON_MQX*sqrt( a1pR_MQXA^2  + a1gR_MQXA^2  +
+ (a1tR_MQXA * ON_BDOT)^2 );
+ A2r  =  ON_MQX*sqrt( a2pR_MQXA^2  + a2gR_MQXA^2  +
+ (a2tR_MQXA * ON_BDOT)^2 );
+ A3r  =  ON_MQX*sqrt( a3pR_MQXA^2  + a3gR_MQXA^2  +
+ (a3tR_MQXA * ON_BDOT)^2 );
+ A4r  =  ON_MQX*sqrt( a4pR_MQXA^2  + a4gR_MQXA^2  +
+ (a4tR_MQXA * ON_BDOT)^2 );
+ A5r  =  ON_MQX*sqrt( a5pR_MQXA^2  + a5gR_MQXA^2  +
+ (a5tR_MQXA * ON_BDOT)^2 );
+ A6r  =  ON_MQX*sqrt( a6pR_MQXA^2  + a6gR_MQXA^2  +
+ (a6tR_MQXA * ON_BDOT)^2 );
+ A7r  =  ON_MQX*sqrt( a7pR_MQXA^2  + a7gR_MQXA^2  +
+ (a7tR_MQXA * ON_BDOT)^2 );
+ A8r  =  ON_MQX*sqrt( a8pR_MQXA^2  + a8gR_MQXA^2  +
+ (a8tR_MQXA * ON_BDOT)^2 );
+ A9r  =  ON_MQX*sqrt( a9pR_MQXA^2  + a9gR_MQXA^2  +
+ (a9tR_MQXA * ON_BDOT)^2 );
+ A10r =  ON_MQXA*sqrt( a10pR_MQXA^2 + a10gR_MQXA^2 +
+ (a10tR_MQXA* ON_BDOT)^2 );
+ A11r =  ON_MQXA*sqrt( a11pR_MQXA^2 + a11gR_MQXA^2 +
+ (a11tR_MQXA* ON_BDOT)^2 );
+
+!
+! Define components and set errors for MQXA'S
+   eoption, seed= SEEDSYS + 13000;
+ exec NewFamily_MQXA;
+ GCUTR =  R_MQX;
+
+! For all insertions, MQXA.3L and MQXA.1R are inverted (normal odd harmonic 
+! components inverted, skew even harmonics inverted)
+
+ exec Single_MQXA;
+   eoption, seed= SEEDRAN + 13100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1L.*1$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3R.*1$";
+ exec SetEfcomp_Q;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3L.*1$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1R.*1$";
+ exec SetEfcomp_Qinv;
+   !Eprint;
+   eoption, seed= SEEDRAN + 13100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1L.*2$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3R.*2$";
+ exec SetEfcomp_Q;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3L.*2$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1R.*2$";
+ exec SetEfcomp_Qinv;
+   !Eprint;
+   eoption, seed= SEEDRAN + 13100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1L.*3$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3R.*3$";
+ exec SetEfcomp_Q;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3L.*3$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1R.*3$";
+ exec SetEfcomp_Qinv;
+   !Eprint;
+   eoption, seed= SEEDRAN + 13100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1L.*4$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3R.*4$";
+ exec SetEfcomp_Q;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXA\.3L.*4$";
+   select, flag=error, range= #S/#E, pattern="^MQXA\.1R.*4$";
+ exec SetEfcomp_Qinv;
+   !Eprint;
+
+ GCUTR =  R_ALL;
+}
+
+if (ON_MQX <> 0) {
+!**************************Low-Beta Quadrupoles (MQXB)*****************
+ System,"echo ' Efcomp : Low-Beta Quadrupoles (MQXB)'";
+! Define sigma for random component
+
+ B1r  =  ON_MQX*sqrt( b1pR_MQXB^2  + b1gR_MQXB^2  +
+ (b1tR_MQXB * ON_BDOT)^2 );
+ B2r  =  ON_MQX*sqrt( b2pR_MQXB^2  + b2gR_MQXB^2  +
+ (b2tR_MQXB * ON_BDOT)^2 );
+ B3r  =  ON_MQX*sqrt( b3pR_MQXB^2  + b3gR_MQXB^2  +
+ (b3tR_MQXB * ON_BDOT)^2 );
+ B4r  =  ON_MQX*sqrt( b4pR_MQXB^2  + b4gR_MQXB^2  +
+ (b4tR_MQXB * ON_BDOT)^2 );
+ B5r  =  ON_MQX*sqrt( b5pR_MQXB^2  + b5gR_MQXB^2  +
+ (b5tR_MQXB * ON_BDOT)^2 );
+ B6r  =  ON_MQX*sqrt( b6pR_MQXB^2  + b6gR_MQXB^2  +
+ (b6tR_MQXB * ON_BDOT)^2 );
+ B7r  =  ON_MQX*sqrt( b7pR_MQXB^2  + b7gR_MQXB^2  +
+ (b7tR_MQXB * ON_BDOT)^2 );
+ B8r  =  ON_MQX*sqrt( b8pR_MQXB^2  + b8gR_MQXB^2  +
+ (b8tR_MQXB * ON_BDOT)^2 );
+ B9r  =  ON_MQX*sqrt( b9pR_MQXB^2  + b9gR_MQXB^2  +
+ (b9tR_MQXB * ON_BDOT)^2 );
+ B10r =  ON_MQX*sqrt( b10pR_MQXB^2 + b10gR_MQXB^2 +
+ (b10tR_MQXB* ON_BDOT)^2 );
+ B11r =  ON_MQX*sqrt( b11pR_MQXB^2 + b11gR_MQXB^2 +
+ (b11tR_MQXB* ON_BDOT)^2 );
+
+ A1r  =  ON_MQX*sqrt( a1pR_MQXB^2  + a1gR_MQXB^2  +
+ (a1tR_MQXB * ON_BDOT)^2 );
+ A2r  =  ON_MQX*sqrt( a2pR_MQXB^2  + a2gR_MQXB^2  +
+ (a2tR_MQXB * ON_BDOT)^2 );
+ A3r  =  ON_MQX*sqrt( a3pR_MQXB^2  + a3gR_MQXB^2  +
+ (a3tR_MQXB * ON_BDOT)^2 );
+ A4r  =  ON_MQX*sqrt( a4pR_MQXB^2  + a4gR_MQXB^2  +
+ (a4tR_MQXB * ON_BDOT)^2 );
+ A5r  =  ON_MQX*sqrt( a5pR_MQXB^2  + a5gR_MQXB^2  +
+ (a5tR_MQXB * ON_BDOT)^2 );
+ A6r  =  ON_MQX*sqrt( a6pR_MQXB^2  + a6gR_MQXB^2  +
+ (a6tR_MQXB * ON_BDOT)^2 );
+ A7r  =  ON_MQX*sqrt( a7pR_MQXB^2  + a7gR_MQXB^2  +
+ (a7tR_MQXB * ON_BDOT)^2 );
+ A8r  =  ON_MQX*sqrt( a8pR_MQXB^2  + a8gR_MQXB^2  +
+ (a8tR_MQXB * ON_BDOT)^2 );
+ A9r  =  ON_MQX*sqrt( a9pR_MQXB^2  + a9gR_MQXB^2  +
+ (a9tR_MQXB * ON_BDOT)^2 );
+ A10r =  ON_MQX*sqrt( a10pR_MQXB^2 + a10gR_MQXB^2 +
+ (a10tR_MQXB* ON_BDOT)^2 );
+ A11r =  ON_MQX*sqrt( a11pR_MQXB^2 + a11gR_MQXB^2 +
+ (a11tR_MQXB* ON_BDOT)^2 );
+
+!
+! Define components and set errors for MQXB'S
+   eoption, seed= SEEDSYS + 12000;
+ exec NewFamily_MQXB;
+!  Single_MQXB; !Taken out since we have inverted insertion quads
+ GCUTR =  R_MQX;
+
+! For all insertions, MQXB.A2L and MQXB.B2R are inverted (normal odd harmonic 
+! components inverted, skew even harmonics inverted)
+ exec Single_MQXB;
+   eoption, seed= SEEDRAN + 12100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2L.*1$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2R.*1$";
+ exec SetEfcomp_Qinv;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2L.*1$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2R.*1$";
+ exec SetEfcomp_Q;
+   !Eprint;
+   eoption, seed= SEEDRAN + 12100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2L.*2$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2R.*2$";
+ exec SetEfcomp_Qinv;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2L.*2$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2R.*2$";
+ exec SetEfcomp_Q;
+   !Eprint;
+   eoption, seed= SEEDRAN + 12100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2L.*3$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2R.*3$";
+ exec SetEfcomp_Qinv;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2L.*3$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2R.*3$";
+ exec SetEfcomp_Q;
+   !Eprint;
+   eoption, seed= SEEDRAN + 12100;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2L.*4$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2R.*4$";
+ exec SetEfcomp_Qinv;
+   select, flag=error, clear;
+   select, flag=error, range= #S/#E, pattern="^MQXB\.B2L.*4$";
+   select, flag=error, range= #S/#E, pattern="^MQXB\.A2R.*4$";
+ exec SetEfcomp_Q;
+   !Eprint;
+
+ GCUTR =  R_ALL;                             ! standard truncation of Gaussian;
+
+}
+
+
+if (ON_MQY <> 0) {
+!******************Large Aperture Quadrupoles(MQY)********************
+ System,"echo ' Efcomp : Large Aperture Quadrupoles(MQY)'";
+! Define sigma for random component
+
+ B1r  =  ON_MQY*sqrt( b1pR_MQX^2  + b1gR_MQX^2  + (b1tR_MQX * ON_BDOT)^2 );
+ B2r  =  ON_MQY*sqrt( b2pR_MQX^2  + b2gR_MQX^2  + (b2tR_MQX * ON_BDOT)^2 );
+ B3r  =  ON_MQY*sqrt( b3pR_MQX^2  + b3gR_MQX^2  + (b3tR_MQX * ON_BDOT)^2 );
+ B4r  =  ON_MQY*sqrt( b4pR_MQX^2  + b4gR_MQX^2  + (b4tR_MQX * ON_BDOT)^2 );
+ B5r  =  ON_MQY*sqrt( b5pR_MQX^2  + b5gR_MQX^2  + (b5tR_MQX * ON_BDOT)^2 );
+ B6r  =  ON_MQY*sqrt( b6pR_MQX^2  + b6gR_MQX^2  + (b6tR_MQX * ON_BDOT)^2 );
+ B7r  =  ON_MQY*sqrt( b7pR_MQX^2  + b7gR_MQX^2  + (b7tR_MQX * ON_BDOT)^2 );
+ B8r  =  ON_MQY*sqrt( b8pR_MQX^2  + b8gR_MQX^2  + (b8tR_MQX * ON_BDOT)^2 );
+ B9r  =  ON_MQY*sqrt( b9pR_MQX^2  + b9gR_MQX^2  + (b9tR_MQX * ON_BDOT)^2 );
+ B10r =  ON_MQY*sqrt( b10pR_MQX^2 + b10gR_MQX^2 + (b10tR_MQX* ON_BDOT)^2 );
+ B11r =  ON_MQY*sqrt( b11pR_MQX^2 + b11gR_MQX^2 + (b11tR_MQX* ON_BDOT)^2 );
+
+ A1r  =  ON_MQY*sqrt( a1pR_MQX^2  + a1gR_MQX^2  + (a1tR_MQX * ON_BDOT)^2 );
+ A2r  =  ON_MQY*sqrt( a2pR_MQX^2  + a2gR_MQX^2  + (a2tR_MQX * ON_BDOT)^2 );
+ A3r  =  ON_MQY*sqrt( a3pR_MQX^2  + a3gR_MQX^2  + (a3tR_MQX * ON_BDOT)^2 );
+ A4r  =  ON_MQY*sqrt( a4pR_MQX^2  + a4gR_MQX^2  + (a4tR_MQX * ON_BDOT)^2 );
+ A5r  =  ON_MQY*sqrt( a5pR_MQX^2  + a5gR_MQX^2  + (a5tR_MQX * ON_BDOT)^2 );
+ A6r  =  ON_MQY*sqrt( a6pR_MQX^2  + a6gR_MQX^2  + (a6tR_MQX * ON_BDOT)^2 );
+ A7r  =  ON_MQY*sqrt( a7pR_MQX^2  + a7gR_MQX^2  + (a7tR_MQX * ON_BDOT)^2 );
+ A8r  =  ON_MQY*sqrt( a8pR_MQX^2  + a8gR_MQX^2  + (a8tR_MQX * ON_BDOT)^2 );
+ A9r  =  ON_MQY*sqrt( a9pR_MQX^2  + a9gR_MQX^2  + (a9tR_MQX * ON_BDOT)^2 );
+ A10r =  ON_MQY*sqrt( a10pR_MQX^2 + a10gR_MQX^2 + (a10tR_MQX* ON_BDOT)^2 );
+ A11r =  ON_MQY*sqrt( a11pR_MQX^2 + a11gR_MQX^2 + (a11tR_MQX* ON_BDOT)^2 );
+
+! Define components and set errors for MQY'S
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2, pattern = "^MQY.*21$";
+   select, flag=error, range= IP5/IP8, pattern = "^MQY.*21$";
+      eoption, seed= SEEDSYS+14000; exec NewFamily_MQY; exec Outer_MQY;
+      eoption, seed= SEEDRAN+14100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP2/IP5,    pattern = "^MQY.*21$";
+   select, flag=error, range= IP8/IP1.L1, pattern = "^MQY.*21$";
+      eoption, seed= SEEDSYS+14200; exec NewFamily_MQY; exec Inner_MQY;
+      eoption, seed= SEEDRAN+14300; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP1/IP2, pattern = "^MQY.*22$";
+   select, flag=error, range= IP5/IP8, pattern = "^MQY.*22$";
+      eoption, seed= SEEDSYS+14000; exec NewFamily_MQY; exec Outer_MQY;
+      eoption, seed= SEEDRAN+14100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error, clear;
+   select, flag=error, range= IP2/IP5,    pattern = "^MQY.*22$";
+   select, flag=error, range= IP8/IP1.L1, pattern = "^MQY.*22$";
+      eoption, seed= SEEDSYS+14200; exec NewFamily_MQY; exec Inner_MQY;
+      eoption, seed= SEEDRAN+14300; exec SetEfcomp_Q;
+      !Eprint;
+}
+
+
+if (ON_MQW <> 0) {
+!****************************Warm Quadrupoles (MQW)*******************
+ System,"echo ' Efcomp : Warm Quadrupoles (MQW)'";
+! Define sigma for random component
+
+ B1r  =  ON_MQW*sqrt( b1pR_MQW^2  + b1gR_MQW^2  + (b1tR_MQW * ON_BDOT)^2 );
+ B2r  =  ON_MQW*sqrt( b2pR_MQW^2  + b2gR_MQW^2  + (b2tR_MQW * ON_BDOT)^2 );
+ B3r  =  ON_MQW*sqrt( b3pR_MQW^2  + b3gR_MQW^2  + (b3tR_MQW * ON_BDOT)^2 );
+ B4r  =  ON_MQW*sqrt( b4pR_MQW^2  + b4gR_MQW^2  + (b4tR_MQW * ON_BDOT)^2 );
+ B5r  =  ON_MQW*sqrt( b5pR_MQW^2  + b5gR_MQW^2  + (b5tR_MQW * ON_BDOT)^2 );
+ B6r  =  ON_MQW*sqrt( b6pR_MQW^2  + b6gR_MQW^2  + (b6tR_MQW * ON_BDOT)^2 );
+ B7r  =  ON_MQW*sqrt( b7pR_MQW^2  + b7gR_MQW^2  + (b7tR_MQW * ON_BDOT)^2 );
+ B8r  =  ON_MQW*sqrt( b8pR_MQW^2  + b8gR_MQW^2  + (b8tR_MQW * ON_BDOT)^2 );
+ B9r  =  ON_MQW*sqrt( b9pR_MQW^2  + b9gR_MQW^2  + (b9tR_MQW * ON_BDOT)^2 );
+ B10r =  ON_MQW*sqrt( b10pR_MQW^2 + b10gR_MQW^2 + (b10tR_MQW* ON_BDOT)^2 );
+ B11r =  ON_MQW*sqrt( b11pR_MQW^2 + b11gR_MQW^2 + (b11tR_MQW* ON_BDOT)^2 );
+
+ A1r  =  ON_MQW*sqrt( a1pR_MQW^2  + a1gR_MQW^2  + (a1tR_MQW * ON_BDOT)^2 );
+ A2r  =  ON_MQW*sqrt( a2pR_MQW^2  + a2gR_MQW^2  + (a2tR_MQW * ON_BDOT)^2 );
+ A3r  =  ON_MQW*sqrt( a3pR_MQW^2  + a3gR_MQW^2  + (a3tR_MQW * ON_BDOT)^2 );
+ A4r  =  ON_MQW*sqrt( a4pR_MQW^2  + a4gR_MQW^2  + (a4tR_MQW * ON_BDOT)^2 );
+ A5r  =  ON_MQW*sqrt( a5pR_MQW^2  + a5gR_MQW^2  + (a5tR_MQW * ON_BDOT)^2 );
+ A6r  =  ON_MQW*sqrt( a6pR_MQW^2  + a6gR_MQW^2  + (a6tR_MQW * ON_BDOT)^2 );
+ A7r  =  ON_MQW*sqrt( a7pR_MQW^2  + a7gR_MQW^2  + (a7tR_MQW * ON_BDOT)^2 );
+ A8r  =  ON_MQW*sqrt( a8pR_MQW^2  + a8gR_MQW^2  + (a8tR_MQW * ON_BDOT)^2 );
+ A9r  =  ON_MQW*sqrt( a9pR_MQW^2  + a9gR_MQW^2  + (a9tR_MQW * ON_BDOT)^2 );
+ A10r =  ON_MQW*sqrt( a10pR_MQW^2 + a10gR_MQW^2 + (a10tR_MQW* ON_BDOT)^2 );
+ A11r =  ON_MQW*sqrt( a11pR_MQW^2 + a11gR_MQW^2 + (a11tR_MQW* ON_BDOT)^2 );
+
+! Define components and set errors for MQW's
+   select, flag=error, clear;
+   select, flag=error, range= s.IR3.B1/e.IR3.B1, class= MQWA;
+   select, flag=error, range= s.IR3.B1/e.IR3.B1, class= MQWB;
+      eoption, seed= SEEDSYS+15000; exec NewFamily_MQW; exec Inner_MQW;
+      eoption, seed= SEEDRAN+15100; exec SetEfcomp_Q;
+      !Eprint;
+   select, flag=error ,clear;
+   select, flag=error, range= s.IR7.B1/e.IR7.B1, class= MQWA;
+   select, flag=error, range= s.IR7.B1/e.IR7.B1, class= MQWB;
+      eoption, seed= SEEDSYS+15200; exec NewFamily_MQW; exec Outer_MQW;
+      eoption, seed= SEEDRAN+15300; exec SetEfcomp_Q;
+      !Eprint;
+}
+Return;

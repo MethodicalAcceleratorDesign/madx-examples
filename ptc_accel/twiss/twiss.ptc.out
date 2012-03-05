@@ -1,0 +1,1181 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.47              +
+  + Code Modification Date: 26.09.2008      +
+  + Execution Time Stamp: 07.10.08 17.15.22 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!Example script showing calculation of the TWISS parameters with accelaration using PTC
+
+!It also illustrates usage of PTC_SELECT command that inststructs PTC_TWISS to
+
+!store given monomials cofficients in a given table 
+
+!author: Piotr Skowronski (CERN)
+
+
+
+!option,-echo;
+
+!option,-info;
+
+
+
+LQL := 0.220; ! length of QL
+
+LQS := 0.124; ! length of QS
+
+CAVLENGTH := 2.4;
+
+QL  : QUADRUPOLE, L=LQL; ! QL quadrupole
+
+QS  : QUADRUPOLE, L=LQS; ! QS quadrupole
+
+
+
+!****** define the regular linac cell 
+
+!setting up Travelling Wave Cavity, Tension 14MV on 2.4 m length, freq 3GHz, 30deg off crest
+
+TCAV      : TWCAVITY,  L=CAVLENGTH, VOLT=14.0d0, LAG=30.d0/360., FREQ=3000.; 
+
+TCAVDrift      : DRIFT, L=CAVLENGTH; 
+
+meterdrif      : DRIFT, L=CAVLENGTH; 
+
+
+
+ds_ql     : drift, l=0.25;    ! short drift between quads in Daniels design
+
+ds_trip   : drift, l=(3.34-CAVLENGTH)/2.; ! long drift between quads in Daniels design
+
+cell_mrk  : marker;
+
+cell_q1   : marker;
+
+cell_q3   : marker;
+
+beforecav : marker;
+
+bc : marker;
+
+aftercav  : marker;
+
+k_ls1     := -1.53125*.56/LQL; ! weaker foc.
+
+k_ls2     :=  1.53125/LQL;     ! weaker foc.
+
+quad_l1   : quadrupole, l=LQL,   k1=k_ls1;
+
+quad_l2   : quadrupole, l=LQL/2, k1=k_ls2;
+
+LDLS      :=(LQL-LQS)/2.; ! half L difference of QL and QS
+
+dls       : DRIFT, L=LDLS; ! 0.048 m
+
+
+
+!                  0.11  + 0.25 + 0.22 +     (3.34-2.4)/2.
+
+ctfcell  : line=( quad_l2,ds_ql,quad_l1,cell_q1,ds_trip ,cell_mrk,
+
+                  beforecav, 
+
+                  TCAV,
+
+                  aftercav,
+
+                  ds_trip,cell_q3,quad_l1,ds_ql,quad_l2);
+
+ctf   : line=(3*ctfcell);
+
+
+
+! calculate Twiss parameters for regular cell structure
+
+beam, PARTICLE=ELECTRON, ENERGY=0.02d0;
+
+
+
+
+
+!First we calculate twiss parameters with thin lense approximation, 
+
+!substituting travelling wave cavities with drift, 
+
+!with close orbit
+
+
+
+USE, period=ctf;
+
+
+
+savebeta, place=#e, label=betaend;
+
+twiss, file=betasNC.txt, rmatrix;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+              13.5                 -0    1.084202172e-19         3037000500 
+
+                q1                dq1            betxmax              dxmax 
+      0.6732468516       -1.164266583        7.886471301                  0 
+
+             dxrms             xcomax             xcorms                 q2 
+                 0                  0                  0       0.7729655708 
+
+               dq2            betymax              dymax              dyrms 
+     -0.6587982905        3.577582585                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+value, betaend->betx;
+
+betaend->betx =        7.886471301 ;
+
+
+PLOT, file="ctfcell", haxis=s, vaxis=betx,bety,dx,dy, colour=100, 
+
+      title="Standard TWISS";
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+ GXPLOT-X11  1.50 initialized
+
+ plot number =  1
+
+
+select,flag=ptc_twiss,column=name,energy,s,beta11,beta21,beta12,beta22,disp1,disp3,x,px,y,py;
+
+
+
+
+
+!make ctf with travelling wave cavities setup the active one
+
+USE, period=ctf;
+
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout, model=1, method=6, nst=100, exact=true, closed_layout=false;
+
+ MAD-X Beam Parameters
+                  Energy : 0.200000E-01
+          Kinetic Energy : 0.194890E-01
+      Particle Rest Mass : 0.510999E-03
+                Momentum : 0.199935E-01
+ Setting MADx with 
+     energy         2.000000000000000E-02
+     method         6
+     Num. of steps  100
+     charge         -1.000000000000000
+  Length of machine:  13.50000000000000
+ The machine is a LINE
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Before   end:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After  start:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ After    end:  0.000000000000000E+00 0.000000000000000E+00 13.49999999999999
+ptc_setswitch, debuglevel=10, maxacceleration=true, exact_mis=true, time=true, totalpath=true, fringe=true;
+
+ Setting debug level to 10
+maxaccel is found and its value is 1.000000
+ Setting MAX ACCEL
+exact_mis is found and its value is 1.000000
+ Switching ON exact missaligment
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+radiation is found and its value is 0.000000
+ Switching OFF radiation
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+fringe is found and its value is 1.000000
+ Switching ON fringe
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+totalpath is found and its value is 1.000000
+ Switching ON totalpath (and switching OFF delta and only_4d)
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+time is found and its value is 1.000000
+ Switching ON time
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+nocavity is found and its value is 1.000000
+ Switching ON nocavity
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+obs_points pro_ptc_setswitch Done
+
+
+!calculate twiss parameters along the line, using initial parameters from the thin lense
+
+ptc_twiss, icase=6, no=3, betx=betaend->betx, alfx=betaend->alfx,  bety=betaend->bety, alfy=betaend->alfy, betz=1.0;
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ ptc_twiss
+ ptc_twiss: Table name is ptc_twiss                                       
+ icase= 6  deltap= 0.000000000000000E+00  deltap0= 0.000000000000000E+00
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+ I am in setcavities 
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+ There are  3  Cavities in the line.
+ c_%feed_p0c =  F
+ START TRACKING TILL THE FIRST CAVITY
+ Current cavity no is j= 1
+ Setting beam momentum AND tracking 1.999347093713292E-02  till the cavity ( 9 )
+  i= 1  name=CTF$START                beta0  0.9996735468566461  newpos  0.000000000000000E+00  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+  i= 2  name=QUAD_L2                  beta0  0.9996735468566461  newpos  0.1100359215724797  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.1100
+  i= 3  name=DS_QL                    beta0  0.9996735468566461  newpos  0.3601175615099323  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.3601
+  i= 4  name=QUAD_L1                  beta0  0.9996735468566461  newpos  0.5801894046548817  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.5802
+  i= 5  name=CELL_Q1                  beta0  0.9996735468566461  newpos  0.5801894046548817  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.5802
+  i= 6  name=DS_TRIP                  beta0  0.9996735468566461  newpos  1.050342887737293  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+  i= 7  name=CELL_MRK                 beta0  0.9996735468566461  newpos  1.050342887737293  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+  i= 8  name=BEFORECAV                beta0  0.9996735468566461  newpos  1.050342887737293  Current energy  2.000000000000000E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+          i=    9 name=      TCAV                      p0c=    0.0200     Current energy     0.0200
+  0.0000  0.0000  0.0000  0.0000  0.0000  1.0503
+ arrivtime =  3.503566749959042E-09
+    Max Energy to gain:  14.00000000000000  MeV, x(6) 1.050342887737293
+ Cavity settings:
+     Name   TCAV                    
+     Charge           -1 max ene? T
+       Volt      5.83333       MV 
+     DELTAE      0.00000      GeV 
+     Length      2.40000         m
+      Phase      -64.993       rad
+       Freq  3000000000.       Hz 
+        Lag     30.00000      deg       0.5236      rad 
+        P0c      0.01999     GeV/c
+ Track parameters after cavity   0.00000000  0.00000000  0.00000000  0.00000000  0.61250066  3.45082957
+  Old Fibre: energy=    0.0200 momentum=    0.0200  kinetic=    0.0195
+  New Fibre: energy=    0.0322 momentum=    0.0322  kinetic=    0.0317
+    0.9999    0.0322    0.0317    0.0322    0.1075    0.0158    0.0003    0.0005 F  0
+Relative E  0.6284
+ beta0  0.9996735468566461  oldpos  0.000000000000000E+00  newpos  3.450829565365475  Current energy  3.224601418438369E-02
+ Finding patch for j= 1  TCAV                    
+ Current cavity no is j= 2
+ Setting beam momentum AND tracking 3.224196505942919E-02  till the cavity ( 23 )
+  i= 10  name=AFTERCAV                 beta0  0.9998744302185274  newpos  3.450829565365475  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.4508
+  i= 11  name=DS_TRIP                  beta0  0.9998744302185274  newpos  3.920888590574549  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.9209
+  i= 12  name=CELL_Q3                  beta0  0.9998744302185274  newpos  3.920888590574549  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  3.9209
+  i= 13  name=QUAD_L1                  beta0  0.9998744302185274  newpos  4.140916219395788  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.1409
+  i= 14  name=DS_QL                    beta0  0.9998744302185274  newpos  4.390947615783594  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.3909
+  i= 15  name=QUAD_L2                  beta0  0.9998744302185274  newpos  4.500961430194109  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.5010
+  i= 16  name=QUAD_L2                  beta0  0.9998744302185274  newpos  4.610975244604623  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.6110
+  i= 17  name=DS_QL                    beta0  0.9998744302185274  newpos  4.861006640992430  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  4.8610
+  i= 18  name=QUAD_L1                  beta0  0.9998744302185274  newpos  5.081034269813636  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.0810
+  i= 19  name=CELL_Q1                  beta0  0.9998744302185274  newpos  5.081034269813636  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.0810
+  i= 20  name=DS_TRIP                  beta0  0.9998744302185274  newpos  5.551093295022711  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.5511
+  i= 21  name=CELL_MRK                 beta0  0.9998744302185274  newpos  5.551093295022711  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.5511
+  i= 22  name=BEFORECAV                beta0  0.9998744302185274  newpos  5.551093295022711  Current energy  3.224601418438369E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.5511
+          i=   23 name=      TCAV                      p0c=    0.0322     Current energy     0.0322
+  0.0000  0.0000  0.0000  0.0000  0.0000  5.5511
+ arrivtime =  1.851645412314779E-08
+    Max Energy to gain:  14.00000000000000  MeV, x(6) 5.551093295022711
+ Cavity settings:
+     Name   TCAV                    
+     Charge           -1 max ene? T
+       Volt      5.83333       MV 
+     DELTAE      0.00000      GeV 
+     Length      2.40000         m
+      Phase     -347.980       rad
+       Freq  3000000000.       Hz 
+        Lag     30.00000      deg       0.5236      rad 
+        P0c      0.03224     GeV/c
+ Track parameters after cavity   0.00000000  0.00000000  0.00000000  0.00000000  0.37768170  7.95131216
+  Old Fibre: energy=    0.0322 momentum=    0.0322  kinetic=    0.0317
+  New Fibre: energy=    0.0444 momentum=    0.0444  kinetic=    0.0439
+    0.9999    0.0444    0.0439    0.0444    0.1482    0.0115    0.0001    0.0005 F  0
+Relative E  1.2532
+ beta0  0.9998744302185274  oldpos  3.450829565365475  newpos  7.951312160483469  Current energy  4.442321437677336E-02
+ Finding patch for j= 2  TCAV                    
+ Current cavity no is j= 3
+ Setting beam momentum AND tracking 4.442027527693567E-02  till the cavity ( 37 )
+  i= 24  name=AFTERCAV                 beta0  0.9999338386499282  newpos  7.951312160483469  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  7.9513
+  i= 25  name=DS_TRIP                  beta0  0.9999338386499282  newpos  8.421343258375481  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  8.4213
+  i= 26  name=CELL_Q3                  beta0  0.9999338386499282  newpos  8.421343258375481  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  8.4213
+  i= 27  name=QUAD_L1                  beta0  0.9999338386499282  newpos  8.641357814835539  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  8.6414
+  i= 28  name=DS_QL                    beta0  0.9999338386499282  newpos  8.891374356267461  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  8.8914
+  i= 29  name=QUAD_L2                  beta0  0.9999338386499282  newpos  9.001381634497490  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  9.0014
+  i= 30  name=QUAD_L2                  beta0  0.9999338386499282  newpos  9.111388912727518  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  9.1114
+  i= 31  name=DS_QL                    beta0  0.9999338386499282  newpos  9.361405454159440  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  9.3614
+  i= 32  name=QUAD_L1                  beta0  0.9999338386499282  newpos  9.581420010619498  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  9.5814
+  i= 33  name=CELL_Q1                  beta0  0.9999338386499282  newpos  9.581420010619498  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000  9.5814
+  i= 34  name=DS_TRIP                  beta0  0.9999338386499282  newpos  10.05145110851151  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 10.0515
+  i= 35  name=CELL_MRK                 beta0  0.9999338386499282  newpos  10.05145110851151  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 10.0515
+  i= 36  name=BEFORECAV                beta0  0.9999338386499282  newpos  10.05145110851151  Current energy  4.442321437677336E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 10.0515
+          i=   37 name=      TCAV                      p0c=    0.0444     Current energy     0.0444
+  0.0000  0.0000  0.0000  0.0000  0.0000 10.0515
+ arrivtime =  3.352803194439104E-08
+    Max Energy to gain:  14.00000000000000  MeV, x(6) 10.05145110851151
+ Cavity settings:
+     Name   TCAV                    
+     Charge           -1 max ene? T
+       Volt      5.83333       MV 
+     DELTAE      0.00000      GeV 
+     Length      2.40000         m
+      Phase     -630.941       rad
+       Freq  3000000000.       Hz 
+        Lag     30.00000      deg       0.5236      rad 
+        P0c      0.04442     GeV/c
+ Track parameters after cavity   0.00000000  0.00000000  0.00000000  0.00000000  0.27361080 12.45157581
+  Old Fibre: energy=    0.0444 momentum=    0.0444  kinetic=    0.0439
+  New Fibre: energy=    0.0566 momentum=    0.0566  kinetic=    0.0561
+    1.0000    0.0566    0.0561    0.0566    0.1887    0.0090    0.0001    0.0005 F  0
+Relative E  1.8768
+ beta0  0.9999338386499282  oldpos  7.951312160483469  newpos  12.45157581341796  Current energy  5.657708150451031E-02
+ Finding patch for j= 3  TCAV                    
+ Loop over cavities done
+ Current element is AFTERCAV                
+ Doing loop from the first element after the last cavity to the END
+  i= 38  name=AFTERCAV                 beta0  0.9999592115006675  newpos  12.45157581341796  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 12.4516
+  i= 39  name=DS_TRIP                  beta0  0.9999592115006675  newpos  12.92159498479462  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 12.9216
+  i= 40  name=CELL_Q3                  beta0  0.9999592115006675  newpos  12.92159498479462  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 12.9216
+  i= 41  name=QUAD_L1                  beta0  0.9999592115006675  newpos  13.14160395863053  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 13.1416
+  i= 42  name=DS_QL                    beta0  0.9999592115006675  newpos  13.39161415617131  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 13.3916
+  i= 43  name=QUAD_L2                  beta0  0.9999592115006675  newpos  13.50161864308891  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 13.5016
+  i= 44  name=CTF$END                  beta0  0.9999592115006675  newpos  13.50161864308891  Current energy  5.657708150451031E-02
+  0.0000  0.0000  0.0000  0.0000  0.0000 13.5016
+ PARAMETERS AT THE END OF LINE:
+ Track parameters   0.0000  0.0000  0.0000  0.0000  0.0000 13.5016
+       START energy=    0.0200 momentum=    0.0200  kinetic=    0.0195
+         END energy=    0.0566 momentum=    0.0566  kinetic=    0.0561
+    1.0000    0.0566    0.0561    0.0566    0.1887    0.0090    0.0001    0.0005 F  0
+Relative E  1.8768
+ Name: CTF$START                Kind:  30
+ Name: QUAD_L2                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L1                  Kind:  46
+ Name: CELL_Q1                  Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_MRK                 Kind:  30
+ Name: BEFORECAV                Kind:  30
+ Name: TCAV                     Kind:  51
+ Cavity  9  name TCAV                     phase  -64.99347982700017  Volt  5.833333333333334  length  2.400000000000000
+ DELTAE  0.000000000000000E+00
+ Name: AFTERCAV                 Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_Q3                  Kind:  30
+ Name: QUAD_L1                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L2                  Kind:  46
+ Name: QUAD_L2                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L1                  Kind:  46
+ Name: CELL_Q1                  Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_MRK                 Kind:  30
+ Name: BEFORECAV                Kind:  30
+ Name: TCAV                     Kind:  51
+ Cavity  23  name TCAV                     phase  -347.9797399116846  Volt  5.833333333333334  length  2.400000000000000
+ DELTAE  0.000000000000000E+00
+ Name: AFTERCAV                 Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_Q3                  Kind:  30
+ Name: QUAD_L1                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L2                  Kind:  46
+ Name: QUAD_L2                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L1                  Kind:  46
+ Name: CELL_Q1                  Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_MRK                 Kind:  30
+ Name: BEFORECAV                Kind:  30
+ Name: TCAV                     Kind:  51
+ Cavity  37  name TCAV                     phase  -630.9413155237402  Volt  5.833333333333334  length  2.400000000000000
+ DELTAE  0.000000000000000E+00
+ Name: AFTERCAV                 Kind:  30
+ Name: DS_TRIP                  Kind:  31
+ Name: CELL_Q3                  Kind:  30
+ Name: QUAD_L1                  Kind:  46
+ Name: DS_QL                    Kind:  31
+ Name: QUAD_L2                  Kind:  46
+ Name: CTF$END                  Kind:  30
+ setknobs: There are  0 pol_blocks
+ Initializing map with initial twiss parameters
+ TW: Ini betas  7.886471300694087 2.067794110985402 1.000000000000000
+ TW: Ini alfas  8.431438882197751E-16 5.297563942492372E-16 0.000000000000000E+00
+ Closed orbit:  0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00 0.000000000000000E+00
+ Setting Sigmas (Emittances)
+ Current sigmas setemittances  1.000000000000000 1.000000000000000 1.000000000000000 1.000000000000000 1.000000000000000 1.000000000000000
+  Read the following BETA0 block in module ptc_twiss
+  Twiss parameters:
+    betx    alfx    bety    alfy    betz    alfz
+  7.8865  0.0000  2.0678  0.0000  1.0000  0.0000
+      dx     dpx      dy     dpy
+  0.0000  0.0000  0.0000  0.0000
+     mux     muy     muz
+  0.0000  0.0000  0.0000
+  Track:
+  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+ ptc_twiss: internal state is:
+ ************ State Summary ****************
+ MADTHICK=>KIND =   32  DRIFT-KICK-DRIFT       
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps    100
+  Real Pill Box Cavities 
+ This is an electron (positron actually if charge=1) 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     1
+       EXACTMIS    =  TRUE 
+       RADIATION   =  FALSE
+       NOCAVITY    =  FALSE
+       TIME        =  TRUE 
+       FRINGE      =  TRUE 
+       PARA_IN     =  FALSE
+       ONLY_4D     =  FALSE
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       SPIN_ONLY   =  FALSE
+  SPIN DIMENSION   =     3
+ ##########################################
+   1 CTF$START                 0.000000
+>CTF$START:1             <
+Ref Momentum     0.019993 GeV/c
+CTF$START                 0.0000
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     7.8865   2.0678   1.0000
+betas w/ener  7.8865   2.0678   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0000   0.0000   0.0000
+ ##########################################
+   2 QUAD_L2                   0.000000
+>QUAD_L2:1               <
+Ref Momentum     0.019993 GeV/c
+QUAD_L2                   0.1100
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     7.2422   2.2529   1.0000
+betas w/ener  7.2422   2.2529   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0023   0.0082   0.0000
+ ##########################################
+   3 DS_QL                     0.110000
+>DS_QL:1                 <
+Ref Momentum     0.019993 GeV/c
+DS_QL                     0.3600
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     4.6846   3.2285   1.0000
+betas w/ener  4.6846   3.2285   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0091   0.0230   0.0000
+ ##########################################
+   4 QUAD_L1                   0.360000
+>QUAD_L1:1               <
+Ref Momentum     0.019993 GeV/c
+QUAD_L1                   0.5800
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     3.6050   3.5776   1.0000
+betas w/ener  3.6050   3.5776   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0179   0.0330  -0.0001
+ ##########################################
+   5 CELL_Q1                   0.580000
+>CELL_Q1:1               <
+Ref Momentum     0.019993 GeV/c
+CELL_Q1                   0.5800
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     3.6050   3.5776   1.0000
+betas w/ener  3.6050   3.5776   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0179   0.0330  -0.0001
+ ##########################################
+   6 DS_TRIP                   0.580000
+>DS_TRIP:1               <
+Ref Momentum     0.019993 GeV/c
+DS_TRIP                   1.0500
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     3.0613   3.0224   1.0000
+betas w/ener  3.0613   3.0224   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0405   0.0558  -0.0001
+ ##########################################
+   7 CELL_MRK                  1.050000
+>CELL_MRK:1              <
+Ref Momentum     0.019993 GeV/c
+CELL_MRK                  1.0500
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     3.0613   3.0224   1.0000
+betas w/ener  3.0613   3.0224   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0405   0.0558  -0.0001
+ ##########################################
+   8 BEFORECAV                 1.050000
+>BEFORECAV:1             <
+Ref Momentum     0.019993 GeV/c
+BEFORECAV                 1.0500
+Delta E 1.00000000
+idxes        1        5        9
+betas raw     3.0613   3.0224   1.0000
+betas w/ener  3.0613   3.0224   1.0000
+disps         0.0000   0.0000   0.0000
+tunes         0.0405   0.0558  -0.0001
+ ##########################################
+   9 TCAV                      1.050000
+>TCAV:1                  <
+Ref Momentum     0.019993 GeV/c
+TCAV                      3.4500
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     1.8218   1.7996   0.9870
+betas w/ener  2.9373   2.9016   1.5914
+disps         0.0000   0.0000   0.0000
+tunes         0.1864   0.2044  -0.0002
+ ##########################################
+  10 AFTERCAV                  3.450000
+>AFTERCAV:1              <
+Ref Momentum     0.032242 GeV/c
+AFTERCAV                  3.4500
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     1.8218   1.7996   0.9870
+betas w/ener  2.9373   2.9016   1.5914
+disps         0.0000   0.0000   0.0000
+tunes         0.1864   0.2044  -0.0002
+ ##########################################
+  11 DS_TRIP                   3.450000
+>DS_TRIP:2               <
+Ref Momentum     0.032242 GeV/c
+DS_TRIP                   3.9200
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.1349   2.1205   0.9839
+betas w/ener  3.4421   3.4189   1.5864
+disps         0.0000   0.0000   0.0000
+tunes         0.2101   0.2282  -0.0002
+ ##########################################
+  12 CELL_Q3                   3.920000
+>CELL_Q3:1               <
+Ref Momentum     0.032242 GeV/c
+CELL_Q3                   3.9200
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.1349   2.1205   0.9839
+betas w/ener  3.4421   3.4189   1.5864
+disps         0.0000   0.0000   0.0000
+tunes         0.2101   0.2282  -0.0002
+ ##########################################
+  13 QUAD_L1                   3.920000
+>QUAD_L1:2               <
+Ref Momentum     0.032242 GeV/c
+QUAD_L1                   4.1400
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.7718   1.9121   0.9825
+betas w/ener  4.4690   3.0829   1.5841
+disps         0.0000   0.0000   0.0000
+tunes         0.2193   0.2387  -0.0003
+ ##########################################
+  14 DS_QL                     4.140000
+>DS_QL:2                 <
+Ref Momentum     0.032242 GeV/c
+DS_QL                     4.3900
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     4.2839   1.3346   0.9808
+betas w/ener  6.9070   2.1517   1.5814
+disps         0.0000   0.0000   0.0000
+tunes         0.2264   0.2542  -0.0003
+ ##########################################
+  15 QUAD_L2                   4.390000
+>QUAD_L2:2               <
+Ref Momentum     0.032242 GeV/c
+QUAD_L2                   4.5000
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     4.6650   1.2259   0.9801
+betas w/ener  7.5214   1.9766   1.5803
+disps         0.0000   0.0000   0.0000
+tunes         0.2288   0.2628  -0.0003
+ ##########################################
+  16 QUAD_L2                   4.500000
+>QUAD_L2:3               <
+Ref Momentum     0.032242 GeV/c
+QUAD_L2                   4.6100
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     4.2840   1.3375   0.9794
+betas w/ener  6.9072   2.1564   1.5791
+disps         0.0000   0.0000   0.0000
+tunes         0.2312   0.2714  -0.0003
+ ##########################################
+  17 DS_QL                     4.610000
+>DS_QL:3                 <
+Ref Momentum     0.032242 GeV/c
+DS_QL                     4.8600
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.7721   1.9236   0.9778
+betas w/ener  4.4694   3.1014   1.5764
+disps         0.0000   0.0000   0.0000
+tunes         0.2384   0.2868  -0.0003
+ ##########################################
+  18 QUAD_L1                   4.860000
+>QUAD_L1:3               <
+Ref Momentum     0.032242 GeV/c
+QUAD_L1                   5.0800
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.1353   2.1385   0.9763
+betas w/ener  3.4428   3.4479   1.5741
+disps         0.0000   0.0000   0.0000
+tunes         0.2476   0.2972  -0.0003
+ ##########################################
+  19 CELL_Q1                   5.080000
+>CELL_Q1:2               <
+Ref Momentum     0.032242 GeV/c
+CELL_Q1                   5.0800
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     2.1353   2.1385   0.9763
+betas w/ener  3.4428   3.4479   1.5741
+disps         0.0000   0.0000   0.0000
+tunes         0.2476   0.2972  -0.0003
+ ##########################################
+  20 DS_TRIP                   5.080000
+>DS_TRIP:3               <
+Ref Momentum     0.032242 GeV/c
+DS_TRIP                   5.5500
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     1.8226   1.8240   0.9732
+betas w/ener  2.9385   2.9408   1.5692
+disps         0.0000   0.0000   0.0000
+tunes         0.2712   0.3207  -0.0003
+ ##########################################
+  21 CELL_MRK                  5.550000
+>CELL_MRK:2              <
+Ref Momentum     0.032242 GeV/c
+CELL_MRK                  5.5500
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     1.8226   1.8240   0.9732
+betas w/ener  2.9385   2.9408   1.5692
+disps         0.0000   0.0000   0.0000
+tunes         0.2712   0.3207  -0.0003
+ ##########################################
+  22 BEFORECAV                 5.550000
+>BEFORECAV:2             <
+Ref Momentum     0.032242 GeV/c
+BEFORECAV                 5.5500
+Delta E 1.61230071
+idxes        1        5        9
+betas raw     1.8226   1.8240   0.9732
+betas w/ener  2.9385   2.9408   1.5692
+disps         0.0000   0.0000   0.0000
+tunes         0.2712   0.3207  -0.0003
+ ##########################################
+  23 TCAV                      5.550000
+>TCAV:2                  <
+Ref Momentum     0.032242 GeV/c
+TCAV                      7.9500
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.3979   1.3942   0.9593
+betas w/ener  3.1049   3.0966   2.1307
+disps         0.0000   0.0000   0.0000
+tunes         0.4165   0.4662  -0.0003
+ ##########################################
+  24 AFTERCAV                  7.950000
+>AFTERCAV:2              <
+Ref Momentum     0.044420 GeV/c
+AFTERCAV                  7.9500
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.3979   1.3942   0.9593
+betas w/ener  3.1049   3.0966   2.1307
+disps         0.0000   0.0000   0.0000
+tunes         0.4165   0.4662  -0.0003
+ ##########################################
+  25 DS_TRIP                   7.950000
+>DS_TRIP:4               <
+Ref Momentum     0.044420 GeV/c
+DS_TRIP                   8.4200
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.6552   1.6509   0.9570
+betas w/ener  3.6765   3.6670   2.1255
+disps         0.0000   0.0000   0.0000
+tunes         0.4387   0.4885  -0.0003
+ ##########################################
+  26 CELL_Q3                   8.420000
+>CELL_Q3:2               <
+Ref Momentum     0.044420 GeV/c
+CELL_Q3                   8.4200
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.6552   1.6509   0.9570
+betas w/ener  3.6765   3.6670   2.1255
+disps         0.0000   0.0000   0.0000
+tunes         0.4387   0.4885  -0.0003
+ ##########################################
+  27 QUAD_L1                   8.420000
+>QUAD_L1:4               <
+Ref Momentum     0.044420 GeV/c
+QUAD_L1                   8.6400
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     2.1546   1.4892   0.9559
+betas w/ener  4.7858   3.3078   2.1231
+disps         0.0000   0.0000   0.0000
+tunes         0.4473   0.4982  -0.0003
+ ##########################################
+  28 DS_QL                     8.640000
+>DS_QL:4                 <
+Ref Momentum     0.044420 GeV/c
+DS_QL                     8.8900
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     3.3349   1.0378   0.9546
+betas w/ener  7.4073   2.3051   2.1204
+disps         0.0000   0.0000   0.0000
+tunes         0.4540   0.5127  -0.0003
+ ##########################################
+  29 QUAD_L2                   8.890000
+>QUAD_L2:4               <
+Ref Momentum     0.044420 GeV/c
+QUAD_L2                   9.0000
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     3.6328   0.9515   0.9541
+betas w/ener  8.0691   2.1134   2.1191
+disps         0.0000   0.0000   0.0000
+tunes         0.4562   0.5207  -0.0003
+ ##########################################
+  30 QUAD_L2                   9.000000
+>QUAD_L2:5               <
+Ref Momentum     0.044420 GeV/c
+QUAD_L2                   9.1100
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     3.3372   1.0353   0.9535
+betas w/ener  7.4124   2.2996   2.1179
+disps         0.0000   0.0000   0.0000
+tunes         0.4585   0.5288  -0.0003
+ ##########################################
+  31 DS_QL                     9.110000
+>DS_QL:5                 <
+Ref Momentum     0.044420 GeV/c
+DS_QL                     9.3600
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     2.1606   1.4794   0.9523
+betas w/ener  4.7990   3.2859   2.1152
+disps         0.0000   0.0000   0.0000
+tunes         0.4651   0.5433  -0.0003
+ ##########################################
+  32 QUAD_L1                   9.360000
+>QUAD_L1:5               <
+Ref Momentum     0.044420 GeV/c
+QUAD_L1                   9.5800
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.6641   1.6355   0.9512
+betas w/ener  3.6963   3.6327   2.1128
+disps         0.0000   0.0000   0.0000
+tunes         0.4737   0.5531  -0.0003
+ ##########################################
+  33 CELL_Q1                   9.580000
+>CELL_Q1:3               <
+Ref Momentum     0.044420 GeV/c
+CELL_Q1                   9.5800
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.6641   1.6355   0.9512
+betas w/ener  3.6963   3.6327   2.1128
+disps         0.0000   0.0000   0.0000
+tunes         0.4737   0.5531  -0.0003
+ ##########################################
+  34 DS_TRIP                   9.580000
+>DS_TRIP:5               <
+Ref Momentum     0.044420 GeV/c
+DS_TRIP                  10.0500
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.4144   1.3732   0.9489
+betas w/ener  3.1416   3.0502   2.1076
+disps         0.0000   0.0000   0.0000
+tunes         0.4957   0.5756  -0.0003
+ ##########################################
+  35 CELL_MRK                 10.050000
+>CELL_MRK:3              <
+Ref Momentum     0.044420 GeV/c
+CELL_MRK                 10.0500
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.4144   1.3732   0.9489
+betas w/ener  3.1416   3.0502   2.1076
+disps         0.0000   0.0000   0.0000
+tunes         0.4957   0.5756  -0.0003
+ ##########################################
+  36 BEFORECAV                10.050000
+>BEFORECAV:3             <
+Ref Momentum     0.044420 GeV/c
+BEFORECAV                10.0500
+Delta E 2.22116072
+idxes        1        5        9
+betas raw     1.4144   1.3732   0.9489
+betas w/ener  3.1416   3.0502   2.1076
+disps         0.0000   0.0000   0.0000
+tunes         0.4957   0.5756  -0.0003
+ ##########################################
+  37 TCAV                     10.050000
+>TCAV:3                  <
+Ref Momentum     0.044420 GeV/c
+TCAV                     12.4500
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     1.0635   1.0308   0.9387
+betas w/ener  3.0085   2.9160   2.6556
+disps         0.0000   0.0000   0.0000
+tunes         0.6378   0.7239  -0.0004
+ ##########################################
+  38 AFTERCAV                 12.450000
+>AFTERCAV:3              <
+Ref Momentum     0.056575 GeV/c
+AFTERCAV                 12.4500
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     1.0635   1.0308   0.9387
+betas w/ener  3.0085   2.9160   2.6556
+disps         0.0000   0.0000   0.0000
+tunes         0.6378   0.7239  -0.0004
+ ##########################################
+  39 DS_TRIP                  12.450000
+>DS_TRIP:6               <
+Ref Momentum     0.056575 GeV/c
+DS_TRIP                  12.9200
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     1.2417   1.2187   0.9371
+betas w/ener  3.5127   3.4476   2.6508
+disps         0.0000   0.0000   0.0000
+tunes         0.6609   0.7476  -0.0004
+ ##########################################
+  40 CELL_Q3                  12.920000
+>CELL_Q3:3               <
+Ref Momentum     0.056575 GeV/c
+CELL_Q3                  12.9200
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     1.2417   1.2187   0.9371
+betas w/ener  3.5127   3.4476   2.6508
+disps         0.0000   0.0000   0.0000
+tunes         0.6609   0.7476  -0.0004
+ ##########################################
+  41 QUAD_L1                  12.920000
+>QUAD_L1:6               <
+Ref Momentum     0.056575 GeV/c
+QUAD_L1                  13.1400
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     1.6091   1.1003   0.9363
+betas w/ener  4.5518   3.1127   2.6486
+disps         0.0000   0.0000   0.0000
+tunes         0.6699   0.7580  -0.0004
+ ##########################################
+  42 DS_QL                    13.140000
+>DS_QL:6                 <
+Ref Momentum     0.056575 GeV/c
+DS_QL                    13.3900
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     2.4827   0.7692   0.9354
+betas w/ener  7.0233   2.1759   2.6461
+disps         0.0000   0.0000   0.0000
+tunes         0.6769   0.7733  -0.0004
+ ##########################################
+  43 QUAD_L2                  13.390000
+>QUAD_L2:6               <
+Ref Momentum     0.056575 GeV/c
+QUAD_L2                  13.5000
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     2.7020   0.7071   0.9350
+betas w/ener  7.6435   2.0002   2.6450
+disps         0.0000   0.0000   0.0000
+tunes         0.6793   0.7818  -0.0004
+ ##########################################
+  44 CTF$END                  13.500000
+>CTF$END:1               <
+Ref Momentum     0.056575 GeV/c
+ It is the last element  CTF$END                 
+ Its reference energy is  5.657477381025912E-02
+CTF$END                  13.5000
+Delta E 2.82885408
+idxes        1        5        9
+betas raw     2.7020   0.7071   0.9350
+betas w/ener  7.6435   2.0002   2.6450
+disps         0.0000   0.0000   0.0000
+tunes         0.6793   0.7818  -0.0004
+ ##########################################
+ ##########################################
+ ###  END  OF  PTC_TWISS            #######
+ ##########################################
+ ##########################################
+
+
+PLOT, file="ctfcell", ptc=true, haxis=s, vaxis=beta11,beta12, colour=100, title="PTC TWISS";
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  2
+write, table=PTC1, file="PTC1.txt";
+
+++++++ warning: table name not found: ignored
+write, table=ptc_twiss, file="ptc_twiss.txt";
+
+
+
+PLOT, file="ctfcell", ptc=true, haxis=s, vaxis=energy, colour=100, title="";
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ plot number =  3
+
+
+ptc_end;
+
+  killing last layout 
+  killed last layout 
+stop;
+
+
+  Number of warnings: 1
+1 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.47 finished normally +
+  +++++++++++++++++++++++++++++++++++

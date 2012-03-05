@@ -1,0 +1,347 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.29              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 21.09.2010      +
+  + Execution Time Stamp: 28.09.10 09.52.03 +
+  +++++++++++++++++++++++++++++++++++++++++++
+title,"MAD-X thin lens fodo cell";
+
+!
+
+! define beam line  
+
+
+
+cav:rfcavity,l:=0,volt:=1.,harmon:=50,shunt:=100.;
+
+mkick:multipole,lrad:=1.,knl:={0,0,(ksf),(kof),0.};
+
+
+
+kqd=-0.0004;
+
+kqf=0.0004;
+
+ksf=10.;
+
+kof=100.;
+
+
+
+mq: multipole,lrad:=3.;
+
+qd: mq,lrad:=1.,knl:={0,(kqd)*(1.e+00)};
+
+qf: mq,lrad:=1.,knl:={0,(kqf)*(1.e+00)};
+
+d:drift,l=500.;
+
+
+
+fodo : line = (qd,d,cav,qf,mkick,qf,d,qd);
+
+
+
+beam,particle=proton,energy=10,sigt=0.077,et=0.002;
+
+use,period=fodo;
+
+twiss;
+
+enter Twiss module
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+              1000                  0    6.141086148e-07         1276.07854 
+
+                q1                dq1            betxmax              dxmax 
+     0.06409421685     -0.06525808721        3061.862178                 -0 
+
+             dxrms             xcomax             xcorms                 q2 
+                 0                  0                  0      0.06409421685 
+
+               dq2            betymax              dymax              dyrms 
+    -0.06525808721        3061.862178                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+! match tunes 
+
+
+
+qx0 = 0.245;
+
+qy0 = 0.270;
+
+
+
+match,sequence=fodo;
+
+START MATCHING
+
+number of sequences: 1
+sequence name: fodo
+global,q1=QX0,q2=QY0;
+
+vary,name=kqf;
+
+vary,name=kqd;
+
+lmdif,calls=200,tolerance=1.0e-21;
+
+number of variables:    2
+user given constraints: 2
+total constraints:      2
+
+START LMDIF:
+
+Initial Penalty Function =   0.75124094E+01
+
+
+call:       4   Penalty function =   0.32163778E+01
+call:       7   Penalty function =   0.77716190E-01
+call:      10   Penalty function =   0.90563565E-04
+call:      13   Penalty function =   0.11586971E-09
+call:      16   Penalty function =   0.21985875E-19
+call:      19   Penalty function =   0.89363149E-29
+ ++++++++++ LMDIF ended: converged successfully
+call:      19   Penalty function =   0.89363149E-29
+endmatch;
+
+
+MATCH SUMMARY
+
+Node_Name                  Constraint   Type  Target Value       Final Value        Penalty
+--------------------------------------------------------------------------------------------------
+Global constraint:         q1           4     2.45000000E-01     2.45000000E-01     1.23259516E-30
+Global constraint:         q2           4     2.70000000E-01     2.70000000E-01     7.70371978E-30
+
+
+Final Penalty Function =   8.93631494e-30
+
+
+
+
+
+Variable                 Final Value  Initial Value Lower Limit  Upper Limit 
+--------------------------------------------------------------------------------
+kqf                       1.40838e-03  4.00000e-04 -1.00000e+20  1.00000e+20
+kqd                      -1.48676e-03 -4.00000e-04 -1.00000e+20  1.00000e+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   8.93631494e-30
+
+
+! run dynap without nonlinear elements (except cavity)
+
+! tunes should be QX=0.245 and Qy=0.27 as set above 
+
+
+
+ksf=.0;
+
+++++++ info: ksf redefined
+kof=0.0;
+
+++++++ info: kof redefined
+
+
+option,echo,warn,info;
+
+
+
+use,period=fodo;
+
+
+
+track;
+
+enter TRACK module
+start,x=0.0000010,y=-0.00000010,pt=0.00;
+
+dynap,fastune,turns=1024,lyapunov=1.e-7;
+
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+  Full 6D closed orbit search.
+  Initial value of 6-D closed orbit from Twiss: 
+  orbit0   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+  Singular matrix occurred during closed orbit search.
+  
+ 6D closed orbit found by subroutine trclor 
+iteration:   2 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+ turn :         100
+ turn :         200
+ turn :         300
+ turn :         400
+ turn :         500
+ turn :         600
+ turn :         700
+ turn :         800
+ turn :         900
+ turn :        1000
+
+++++++ table: tracksumm
+
+    number       turn                  x                 px 
+         1          0              1e-06                  0 
+         2          0            1.1e-06                  0 
+         1       1024    7.289686274e-07    2.313017128e-09 
+         2       1024    8.018654902e-07    2.544318841e-09 
+
+                 y                 py                  t                 pt 
+            -1e-07                  0                  0                  0 
+            -1e-07                  0                  0                  0 
+   9.921147013e-08    7.296416994e-12                  0                  0 
+   9.921147013e-08    7.296416994e-12                  0                  0 
+
+                 s                  e 
+                 0                  0 
+                 0                  0 
+              1000                  0 
+              1000                  0 
+  entered dynap 
+  0.245000000000000       0.245000000000000         0.270000000000000       0.270000000000000     
+  tunes =   0.245000000000000       0.270000000000000       0.000000000000000E+000
+  yapunov =   0.000000000000000E+000
+  end dynap 
+endtrack;
+
+exit TRACK module
+
+
+
+! print out results 
+
+
+
+value,table(dynaptune,tunx),table(dynaptune,tuny),table(dynaptune,dtune);
+
+table( dynaptune tunx ) =              0.245 ;
+table( dynaptune tuny ) =               0.27 ;
+table( dynaptune dtune ) =                  0 ;
+value,table(dynap,yapunov),table(dynap,smear);
+
+table( dynap yapunov ) =                  0 ;
+table( dynap smear ) =    1.165325667e-14 ;
+
+
+!
+
+! set nonlinear elements and track again with dynap 
+
+! 
+
+
+
+ksf=.026;
+
+++++++ info: ksf redefined
+! kof=4000.;
+
+kof:=0.;
+
+++++++ info: kof redefined
+
+
+use,period=fodo;
+
+
+
+track;
+
+enter TRACK module
+start,x=0.0010,y=0.0017,pt=0.0003;
+
+dynap,fastune,turns=1024,lyapunov=1.e-7;
+
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+  
+  Full 6D closed orbit search.
+  Initial value of 6-D closed orbit from Twiss: 
+  orbit0   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+  Singular matrix occurred during closed orbit search.
+  
+ 6D closed orbit found by subroutine trclor 
+iteration:   2 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+ turn :         100
+ turn :         200
+ turn :         300
+ turn :         400
+ turn :         500
+ turn :         600
+ turn :         700
+ turn :         800
+ turn :         900
+ turn :        1000
+
+++++++ table: tracksumm
+
+    number       turn                  x                 px 
+         1          0              0.001                  0 
+         2          0          0.0010001                  0 
+         1       1024    0.0004495288864    3.123005881e-06 
+         2       1024    0.0004494916622    3.123463384e-06 
+
+                 y                 py                  t                 pt 
+            0.0017                  0                  0             0.0003 
+            0.0017                  0                  0             0.0003 
+   -0.001693521927     4.18402838e-08      -0.1570384655   -5.247961243e-05 
+   -0.001693518631    4.186695353e-08      -0.1570384654   -5.247961233e-05 
+
+                 s                  e 
+                 0                  0 
+                 0                  0 
+              1000                  0 
+              1000                  0 
+  entered dynap 
+  0.244956609889445       0.244905959100610         0.270036933889672       0.269978948592824     
+  tunes =   0.244941173181912       0.270018571756333       7.699218830629070E-005
+  yapunov =   0.000000000000000E+000
+  end dynap 
+endtrack;
+
+exit TRACK module
+
+
+
+! print out results 
+
+
+
+value,table(dynaptune,tunx),table(dynaptune,tuny),table(dynaptune,dtune);
+
+table( dynaptune tunx ) =       0.2449411732 ;
+table( dynaptune tuny ) =       0.2700185718 ;
+table( dynaptune dtune ) =    7.699218831e-05 ;
+value,table(dynap,yapunov),table(dynap,smear);
+
+table( dynap yapunov ) =                  0 ;
+table( dynap smear ) =      0.05753576911 ;
+
+
+return;
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.29 finished normally +
+  +++++++++++++++++++++++++++++++++++

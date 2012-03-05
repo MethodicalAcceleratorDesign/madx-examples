@@ -1,0 +1,1194 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.27              +
+  + Code Modification Date: 02.04.2008      +
+  + Execution Time Stamp: 10.04.08 16.32.12 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!For the time being use only with 6D and Gaussian distributions
+
+
+
+!E0 = 1.3;
+
+!emitx =2.0e-9;
+
+!emityn =3.0e-8;
+
+!
+
+!dp=0.8e-3;
+
+
+
+ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+
+ptc_enforce6d, flag=true;
+
+
+
+call, file='matchline';
+
+Q1: QUADRUPOLE, L:=0.1, K1:=KQ1;
+
+Q2: QUADRUPOLE, L:=0.1, K1:=KQ2;
+
+L1: DRIFT, L:=0.3;
+
+B: SBEND, L:=0.1, ANGLE:=BANG, K1:=BK1;
+
+S: MARKER;
+
+ML: LINE:=(S,Q2,L1,B,L1,Q1,L1);
+
+MLinv: LINE :=(-(ML));
+
+beam, particle=electron, energy=1.3, sequence=ML;
+
+beam, particle=electron, energy=1.3, sequence=MLinv;
+
+use, sequence=ML;
+
+
+
+
+
+!match,betx=7.328756752062, bety=3.138666109153,dx=-0.0017843735153,alfx=-1.182561568783,alfy=1.770354080712, dpx=-0.00037646863;
+
+!vary, name=KQ1;
+
+!vary, name=KQ2;
+
+!vary, name=BANG;
+
+!vary, name=BK1;
+
+!constraint, range=#e,dx=0, dpx=0, alfx=0, alfy=0;
+
+!jacobian, calls=100;
+
+!endmatch;
+
+
+
+kq1 =                       2.54832846E+01;
+
+kq2  =                      2.84159142E+01;
+
+bang  =                    -4.28538725E-03;
+
+bk1    =                   -3.08961672E+01;
+
+
+
+
+
+
+
+
+
+savebeta, label=mline, place=#e, sequence=ML;
+
+
+
+select, flag=twiss,column=name,s,betx,mux,bety,muy,k2l,dx,alfx,alfy,dpx;
+
+twiss, betx=7.328756752062, bety=3.138666109153,dx=-0.0017843735153,alfx=-1.182561568783,alfy=1.770354080712, dpx=-0.000376468633842,file='mline.twiss';
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+               1.2                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+      0.4812859847                  0        8.644361602     0.001784373515 
+
+             dxrms             xcomax             xcorms                 q2 
+   0.0009938505979                  0                  0       0.2304648935 
+
+               dq2            betymax              dymax              dyrms 
+                 0        10.07532283                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+
+
+
+
+
+
+
+
+use, sequence=MLinv;
+
+twiss, beta0=mline,mux=0,muy=0,file='minvline.twiss';
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+               1.2                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+      0.4812858752                  0        8.644391598     0.001784373523 
+
+             dxrms             xcomax             xcorms                 q2 
+    0.001158238128                  0                  0       0.2304639847 
+
+               dq2            betymax              dymax              dyrms 
+                 0        10.07534586                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+
+
+
+
+call, file='ATF2-1.madx';
+
+! DATE AND TIME:    04/12/06  11.58.23;
+
+!;
+
+! FILE:             text.txt                                                                        ;
+
+!;
+
+KEX1A: SBEND, L:=0.250000010417, ANGLE:=0.25E-2, E1:=0.0, HGAP:=0.635E-2, FINT:=0.5
+
+, FINTX:=0.0;
+
+IP01: MARKER;
+
+KEX1B: SBEND, L:=0.250000010417, ANGLE:=0.25E-2, E2:=0.5E-2, HGAP:=0.635E-2, 
+
+FINT:=0.0, FINTX:=0.5;
+
+L001: DRIFT, L:=0.932500124;
+
+QM6R: SBEND, L:=0.09, ANGLE:=0.228208782798E-2, K1:=-3.95620850337, FINT:=0.0, 
+
+FINTX:=0.0;
+
+L002A: DRIFT, L:=1.4154208424;
+
+COLL: MARKER;
+
+L002B: DRIFT, L:=0.065;
+
+MB1X: MONITOR;
+
+L002C: DRIFT, L:=0.0855465;
+
+QM7R: SBEND, L:=0.03, ANGLE:=-0.421226915923E-2, K1:=6.634631740033, FINT:=0.0, 
+
+FINTX:=0.0;
+
+L003: DRIFT, L:=0.161609143;
+
+BS1XA: SBEND, L:=0.3, ANGLE:=0.01401783271, E1:=0.0, HGAP:=0.016, FINT:=0.5, 
+
+FINTX:=0.0;
+
+ZS1X: HKICKER;
+
+BS1XB: SBEND, L:=0.3, ANGLE:=0.01401783271, E2:=0.0, HGAP:=0.016, FINT:=0.0, 
+
+FINTX:=0.5;
+
+L004: DRIFT, L:=0.2;
+
+BS2XA: SBEND, L:=0.4, ANGLE:=0.037171683066, E1:=0.0, HGAP:=0.016, FINT:=0.5, 
+
+FINTX:=0.0;
+
+ZS2X: HKICKER;
+
+BS2XB: SBEND, L:=0.4, ANGLE:=0.037171683066, E2:=0.0, HGAP:=0.016, FINT:=0.0, 
+
+FINTX:=0.5;
+
+L005A: DRIFT, L:=0.1;
+
+MB2X: MONITOR;
+
+L005B: DRIFT, L:=0.1;
+
+BS3XA: SBEND, L:=0.5, ANGLE:=0.117511012908, E1:=0.0, HGAP:=0.016, FINT:=0.5, 
+
+FINTX:=0.0;
+
+ZS3X: HKICKER;
+
+BS3XB: SBEND, L:=0.5, ANGLE:=0.117511012908, E2:=0.0, HGAP:=0.016, FINT:=0.0, 
+
+FINTX:=0.5;
+
+L006A: DRIFT, L:=0.2652;
+
+ZV1X: VKICKER, L:=0.1248;
+
+L006B: DRIFT, L:=0.16;
+
+SF1X: SEXTUPOLE, L:=0.05, K2:=71.03783878248, APERTURE:=0.017526;
+
+L006C: DRIFT, L:=0.09;
+
+ML1X: MONITOR;
+
+L006D: DRIFT, L:=0.06;
+
+QF1X: QUADRUPOLE, L:=0.099305, K1:=5.388576248381, APERTURE:=0.016;
+
+L007A: DRIFT, L:=0.25;
+
+MS1X: MARKER;
+
+L007B: DRIFT, L:=0.25;
+
+BH1XA: SBEND, L:=0.4, ANGLE:=0.0935043315, E1:=0.0, K2:=-0.913128237305, HGAP:=
+
+0.016, FINT:=0.5, FINTX:=0.0;
+
+ZX1X: HKICKER;
+
+BH1XB: SBEND, L:=0.4, ANGLE:=0.0935043315, E2:=0.0, K2:=-0.913128237305, HGAP:=
+
+0.016, FINT:=0.0, FINTX:=0.5;
+
+L008A: DRIFT, L:=0.44;
+
+ML2X: MONITOR;
+
+L008B: DRIFT, L:=0.06;
+
+QD2X: QUADRUPOLE, L:=0.099305, K1:=-4.737685355667, APERTURE:=0.016;
+
+L009A: DRIFT, L:=0.15;
+
+SD2X: SEXTUPOLE, L:=0.05, K2:=-62.99587809986, APERTURE:=0.027051;
+
+L009B: DRIFT, L:=0.16;
+
+ZV2X: VKICKER, L:=0.1248;
+
+L009C: DRIFT, L:=0.177700080767;
+
+ML3X: MONITOR;
+
+L009D: DRIFT, L:=0.06;
+
+QF3X: QUADRUPOLE, L:=0.099305, K1:=3.371258718982, APERTURE:=0.016;
+
+L010A: DRIFT, L:=0.16;
+
+ZH1X: HKICKER, L:=0.111921;
+
+L010B: DRIFT, L:=0.16;
+
+ZV3X: VKICKER, L:=0.1248;
+
+L010C: DRIFT, L:=1.496708376233;
+
+LW1U: MARKER;
+
+MID: MARKER;
+
+L011A: DRIFT, L:=1.993429376233;
+
+ML4X: MONITOR;
+
+L011B: DRIFT, L:=0.06;
+
+QF4X: QUADRUPOLE, L:=0.099305, K1:=3.444163076059, APERTURE:=0.016;
+
+L012A: DRIFT, L:=0.16;
+
+ZH2X: HKICKER, L:=0.111921;
+
+L012B: DRIFT, L:=0.250579080767;
+
+SD3X: SEXTUPOLE, L:=0.05, K2:=62.99587809986, APERTURE:=0.027051;
+
+L012C: DRIFT, L:=0.09;
+
+ML5X: MONITOR;
+
+L012D: DRIFT, L:=0.06;
+
+QD5X: QUADRUPOLE, L:=0.099305, K1:=-4.67058246193, APERTURE:=0.016;
+
+L013A: DRIFT, L:=0.16;
+
+ZV4X: VKICKER, L:=0.1248;
+
+L013B: DRIFT, L:=0.2152;
+
+BH2XA: SBEND, L:=0.4, ANGLE:=-0.0935043315, E1:=0.0, K2:=0.913128237305, HGAP:=
+
+0.016, FINT:=0.5, FINTX:=0.0;
+
+ZX2X: HKICKER;
+
+BH2XB: SBEND, L:=0.4, ANGLE:=-0.0935043315, E2:=0.0, K2:=0.913128237305, HGAP:=
+
+0.016, FINT:=0.0, FINTX:=0.5;
+
+L014A: DRIFT, L:=0.44;
+
+ML6X: MONITOR;
+
+L014B: DRIFT, L:=0.06;
+
+QF6X: QUADRUPOLE, L:=0.099305, K1:=5.671658122381, APERTURE:=0.016;
+
+L015A: DRIFT, L:=0.15;
+
+SF4X: SEXTUPOLE, L:=0.05, K2:=-74.4910756578, APERTURE:=0.017526;
+
+L015B: DRIFT, L:=0.16;
+
+ZV5X: VKICKER, L:=0.1248;
+
+L015C: DRIFT, L:=0.471402919594;
+
+BH3XA: SBEND, L:=0.675, ANGLE:=-0.171770347352, E1:=0.0, HGAP:=0.016, FINT:=0.5, 
+
+FINTX:=0.0;
+
+ZX3X: HKICKER;
+
+BH3XB: SBEND, L:=0.675, ANGLE:=-0.171770347352, E2:=0.0, HGAP:=0.016, FINT:=0.0, 
+
+FINTX:=0.5;
+
+L016A: DRIFT, L:=0.795379615159;
+
+ML7X: MONITOR;
+
+L016B: DRIFT, L:=0.06;
+
+QF7X: QUADRUPOLE, L:=0.039335, K1:=4.767735053655, APERTURE:=0.016;
+
+L017A: DRIFT, L:=1.709618833813;
+
+ZH3X: HKICKER, L:=0.111921;
+
+L017B: DRIFT, L:=0.1;
+
+ML8X: MONITOR;
+
+L017C: DRIFT, L:=0.06;
+
+QD8X: QUADRUPOLE, L:=0.099305, K1:=-2.994809740003, APERTURE:=0.016;
+
+L018A: DRIFT, L:=0.16;
+
+ZV6X: VKICKER, L:=0.1248;
+
+L018B: DRIFT, L:=0.682526240834;
+
+KEX2A: SBEND, L:=0.250000010417, ANGLE:=0.25E-2, E1:=0.5E-2, HGAP:=0.635E-2, 
+
+FINT:=0.5, FINTX:=0.0;
+
+IP02: MARKER;
+
+KEX2B: SBEND, L:=0.250000010417, ANGLE:=0.25E-2, E2:=0.0, HGAP:=0.635E-2, FINT:=
+
+0.0, FINTX:=0.5;
+
+MDISP: MARKER;
+
+L101: DRIFT, L:=0.411793385919;
+
+QF9X: QUADRUPOLE, L:=0.099305, K1:=3.69928222799, APERTURE:=0.016;
+
+L102A: DRIFT, L:=0.06;
+
+ML9X: MONITOR;
+
+L102B: DRIFT, L:=0.1;
+
+ZH4X: HKICKER, L:=0.111921;
+
+L102C: DRIFT, L:=1.79712896332;
+
+ZV7X: VKICKER, L:=0.1248;
+
+L102D: DRIFT, L:=0.16;
+
+QK1X: QUADRUPOLE, L:=0.039335, K1:=0.0, TILT:=0.785398163397, APERTURE:=0.016;
+
+L102E: DRIFT, L:=0.1;
+
+QD10X: QUADRUPOLE, L:=0.1, K1:=-5.11862830879, APERTURE:=0.016;
+
+MSKEW: MARKER;
+
+L103A: DRIFT, L:=0.06;
+
+ML10X: MONITOR;
+
+L103B: DRIFT, L:=0.918079;
+
+ZH5X: HKICKER, L:=0.111921;
+
+L103C: DRIFT, L:=0.16;
+
+QF11X: QUADRUPOLE, L:=0.1, K1:=5.11862830879, APERTURE:=0.016;
+
+L104A: DRIFT, L:=0.06;
+
+ML11X: MONITOR;
+
+L104B: DRIFT, L:=0.72653;
+
+ZV8X: VKICKER, L:=0.1248;
+
+L104C: DRIFT, L:=0.16;
+
+QK2X: QUADRUPOLE, L:=0.039335, K1:=0.0, TILT:=0.785398163397, APERTURE:=0.016;
+
+L104D: DRIFT, L:=0.1;
+
+QD12X: QUADRUPOLE, L:=0.1, K1:=-5.11862830879, APERTURE:=0.016;
+
+L105A: DRIFT, L:=0.06;
+
+ML12X: MONITOR;
+
+L105B: DRIFT, L:=0.502055841954;
+
+ZH6X: HKICKER, L:=0.111921;
+
+L105C: DRIFT, L:=0.16;
+
+QF13X: QUADRUPOLE, L:=0.0993725, K1:=6.884441078488, APERTURE:=0.016;
+
+L106A: DRIFT, L:=0.06;
+
+ML13X: MONITOR;
+
+L106B: DRIFT, L:=0.776949327745;
+
+QD14X: QUADRUPOLE, L:=0.0993725, K1:=-5.108275738736, APERTURE:=0.016;
+
+FIT180: MARKER;
+
+L107A: DRIFT, L:=0.06;
+
+ML14X: MONITOR;
+
+L107B: DRIFT, L:=0.505028327745;
+
+ZH7X: HKICKER, L:=0.111921;
+
+L107C: DRIFT, L:=0.16;
+
+QF15X: QUADRUPOLE, L:=0.0993725, K1:=6.884441078488, APERTURE:=0.016;
+
+L108A: DRIFT, L:=0.06;
+
+ML15X: MONITOR;
+
+L108B: DRIFT, L:=0.310506841954;
+
+ZV9X: VKICKER, L:=0.1248;
+
+L108C: DRIFT, L:=0.16;
+
+QK3X: QUADRUPOLE, L:=0.039335, K1:=0.0, TILT:=0.785398163397, APERTURE:=0.016;
+
+L108D: DRIFT, L:=0.1;
+
+QD16X: QUADRUPOLE, L:=0.1, K1:=-5.11862830879, APERTURE:=0.016;
+
+L109A: DRIFT, L:=0.06;
+
+ML16X: MONITOR;
+
+L109B: DRIFT, L:=0.918079;
+
+ZH8X: HKICKER, L:=0.111921;
+
+L109C: DRIFT, L:=0.16;
+
+QF17X: QUADRUPOLE, L:=0.1, K1:=5.11862830879, APERTURE:=0.016;
+
+L110A: DRIFT, L:=0.06;
+
+ML17X: MONITOR;
+
+L110B: DRIFT, L:=1.01133;
+
+QK4X: QUADRUPOLE, L:=0.039335, K1:=0.0, TILT:=0.785398163397, APERTURE:=0.016;
+
+L110C: DRIFT, L:=0.748018634363;
+
+ZV10X: VKICKER, L:=0.1248;
+
+L110D: DRIFT, L:=0.095;
+
+MQ18X: MONITOR;
+
+L110E: DRIFT, L:=0.065;
+
+QD18X: QUADRUPOLE, L:=0.1, K1:=-3.41642238452, APERTURE:=0.016;
+
+L111A: DRIFT, L:=0.3;
+
+MW0X: MARKER;
+
+L111B: DRIFT, L:=0.672728895242;
+
+ZH9X: HKICKER, L:=0.111921;
+
+L111C: DRIFT, L:=0.095;
+
+MQ19X: MONITOR;
+
+L111D: DRIFT, L:=0.065;
+
+QF19X: QUADRUPOLE, L:=0.1, K1:=3.276079830015, APERTURE:=0.016;
+
+L112A: DRIFT, L:=0.3;
+
+MW1X: MARKER;
+
+L112B: DRIFT, L:=1.2016;
+
+WALL: DRIFT, L:=1.0;
+
+L112C: DRIFT, L:=0.8536;
+
+ZV11X: VKICKER, L:=0.1248;
+
+L112D: DRIFT, L:=0.16;
+
+MW2X: MARKER;
+
+L112E: DRIFT, L:=0.095;
+
+MQ20X: MONITOR;
+
+L112F: DRIFT, L:=0.065;
+
+QD20X: QUADRUPOLE, L:=0.039335, K1:=-3.799701347922, APERTURE:=0.016;
+
+MEMIT: MARKER;
+
+L113A: DRIFT, L:=3.528079;
+
+ZH10X: HKICKER, L:=0.111921;
+
+L113B: DRIFT, L:=0.095;
+
+MQ21X: MONITOR;
+
+L113C: DRIFT, L:=0.065;
+
+QF21X: QUADRUPOLE, L:=0.039335, K1:=3.799701347922, APERTURE:=0.016;
+
+L114A: DRIFT, L:=0.3;
+
+MW3X: MARKER;
+
+L114B: DRIFT, L:=0.16;
+
+ZV12X: VKICKER, L:=0.1248;
+
+L114C: DRIFT, L:=2.9152;
+
+MW4X: MARKER;
+
+L114D: DRIFT, L:=0.235;
+
+MQQM16: MONITOR;
+
+L114E: DRIFT, L:=0.065;
+
+BEGFF: MARKER;
+
+QM16: QUADRUPOLE, L:=0.1, K1:=-0.280385564165, APERTURE:=0.016;
+
+DDD: DRIFT, L:=0.15;
+
+D12: DRIFT, L:=1.0;
+
+QM15: QUADRUPOLE, L:=0.1, K1:=-0.54167584301, APERTURE:=0.016;
+
+D11: DRIFT, L:=1.0;
+
+QM14: QUADRUPOLE, L:=0.1, K1:=-8.22137016649, APERTURE:=0.016;
+
+D10: DRIFT, L:=1.0;
+
+QM13: QUADRUPOLE, L:=0.1, K1:=4.949863060475, APERTURE:=0.016;
+
+D9: DRIFT, L:=1.0;
+
+QM12: QUADRUPOLE, L:=0.1, K1:=1.930593704625, APERTURE:=0.016;
+
+D8: DRIFT, L:=1.1;
+
+QM11: QUADRUPOLE, L:=0.1, K1:=0.0, APERTURE:=0.016;
+
+VWXY: MARKER;
+
+D7: DRIFT, L:=1.0;
+
+QD10: QUADRUPOLE, L:=0.1, K1:=-1.47401975321, APERTURE:=0.016;
+
+LX0: DRIFT, L:=0.1;
+
+OC10: OCTUPOLE, L:=0.1, K3:=0.0, APERTURE:=0.016;
+
+D6A: DRIFT, L:=0.4;
+
+DEC6: MULTIPOLE,  KNL:={0,0,0,0,0};
+
+D6: DRIFT, L:=0.4;
+
+QF9: QUADRUPOLE, L:=0.1, K1:=1.8737097132, APERTURE:=0.016;
+
+DQS: DRIFT, L:=0.26;
+
+LXS: DRIFT, L:=0.055;
+
+SF6: SEXTUPOLE, L:=0.045, K2:=87.069332841878, APERTURE:=0.016;
+
+D8TO9: DRIFT, L:=1.6;
+
+QD8: QUADRUPOLE, L:=0.1, K1:=-2.74934398047, APERTURE:=0.016;
+
+D7TO8: DRIFT, L:=1.7;
+
+QF7: QUADRUPOLE, L:=0.1, K1:=2.4251192945, APERTURE:=0.016;
+
+DDBB: DRIFT, L:=0.1;
+
+B5A: SBEND, L:=0.400041496416, ANGLE:=-0.024947966607, E1:=-0.024947966607, 
+
+HGAP:=0.016, FINT:=0.5, FINTX:=0.0;
+
+B5B: SBEND, L:=0.400041496416, ANGLE:=-0.024947966607, E2:=-0.024947966607, 
+
+HGAP:=0.016, FINT:=0.0, FINTX:=0.5;
+
+DLB5Q6: DRIFT, L:=0.55;
+
+QD6: QUADRUPOLE, L:=0.1, K1:=-2.74934398047, APERTURE:=0.016;
+
+D5TO6: DRIFT, L:=1.6;
+
+QF5: QUADRUPOLE, L:=0.1, K1:=1.8737097132, APERTURE:=0.016;
+
+SF5: SEXTUPOLE, L:=0.045, K2:=-9.695385033856, APERTURE:=0.016;
+
+D4: DRIFT, L:=0.4;
+
+DEC4: MULTIPOLE,  KNL:={0,0,0,0,0};
+
+D4A: DRIFT, L:=0.4;
+
+QD4: QUADRUPOLE, L:=0.1, K1:=-1.522112466355, APERTURE:=0.016;
+
+SD4: SEXTUPOLE, L:=0.045, K2:=1.615272873296E2, APERTURE:=0.016;
+
+D3: DRIFT, L:=1.1;
+
+B2A: SBEND, L:=0.400041496416, ANGLE:=-0.015087937324, E1:=-0.015087937324, 
+
+HGAP:=0.016, FINT:=0.5, FINTX:=0.0;
+
+B2B: SBEND, L:=0.400041496416, ANGLE:=-0.015087937324, E2:=-0.015087937324, 
+
+HGAP:=0.016, FINT:=0.0, FINTX:=0.5;
+
+QD2B: QUADRUPOLE, L:=0.1, K1:=2.840693832035, APERTURE:=0.016;
+
+B1A: SBEND, L:=0.400041496416, ANGLE:=-0.02690209037, E1:=-0.02690209037, HGAP:=
+
+0.016, FINT:=0.5, FINTX:=0.0;
+
+B1B: SBEND, L:=0.400041496416, ANGLE:=-0.02690209037, E2:=-0.02690209037, HGAP:=
+
+0.016, FINT:=0.0, FINTX:=0.5;
+
+QF3: QUADRUPOLE, L:=0.1, K1:=-1.05686947213, APERTURE:=0.016;
+
+DDB: DRIFT, L:=0.0;
+
+D05M: DRIFT, L:=0.5;
+
+QD2A: QUADRUPOLE, L:=0.1, K1:=-1.39391395475, APERTURE:=0.016;
+
+D2B: DRIFT, L:=2.875;
+
+OC1: OCTUPOLE, L:=0.15, K3:=0.0, APERTURE:=0.016;
+
+D2A: DRIFT, L:=0.25;
+
+SF1: SEXTUPOLE, L:=0.045, K2:=-29.335648872922, APERTURE:=0.016;
+
+D1C: DRIFT, L:=0.25;
+
+QF1: QUADRUPOLE, L:=0.225, K1:=1.637327670569, APERTURE:=0.016;
+
+D1B: DRIFT, L:=0.465;
+
+SD0: SEXTUPOLE, L:=0.045, K2:=49.637054116144, APERTURE:=0.016;
+
+D1A: DRIFT, L:=0.25;
+
+QD0: QUADRUPOLE, L:=0.225, K1:=-3.00315722952, APERTURE:=0.016;
+
+D0: DRIFT, L:=1.0;
+
+IP: MARKER;
+
+ENDFF: MARKER;
+
+DDMP1: DRIFT, L:=1.5;
+
+BDMPA: SBEND, L:=0.678439164133, ANGLE:=0.174532925199, E1:=0.174532925199, 
+
+HGAP:=0.016, FINT:=0.5, FINTX:=0.0;
+
+BDMPB: SBEND, L:=0.678439164133, ANGLE:=0.174532925199, E2:=0.174532925199, 
+
+HGAP:=0.016, FINT:=0.0, FINTX:=0.5;
+
+DDMP2: DRIFT, L:=1.0;
+
+DUMPH: DRIFT, L:=1.15;
+
+QF90X: QUADRUPOLE, L:=0.1, K1:=5.11862830879, APERTURE:=0.016;
+
+QD90X: QUADRUPOLE, L:=0.1, K1:=-5.11862830879, APERTURE:=0.016;
+
+QF180X: QUADRUPOLE, L:=0.0993725, K1:=6.884441078488, APERTURE:=0.016;
+
+QD180X: QUADRUPOLE, L:=0.0993725, K1:=-5.108275738736, APERTURE:=0.016;
+
+QFWX: QUADRUPOLE, L:=0.1, K1:=1.494612525205, APERTURE:=0.016;
+
+QDWX: QUADRUPOLE, L:=0.1, K1:=-1.494612525205, APERTURE:=0.016;
+
+L002: DRIFT, L:=1.5659673424;
+
+L005: DRIFT, L:=0.2;
+
+L006: DRIFT, L:=0.8;
+
+L007: DRIFT, L:=0.5;
+
+L008: DRIFT, L:=0.5;
+
+L009: DRIFT, L:=0.772500080767;
+
+L010: DRIFT, L:=2.053429376233;
+
+L011: DRIFT, L:=2.053429376233;
+
+L012: DRIFT, L:=0.772500080767;
+
+L013: DRIFT, L:=0.5;
+
+L014: DRIFT, L:=0.5;
+
+L015: DRIFT, L:=1.006202919594;
+
+L016: DRIFT, L:=0.855379615159;
+
+L017: DRIFT, L:=1.981539833813;
+
+L018: DRIFT, L:=0.967326240834;
+
+L90X: DRIFT, L:=1.25;
+
+L180AX: DRIFT, L:=0.833976841954;
+
+L180BX: DRIFT, L:=0.836949327745;
+
+LWX: DRIFT, L:=3.8;
+
+L102: DRIFT, L:=2.53251996332;
+
+L103: DRIFT, L:=1.25;
+
+L104: DRIFT, L:=1.25;
+
+L105: DRIFT, L:=0.833976841954;
+
+L106: DRIFT, L:=0.836949327745;
+
+L107: DRIFT, L:=0.836949327745;
+
+L108: DRIFT, L:=0.833976841954;
+
+L109: DRIFT, L:=1.25;
+
+L110: DRIFT, L:=2.182818634363;
+
+L111: DRIFT, L:=1.244649895242;
+
+L112: DRIFT, L:=3.8;
+
+L113: DRIFT, L:=3.8;
+
+L114: DRIFT, L:=3.8;
+
+MKEX1: MULTIPOLE;
+
+MQM6R: MULTIPOLE;
+
+MQM7R: MULTIPOLE;
+
+MBS1X: MULTIPOLE;
+
+MBS2X: MULTIPOLE;
+
+MBS3X: MULTIPOLE;
+
+MQS1X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MQS2X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MQS3X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MQS4X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MQS5X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MQS6X: MULTIPOLE, T1:=0.785398163397;
+
+++++++ warning: illegal keyword: t1
+MSIM: MARKER;
+
+ZHSIM1: HKICKER;
+
+ZHSIM2: HKICKER;
+
+ZVSIM1: VKICKER;
+
+ZVSIM2: VKICKER;
+
+MLSIM1: MONITOR;
+
+MLSIM2: MONITOR;
+
+L000001: LINE:=(KEX1A,IP01,KEX1B,L001,QM6R,QM6R,L002A,COLL,L002B,MB1X,L002C,
+
+QM7R,QM7R,L003,BS1XA,ZS1X,BS1XB,L004,BS2XA,ZS2X,BS2XB,L005A,MB2X,L005B,BS3XA,
+
+ZS3X,BS3XB,L006A,ZV1X,L006B,SF1X,SF1X,L006C,ML1X,L006D,QF1X,QF1X,L007A,MS1X,
+
+L007B,BH1XA,ZX1X,BH1XB,L008A,ML2X,L008B,QD2X,QD2X,L009A,SD2X,SD2X,L009B,ZV2X,
+
+L009C,ML3X,L009D,QF3X,QF3X,L010A,ZH1X,L010B,ZV3X,L010C,LW1U,MID,L011A,ML4X,
+
+L011B,QF4X,QF4X,L012A,ZH2X,L012B,SD3X,SD3X,L012C,ML5X,L012D,QD5X,QD5X,L013A,
+
+ZV4X,L013B,BH2XA,ZX2X,BH2XB,L014A,ML6X,L014B,QF6X,QF6X,L015A,SF4X,SF4X,L015B,
+
+ZV5X,L015C,BH3XA,ZX3X,BH3XB,L016A,ML7X,L016B,QF7X,QF7X,L017A,ZH3X,L017B,ML8X,
+
+L017C,QD8X,QD8X,L018A,ZV6X,L018B,KEX2A,IP02,KEX2B,MDISP,L101,QF9X,QF9X,L102A,
+
+ML9X,L102B,ZH4X,L102C,ZV7X,L102D,QK1X,QK1X,L102E,QD10X,MSKEW,QD10X,L103A,
+
+ML10X,L103B,ZH5X,L103C,QF11X,QF11X,L104A,ML11X,L104B,ZV8X,L104C,QK2X,QK2X,
+
+L104D,QD12X,QD12X,L105A,ML12X,L105B,ZH6X,L105C,QF13X,QF13X,L106A,ML13X,L106B,
+
+QD14X,FIT180,QD14X,L107A,ML14X,L107B,ZH7X,L107C,QF15X,QF15X,L108A,ML15X,
+
+L108B,ZV9X,L108C,QK3X,QK3X,L108D,QD16X,QD16X,L109A,ML16X,L109B,ZH8X,L109C,
+
+QF17X,QF17X,L110A,ML17X,L110B,QK4X,QK4X,L110C,ZV10X,L110D,MQ18X,L110E,QD18X);
+
+L000002: LINE:=(QD18X,L111A,MW0X,L111B,ZH9X,L111C,MQ19X,L111D,QF19X,QF19X,
+
+L112A,MW1X,L112B,WALL,L112C,ZV11X,L112D,MW2X,L112E,MQ20X,L112F,QD20X,MEMIT,
+
+QD20X,L113A,ZH10X,L113B,MQ21X,L113C,QF21X,QF21X,L114A,MW3X,L114B,ZV12X,L114C,
+
+MW4X,L114D,MQQM16,L114E,BEGFF,QM16,QM16,DDD,D12,DDD,QM15,QM15,DDD,D11,DDD,
+
+QM14,QM14,DDD,D10,DDD,QM13,QM13,DDD,D9,DDD,QM12,QM12,DDD,D8,DDD,QM11,QM11,
+
+DDD,VWXY,D7,DDD,QD10,QD10,DDD,LX0,OC10,OC10,LX0,DDD,QD10,QD10,DDD,D6A,DEC6,
+
+D6,DDD,QF9,QF9,DQS,LX0,LXS,SF6,SF6,LXS,LX0,DQS,QF9,QF9,D8TO9,QD8,QD8,D7TO8,
+
+QF7,QF7,DDD,LX0,DDBB,B5A,B5B,DLB5Q6,QD6,QD6,D5TO6,QF5,QF5,DQS,LX0,LXS,SF5,
+
+SF5,LXS,LX0,DQS,QF5,QF5,DDD,D4,DEC4,D4A,DDD,QD4,QD4,DQS,LX0,LXS,SD4,SD4,LXS,
+
+LX0,DQS,QD4,QD4,DDD,D3,LX0,DDBB,B2A,B2B,DDBB,LX0,DDD,QD2B,QD2B,DDD,LX0,DDBB,
+
+B1A,B1B,DDBB,LX0,DDD,QF3,QF3,DDD,LX0,DDB,D05M,D05M,DDB,LX0,DDD,QD2A,QD2A,DDD,
+
+LX0,DDB,D05M,D05M,DDB,D2B,OC1,OC1,D2A,LXS,SF1,SF1,LXS,D1C,QF1,QF1,D1B,LXS,
+
+SD0,SD0,LXS,D1A,QD0,QD0,D0,IP,ENDFF);
+
+L000003: LINE:=(DDMP1,BDMPA,BDMPB,DDMP2,DUMPH,DUMPH);
+
+ATF2: LINE:=(L000001,L000002);
+
+ATFD: LINE:=(L000001,L000002,L000003);
+
+
+
+
+
+myatf2: LINE=(MLinv,ATF2);
+
+
+
+ini_betaz = 23; !Emittance is sigmadp^2/sqrt(gammaz), so emittance must be adjusted to the initial betaz and alfaz
+
+ini_alfaz = 0;
+
+ini_gamaz = (1+ini_alfaz*ini_alfaz)/ini_betaz;
+
+
+
+sigmadp=0.008;
+
+emiz = (sigmadp*sigmadp)/ini_gamaz;
+
+
+
+
+
+beam, particle=electron, energy=1.3, ex = 3.e-6/2544.0313111546, ey = 3.e-8/2544.0313111546, et = emiz, sigt=0, sige=0;
+
+use, sequence=myATF2;
+
+!use, sequence=my;
+
+
+
+!Here is sigmax^2
+
+ptc_select_moment, table = momord2,   moment_s=2;
+
+
+
+!Below are example how to encode other moments
+
+!ptc_select_moment, table = momord2,   moment_s=20,11,02, 002,0011,0002, 00002;
+
+!ptc_select_moment, table = momord2xy, moment_s=1010,0110,1001,0101, 10001,01001, 00101, 00011;
+
+!ptc_select_moment, table = momord4,   moment_s=40,22,04, 004,0022,0004;
+
+!ptc_select_moment, table = momord6,   moment_s=6;
+
+
+
+
+
+
+
+
+
+
+
+
+
+select, flag=twiss,column=name,s,betx,mux,bety,muy,k2l,dx,alfx,alfy,dpx;
+
+twiss, beta0=mline,alfx=0,alfy=0,file='twiss';
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+       90.49739237                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+       6.056690936                  0        5951.228074       0.6800197353 
+
+             dxrms             xcomax             xcorms                 q2 
+      0.1902723053                  0                  0        4.669739811 
+
+               dq2            betymax              dymax              dyrms 
+                 0        13093.85534                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+
+
+
+
+SELECT, flag=ptc_twiss, column=name, s, beta11, beta12, beta21, beta22, beta33, mu2,mu3,gama11, disp1,disp3;
+
+
+
+show, mline;
+
+command: beta0  module: control
+parameter: betx   double value:        8.633952637
+parameter: alfx   double value:   -2.499656612e-05
+parameter: mux   double value:       0.4812859847
+parameter: bety   double value:       0.1142130252
+parameter: alfy   double value:   -2.898408055e-06
+parameter: muy   double value:       0.2304648935
+parameter: x   double value:                  0
+parameter: px   double value:                  0
+parameter: y   double value:                  0
+parameter: py   double value:                  0
+parameter: t   double value:                  0
+parameter: pt   double value:                  0
+parameter: dx   double value:   -2.693090103e-12
+parameter: dpx   double value:   -4.105201821e-12
+parameter: dy   double value:                  0
+parameter: dpy   double value:                  0
+parameter: wx   double value:                  0
+parameter: phix   double value:                  0
+parameter: dmux   double value:                  0
+parameter: wy   double value:                  0
+parameter: phiy   double value:                  0
+parameter: dmuy   double value:                  0
+parameter: ddx   double value:                  0
+parameter: ddpx   double value:                  0
+parameter: ddy   double value:                  0
+parameter: ddpy   double value:                  0
+parameter: r11   double value:                 -0
+parameter: r12   double value:                  0
+parameter: r21   double value:                 -0
+parameter: r22   double value:                  0
+parameter: energy   double value:                1.3
+
+
+ptc_create_universe;
+
+!PTC_SETSWITCH, fringe=true;
+
+ptc_create_layout, model=2, method=6, nst=10;
+
+
+
+
+
+!ptc_setswitch, debuglevel=10, exact_mis=true, time=true, totalpath=false;
+
+
+
+ptc_twiss, icase=6, zdistr=gauss, no=4, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ T
+ Closed orbit specified by the user!
+
+
+value, table(momord2,myatf2$end,mu200000);
+
+table( momord2 myatf2$end mu200000 ) =    6.342094794e-11 ;
+sigmax4 = table(momord2,myatf2$end,mu200000);
+
+
+
+
+
+ptc_twiss, icase=6, zdistr=gauss, no=3, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ T
+ Closed orbit specified by the user!
+
+
+value, table(momord2,myatf2$end,mu200000);
+
+table( momord2 myatf2$end mu200000 ) =    8.702758176e-12 ;
+sigmax3 = table(momord2,myatf2$end,mu200000);
+
+
+
+
+
+ptc_twiss, icase=6, zdistr=gauss, no=2, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ T
+ Closed orbit specified by the user!
+
+
+value, table(momord2,myatf2$end,mu200000);
+
+table( momord2 myatf2$end mu200000 ) =    5.009866174e-12 ;
+sigmax2 = table(momord2,myatf2$end,mu200000);
+
+
+
+
+
+ptc_twiss, icase=6, zdistr=gauss, no=1, file='twiss.ptc', beta0=mline, betz=ini_betaz;!if you change init betz then adjust emiz!!!
+
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+ T
+ Closed orbit specified by the user!
+
+
+value, table(momord2,myatf2$end,mu200000);
+
+table( momord2 myatf2$end mu200000 ) =    4.723384446e-12 ;
+sigmax1 = table(momord2,myatf2$end,mu200000);
+
+
+
+value, sigmax1, sigmax2, sigmax3, sigmax4;  
+
+sigmax1 =    4.723384446e-12 ;
+sigmax2 =    5.009866174e-12 ;
+sigmax3 =    8.702758176e-12 ;
+sigmax4 =    6.342094794e-11 ;
+
+
+stop;
+
+
+  Number of warnings: 6
+6 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.27 finished normally +
+  +++++++++++++++++++++++++++++++++++

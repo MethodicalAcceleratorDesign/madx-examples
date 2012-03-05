@@ -1,0 +1,13 @@
+
+! saved on 07/04/06 11:20:48 by T.Risselada
+
+ Rr = 0.017; ON_MBX  = 1;
+
+
+ exec, Efcomp_Measured_Dip(MBX.4L2);
+ exec, Efcomp_Measured_Dip(MBX.4R2);
+ exec, Efcomp_Measured_Dip(MBX.4L8);
+ exec, Efcomp_Measured_Dip(MBX.4R8);
+
+
+return;

@@ -1,0 +1,39 @@
+Example 2:
+   Output in  normalized coordinates 
+   Input in standard coordinates; 6 particles;
+   icase=4; closed_orbit; turns=1000; no=1; 
+   Output in normalized coordinates at beginning of the ring (i.e., at START)
+
+Initial files for running the example 1 are
+    Readme                - this file
+    fv9_2.madx            - madX input data file
+    fv9.opt               - madX input data file
+    fv9.seq               - madX input data file
+    Makefile_2            - command file 
+    *.plt                 - scripts for running GNUPLOT
+
+The example can be run with commands ("Makefile_2"):
+=============================================================
+# Run Example No.2 with "madxp" 
+#     using the input "fv9_2.madx" and output "fv9_2.out" 
+madxp < fv9_2.madx > fv9_2.out
+
+# Plot with GNUPLOT4.0
+gnuplot make_plots2.plt
+
+# clean temp files
+rm empty.ps
+==============================================================
+
+
+The resuling files are
+
+    fv9_2.out  - the output text-file of madx
+ 
+    track.obs0001.p000* - output data-table for the n-th particle 
+                          at observation point0001 (i.e., at START)
+    fv9_2_START.ps      - phase spaces at START plotted by MAD-X
+    obs1_XX1.eps        - X-X' phase spaces plotted by GNUPLOT
+    obs1_YY1.eps        - Y-Y' phase spaces plotted by GNUPLOT 
+
+    PDF_2 - directory with pdf-images derived from the above postscript files. 

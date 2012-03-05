@@ -1,0 +1,217 @@
+@ NAME             %05s "TWISS"
+@ TYPE             %05s "TWISS"
+@ SEQUENCE         %06s "SMACH1"
+@ PARTICLE         %06s "PROTON"
+@ MASS             %le         0.938271998
+@ CHARGE           %le                   1
+@ ENERGY           %le                 450
+@ PC               %le         449.9990218
+@ GAMMA            %le         479.6050622
+@ KBUNCH           %le                   1
+@ BCURRENT         %le                   0
+@ SIGE             %le                   0
+@ SIGT             %le                   0
+@ NPART            %le                   0
+@ EX               %le     5.212633542e-10
+@ EY               %le     5.212633542e-10
+@ ET               %le                   1
+@ LENGTH           %le                   5
+@ ALFA             %le                   0
+@ ORBIT5           %le                  -0
+@ GAMMATR          %le                   0
+@ Q1               %le        0.1398034313
+@ Q2               %le        0.2768289926
+@ DQ1              %le                   0
+@ DQ2              %le                   0
+@ DXMAX            %le                   0
+@ DYMAX            %le                   0
+@ XCOMAX           %le                   0
+@ YCOMAX           %le                   0
+@ BETXMAX          %le         9.115008032
+@ BETYMAX          %le          5.30901356
+@ XCORMS           %le                   0
+@ YCORMS           %le                   0
+@ DXRMS            %le                   0
+@ DYRMS            %le                   0
+@ DELTAP           %le                   0
+@ SYNCH_1          %le                   0
+@ SYNCH_2          %le                   0
+@ SYNCH_3          %le                   0
+@ SYNCH_4          %le                   0
+@ SYNCH_5          %le                   0
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 3.04.19 Linux"
+@ DATE             %08s "21/02/08"
+@ TIME             %08s "10.11.28"
+* NAME                                S                  L                K1L               BETX               ALFX               BETY               ALFY 
+$ %s                                %le                %le                %le                %le                %le                %le                %le 
+ "SMACH1$START"                       0                  0                  0            4.94687           -1.32058            4.94687            1.32058
+ "DRIFT_0"                         1.25               1.25                  0        9.115008032       -2.013930426        2.512108032       0.6272295743
+ "QF1"                             1.75                0.5              0.545        8.642763393        2.871028475        2.665323703      -0.9610022173
+ "DRIFT_1"                         2.75                  1                  0        3.970133441        1.801601478         5.30901356       -1.682687639
+ "QF2"                             3.25                0.5               -0.7        3.577190783      -0.9260999936        5.134752129        1.989567971
+ "DRIFT_2"                            5               1.75                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+ "MKR"                                5                  0                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+ "SMACH1$END"                         5                  0                  0        8.408919291       -1.834887725        1.128571721       0.2996779772
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 3.04.19              +
+  + Code Modification Date: 10.02.2008      +
+  + Execution Time Stamp: 21.02.08 10.11.20 +
+  +++++++++++++++++++++++++++++++++++++++++++
+mkr : marker;
+
+qf1: quadrupole,k1:=kq1,l=0.5;
+
+qf2: quadrupole,k1:=kq2,l=0.5;
+
+
+
+kq2=-1.4;
+
+kq1=1.09;
+
+posq1=1.5;
+
+posq2=3;
+
+lseq=5;
+
+
+
+smach1: sequence,l:=lseq;
+
+qf1,at:=posq1;
+
+qf2,at:=posq2;
+
+mkr,at:=lseq;
+
+endsequence;
+
+
+
+beam,particle=proton,energy=450,exn=1e-6,eyn=1e-6;
+
+use,period=smach1;
+
+select,flag=twiss, clear;
+
+select,flag=twiss,column=name,s,l,k1l,betx,alfx,bety,alfy;
+
+twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+                 5                 -0                  0                  0 
+
+                q1                dq1            betxmax              dxmax 
+      0.1398034313                  0        9.115008032                  0 
+
+             dxrms             xcomax             xcorms                 q2 
+                 0                  0                  0       0.2768289926 
+
+               dq2            betymax              dymax              dyrms 
+                 0         5.30901356                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+system,"cat twj";
+
+
+
+match,vlength=true,betx=4.94687,alfx= -1.32058,bety=4.94687,alfy=1.32058;
+
+START MATCHING
+
+entry name: betx
+number of entries: 1
+entry value: 4.946870
+entry name: alfx
+number of entries: 1
+entry value: -1.320580
+entry name: bety
+number of entries: 1
+entry value: 4.946870
+entry name: alfy
+number of entries: 1
+entry value: 1.320580
+vary,name=kq1,step=.00001;
+
+vary,name=posq2,step=.001;
+
+vary,name=kq2,step=.00001;
+
+vary,name=lseq,step=.001;
+
+constraint,sequence=smach1,range=mkr,betx=4.91062,alfx=-1.32332,bety=4.94687,alfy=1.32058;
+
+lmdif,calls=200,tolerance=1E-24;
+
+number of variables:    4
+user given constraints: 4
+total constraints:      4
+
+START LMDIF:
+
+Initial Penalty Function =   0.15721175E+03
+
+
+call:       7   Penalty function =   0.28112942E+02
+call:      12   Penalty function =   0.26979511E+02
+call:      17   Penalty function =   0.53599888E+00
+call:      22   Penalty function =   0.19331567E+00
+call:      27   Penalty function =   0.69729085E-03
+call:      32   Penalty function =   0.75840960E-07
+call:      37   Penalty function =   0.22635818E-13
+call:      42   Penalty function =   0.26486214E-18
+call:      47   Penalty function =   0.27378605E-23
+ ++++++++++ LMDIF ended: converged without success
+call:      47   Penalty function =   0.27378605E-23
+endmatch;
+
+
+MATCH SUMMARY
+
+Node_Name                  Constraint   Type  Target Value       Final Value        Penalty
+--------------------------------------------------------------------------------------------------
+mkr:1                      betx         4     4.91062000E+00     4.91062000E+00     7.00006768E-25
+mkr:1                      alfx         4    -1.32332000E+00    -1.32332000E+00     1.57974327E-25
+mkr:1                      bety         4     4.94687000E+00     4.94687000E+00     7.39181601E-25
+mkr:1                      alfy         4     1.32058000E+00     1.32058000E+00     1.14069780E-24
+
+
+Final Penalty Function =   2.73786050e-24
+
+
+
+Variable                   Final Value        Lower Limit        Upper Limit
+-------------------------------------------------------------------------------
+kq1                        9.13468047E-01    -1.00000000E+20     1.00000000E+20
+posq2                      3.13785046E+00    -1.00000000E+20     1.00000000E+20
+kq2                       -1.10714680E+00    -1.00000000E+20     1.00000000E+20
+lseq                       3.40117920E+00    -1.00000000E+20     1.00000000E+20
+
+END MATCH SUMMARY
+
+VARIABLE "TAR" SET TO   2.73786050e-24
+
+
+!twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+
+!system,"cat twj";
+
+
+  Number of warnings: 0
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 3.04.19 finished normally +
+  +++++++++++++++++++++++++++++++++++

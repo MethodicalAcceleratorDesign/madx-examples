@@ -1,0 +1,300 @@
+title,      "LHC V6.503  -  LHC thin lens";
+
+! saved on 14/10/08 14:43:03 by T.Risselada
+
+ system, "rm -rf temp";
+! system, "ln -fns /afs/cern.ch/eng/lhc/optics/V6.503 db";
+! system, "ln -s /afs/cern.ch/eng/lhc/optics/errors/0705 wise";
+ system, "mkdir temp";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                        choose beam
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!mylhcbeam = 1;   // LHC beam 1 (clockwise)
+!mylhcbeam = 2;   // LHC beam 2 (clockwise)
+mylhcbeam = 4;   // LHC beam 2 (counterclockwise)
+
+
+ option,    -info, -warn, verify, -echo;
+
+ if (mylhcbeam == 1){
+ call, file="V6.5.thin.seq";
+ beam, sequence=lhcb1, particle=proton, energy=450, kbunch=1, npart=1.15E11, bv= 1;
+ use,  sequence=lhcb1;
+ }
+
+ if (mylhcbeam == 2){
+ call, file="V6.5.thin.seq";
+ beam, sequence=lhcb2, particle=proton, energy=450, kbunch=1, npart=1.15E11, bv=-1;
+ use,  sequence=lhcb2;
+ }
+
+ if (mylhcbeam == 4){
+ call, file="beam_four.thin.seq";
+ beam, sequence=lhcb2, particle=proton, energy=450, kbunch=1, npart=1.15E11, bv= 1;
+ use,  sequence=lhcb2;
+ }
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                 choose optics and target tunes
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+call, file="V6.5.thin.inj.str";    qx0 = 64.28;   qy0 = 59.31;  qprime = 2.0;
+! call, file="V6.5.thin.lowb.str";   qx0 = 64.31;   qy0 = 59.32;  qprime = 0.0;
+
+
+ tsplit=  5.0;
+ qx00  = 64.0;
+ qy00  = 59.0;
+
+
+ on_x1:=0; on_sep1:=0;
+ on_x2:=0; on_sep2:=0; on_alice:=0;
+ on_x5:=0; on_sep5:=0;
+ on_x8:=0; on_sep8:=0; on_lhcb :=0;
+
+ twiss, table=nominal;   // used by orbit correction
+
+
+! print nominal optics parameter at the MB, MQS and MSS for
+! a2 and a3 correction
+ select, flag=twiss, clear;
+ select, flag=twiss,class=MB, column=name,k0L,betx,bety,dx,mux,muy;
+ select, flag=twiss,class=MQS;
+ select, flag=twiss,class=MSS;
+ select, flag=twiss,pattern=MQT\.14;
+ select, flag=twiss,pattern=MQT\.15;
+ select, flag=twiss,pattern=MQT\.16;
+ select, flag=twiss,pattern=MQT\.17;
+ select, flag=twiss,pattern=MQT\.18;
+ select, flag=twiss,pattern=MQT\.19;
+ select, flag=twiss,pattern=MQT\.20;
+ select, flag=twiss,pattern=MQT\.21;
+ twiss,  file='temp/optics0_MB.mad';
+
+
+! print nominal optics parameter at the D1,D2, MQX and triplet corrector
+! for triplet correction
+ select, flag=twiss, clear;
+ select, flag=twiss, pattern=MQSX , column=name,betx,bety,x,y;
+ select, flag=twiss, pattern=MCSX ;
+ select, flag=twiss, pattern=MCTX ;
+ select, flag=twiss, pattern=MCOSX;
+ select, flag=twiss, pattern=MCOX ;
+ select, flag=twiss, pattern=MCSSX;
+ select, flag=twiss, pattern=MQX  , class=multipole;
+ select, flag=twiss, pattern=MBX  , class=multipole;
+ select, flag=twiss, pattern=MBRC , class=multipole;
+ twiss,  file='temp/optics0_inser.mad';
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                   align separation magnets
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ option, -echo, -info, -warn;
+ assign, echo="assign";
+! call,   file = "db/toolkit/Align_D1234_Slices.madx";
+ call,   file = "Align_D1234_Slices.madx";
+ assign, echo=terminal;
+
+
+! call,      file="db/measured_errors/Msubroutines.madx";
+! call,      file="db/toolkit/Orbit_Routines.madx";
+! call,      file="db/toolkit/SelectLHCMonCor.madx";
+ call,      file="Msubroutines.madx";
+ call,      file="Orbit_Routines.madx";
+ call,      file="SelectLHCMonCor.madx";
+ option,    echo, info, -warn;
+
+
+! Switches to enable/disable multipole errors
+ exec, No_Mult;
+ on_b1s  = 1; on_a1s  = 1;
+ on_b2s  = 1; on_a2s  = 1;
+ on_b3s  = 1; on_a3s  = 1;
+ on_b4s  = 1; on_a4s  = 1;
+ on_b5s  = 1; on_a5s  = 1;
+ on_b6s  = 1; on_a6s  = 1;
+ on_b7s  = 1; on_a7s  = 1;
+ on_b8s  = 1; on_a8s  = 1;
+ on_b9s  = 1; on_a9s  = 1;
+ on_b10s = 1; on_a10s = 1;
+ on_b11s = 1; on_a11s = 1;
+
+
+! readtable, file="db/measured_errors/rotations_Q2_integral.tab";
+ readtable, file="rotations_Q2_integral.tab";
+
+! readtable, file="wise/injection_errors-emfqcs-1.tfs" ;
+ readtable, file="injection_errors-emfqcs-1.tfs" ;
+!readtable, file="wise/collision_errors-emfqcs-1.tfs" ;
+ option,    -echo, -info, -warn;
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!             apply field errors to MB magnets
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ assign, echo="assign";
+! call,   file="db/measured_errors/Efcomp_MB.madx"  ;
+ call,   file="Efcomp_MB.madx"  ;
+ assign, echo=terminal;
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!     correct orbit distortion resulting from MB magnets
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ exec,   initial_micado(4);
+ exec,   initial_micado(4);
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!           apply field errors to all other magnets
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ assign, echo="assign";
+! call,   file="db/measured_errors/Efcomp_MBRB.madx";
+! call,   file="db/measured_errors/Efcomp_MBRC.madx";
+! call,   file="db/measured_errors/Efcomp_MBRS.madx";
+! call,   file="db/measured_errors/Efcomp_MBX.madx" ;
+! call,   file="db/measured_errors/Efcomp_MBW.madx" ;
+! call,   file="db/measured_errors/Efcomp_MBXW.madx";
+! call,   file="db/measured_errors/Efcomp_MQ.madx"  ;
+! call,   file="db/measured_errors/Efcomp_MQM.madx" ;
+! call,   file="db/measured_errors/Efcomp_MQMC.madx";
+! call,   file="db/measured_errors/Efcomp_MQML.madx";
+! call,   file="db/measured_errors/Efcomp_MQTL.madx";
+! call,   file="db/measured_errors/Efcomp_MQW.madx" ;
+! call,   file="db/measured_errors/Efcomp_MQX.madx" ;
+! call,   file="db/measured_errors/Efcomp_MQY.madx" ;
+ call,   file="Efcomp_MBRB.madx";
+ call,   file="Efcomp_MBRC.madx";
+ call,   file="Efcomp_MBRS.madx";
+ call,   file="Efcomp_MBX.madx" ;
+ call,   file="Efcomp_MBW.madx" ;
+ call,   file="Efcomp_MBXW.madx";
+ call,   file="Efcomp_MQ.madx"  ;
+ call,   file="Efcomp_MQM.madx" ;
+ call,   file="Efcomp_MQMC.madx";
+ call,   file="Efcomp_MQML.madx";
+ call,   file="Efcomp_MQTL.madx";
+ call,   file="Efcomp_MQW.madx" ;
+ call,   file="Efcomp_MQX.madx" ;
+ call,   file="Efcomp_MQY.madx" ;
+ assign, echo=terminal;
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!               correction of field errors in MB
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ select, flag=error, clear;
+ select, flag=error, class=mb;
+ esave,  file="temp/MB.errors";
+! system, "db/toolkit/corr_MB";
+ system, "corr_MB";
+ call,   file="temp/MB_corr_setting.mad";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                 correction of triplet and D1
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ option, echo, warn, -info;
+ select, flag=error, clear;
+ select, flag=error, pattern=MQX,  class=multipole;
+ select, flag=error, pattern=MBX,  class=multipole;
+ select, flag=error, pattern=MBRC, class=multipole;
+ esave,  file="temp/tripD1D2.errors";
+! system, "db/toolkit/corr_tripD1";
+ system, "corr_tripD1";
+ call,   file="temp/MCX_setting.mad";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!    correct orbit distortion resulting from other magnets
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ exec, initial_micado(4);
+ exec, initial_micado(4);
+ exec, initial_micado(4);
+ exec, initial_micado(4);
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!              switch off b2 correction  (disabled)
+!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!call,   file="db/toolkit/Switch_Off_MQT.madx";
+call,   file="Switch_Off_MQT.madx";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                   fine tuning of coupling
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+! call,   file="db/measured_errors/FineTuneCoupling.madx";
+ call,   file="FineTuneCoupling.madx";
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                    return to nominal tune
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ match;
+ global, q1=qx0, q2=qy0;
+ vary,   name=kqd, step=1.0E-7 ;
+ vary,   name=kqf, step=1.0E-7 ;
+ lmdif,  calls=50, tolerance=1.E-8;
+ endmatch;
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!    final orbit correction before applying crossing scheme
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ exec, final_micado(0.004);
+
+! end of orbit correction, now switch ON crossing scheme
+ on_x1:=1; on_sep1:=1;
+ on_x2:=1; on_sep2:=1; on_alice:=0;
+ on_x5:=1; on_sep5:=1;
+ on_x8:=1; on_sep8:=1; on_lhcb :=0;
+
+
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!                 matching of tune and chromaticity
+!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ if (mylhcbeam == 1){
+ match;
+ global, dq1=qprime, dq2=qprime;
+ global, q1=qx0, q2=qy0;
+ vary,   name=ksf.b1;
+ vary,   name=ksd.b1;
+ vary,   name=kqd, step=1.0E-7 ;
+ vary,   name=kqf, step=1.0E-7 ;
+ lmdif,  calls=100, tolerance=1.0E-12;
+ endmatch;
+ }
+
+ if (mylhcbeam >  1){
+ match;
+ global, dq1=qprime, dq2=qprime;
+ global, q1=qx0, q2=qy0;
+ vary,   name=ksf.b2;
+ vary,   name=ksd.b2;
+ vary,   name=kqd, step=1.0E-7 ;
+ vary,   name=kqf, step=1.0E-7 ;
+ lmdif,  calls=100, tolerance=1.0E-12;
+ endmatch;
+ }
+
+ twiss;
+
+!nrj:=7.0E+12;
+ nrj:=450.E9;
+! if (mylhcbeam == 1){call, file="db/toolkit/corr_value_b1.madx";}
+! if (mylhcbeam >  1){call, file="db/toolkit/corr_value_b2.madx";}
+ if (mylhcbeam == 1){call, file="corr_value_b1.madx";}
+ if (mylhcbeam >  1){call, file="corr_value_b2.madx";}
+
+ value, table(summ,q1);
+ value, table(summ,q2);
+ value, table(summ,dq1);
+ value, table(summ,dq2);
+
+sixtrack,radius=0.017;
+
+stop;

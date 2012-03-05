@@ -1,0 +1,34 @@
+mkr : marker;
+qf1: quadrupole,k1:=kq1,l=0.5;
+qf2: quadrupole,k1:=kq2,l=0.5;
+
+kq2=-1.4;
+kq1=1.09;
+posq1=1.5;
+posq2=3;
+lseq=5;
+
+smach1: sequence,l:=lseq;
+qf1,at:=posq1;
+qf2,at:=posq2;
+mkr,at:=lseq;
+endsequence;
+
+beam,particle=proton,energy=450,exn=1e-6,eyn=1e-6;
+use,period=smach1;
+select,flag=twiss, clear;
+select,flag=twiss,column=name,s,l,k1l,betx,alfx,bety,alfy;
+twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+system,"cat twj";
+
+match,vlength=true,betx=4.94687,alfx= -1.32058,bety=4.94687,alfy=1.32058;
+vary,name=kq1,step=.00001;
+vary,name=posq2,step=.001;
+vary,name=kq2,step=.00001;
+vary,name=lseq,step=.001;
+constraint,sequence=smach1,range=mkr,betx=4.91062,alfx=-1.32332,bety=4.94687,alfy=1.32058;
+lmdif,calls=200,tolerance=1E-24;
+endmatch;
+
+!twiss,betx=4.94687,alfx=-1.32058,bety=4.94687,alfy=1.32058,file=twj;
+!system,"cat twj";

@@ -1,0 +1,16 @@
+create,table=t,column=a,b;
+a=1; b=2;
+fill,table=t; ! as usual
+a=2; b=4;
+fill,table=t; ! as usual
+write,table=t;
+a=3;
+fill,table=t,row=1; ! now the first row is [3 4]
+write,table=t;
+b=-1;
+fill,table=t; ! now the last row is [3 -1]
+write,table=t;
+setvars,table=t,row=1; ! now a=3, b=4
+value,a,b;
+setvars,table=t;       ! now a=3, b=-1
+value,a,b;

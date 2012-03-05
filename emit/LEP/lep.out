@@ -1,0 +1,299 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.29              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 22.07.2010      +
+  + Execution Time Stamp: 17.09.10 14.17.02 +
+  +++++++++++++++++++++++++++++++++++++++++++
+Title " LEP for survey comp";
+
+option,trace,rbarc=false;
+
+option,echo = false;
+
+sec.s since start: 0   since last call: 0
+sec.s since start: 0   since last call: 0
+sec.s since start: 1   since last call: 1
+++++++ info: ksrf redefined
+++++++ info: kssf3 redefined
+++++++ info: kssf2 redefined
+++++++ info: kssf1 redefined
+++++++ info: kssd1 redefined
+++++++ info: kssd2 redefined
+++++++ info: kssd1.2 redefined
+++++++ info: kssd1.4 redefined
+++++++ info: kssd1.6 redefined
+++++++ info: kssd1.8 redefined
+++++++ info: kssd2.2 redefined
+++++++ info: kssd2.4 redefined
+++++++ info: kssd2.6 redefined
+++++++ info: kssd2.8 redefined
+++++++ info: kssf1.2 redefined
+++++++ info: kssf1.4 redefined
+++++++ info: kssf1.6 redefined
+++++++ info: kssf1.8 redefined
+++++++ info: kssf2.2 redefined
+++++++ info: kssf2.4 redefined
+++++++ info: kssf2.6 redefined
+++++++ info: kssf2.8 redefined
+++++++ info: kssf3.2 redefined
+++++++ info: kssf3.4 redefined
+++++++ info: kssf3.6 redefined
+++++++ info: kssf3.8 redefined
+++++++ info: kssrf.2 redefined
+++++++ info: kssrf.4 redefined
+++++++ info: kssrf.6 redefined
+++++++ info: kssrf.8 redefined
+sec.s since start: 1   since last call: 0
+beam, particle = positron, energy = 98.0, radiate;
+
+sec.s since start: 1   since last call: 0
+use, period=lep;
+
+sec.s since start: 1   since last call: 0
+vrfc:=2.;
+
+++++++ info: vrfc redefined
+vrfsc:=45.;
+
+++++++ info: vrfsc redefined
+select,flag=twiss,column=name,s,betx,bety,re11,re12,re13,re14,re15,re16,
+
+re21,re22,re23,re24,re25,re26,
+
+re31,re32,re33,re34,re35,re36,
+
+re41,re42,re43,re44,re45,re46,
+
+re51,re52,re53,re54,re55,re56,
+
+re61,re62,re63,re64,re65,re66;
+
+sec.s since start: 1   since last call: 0
+twiss,chrom,centre,rmatrix,file=twiss_lep;
+
+sec.s since start: 1   since last call: 0
+enter Twiss module
+  
+iteration:   1 error:   5.244642E-02 deltap:   1.000000E-06
+orbit:  -3.616080E-03  1.067161E-04  0.000000E+00  0.000000E+00  1.238207E-01  5.244775E-04
+  
+iteration:   2 error:   1.134236E-02 deltap:   1.000000E-06
+orbit:   3.052228E-04 -4.191103E-07  0.000000E+00  0.000000E+00  1.519452E-01  7.079268E-04
+  
+iteration:   3 error:   3.292227E-04 deltap:   1.000000E-06
+orbit:   5.141867E-05 -3.990911E-07  0.000000E+00  0.000000E+00  1.525061E-01  7.174185E-04
+  
+iteration:   4 error:   1.616377E-06 deltap:   1.000000E-06
+orbit:   4.955734E-05 -4.288679E-07  0.000000E+00  0.000000E+00  1.525208E-01  7.171492E-04
+  
+iteration:   5 error:   2.431904E-08 deltap:   1.000000E-06
+orbit:   4.955586E-05 -4.292021E-07  0.000000E+00  0.000000E+00  1.525211E-01  7.171419E-04
+ ++++++ warning: TWCPGO: TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+ ++++++ warning: TWCHGO: TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+  
+iteration:   1 error:   5.244646E-02 deltap:   0.000000E+00
+orbit:  -3.616231E-03  1.067294E-04  0.000000E+00  0.000000E+00  1.238210E-01  5.244596E-04
+  
+iteration:   2 error:   1.134309E-02 deltap:   0.000000E+00
+orbit:   3.052102E-04 -4.174838E-07  0.000000E+00  0.000000E+00  1.519458E-01  7.079263E-04
+  
+iteration:   3 error:   3.291079E-04 deltap:   0.000000E+00
+orbit:   5.140851E-05 -3.990557E-07  0.000000E+00  0.000000E+00  1.525056E-01  7.174187E-04
+  
+iteration:   4 error:   1.610947E-06 deltap:   0.000000E+00
+orbit:   4.954739E-05 -4.288387E-07  0.000000E+00  0.000000E+00  1.525202E-01  7.171498E-04
+  
+iteration:   5 error:   2.423672E-08 deltap:   0.000000E+00
+orbit:   4.954591E-05 -4.291730E-07  0.000000E+00  0.000000E+00  1.525205E-01  7.171426E-04
+ ++++++ warning: TWCPGO: TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+ ++++++ warning: TWCHGO: TWISS uses the RF system or synchrotron radiation only to find the closed orbit, for optical calculations it ignores both.        
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+       26658.87208       -0.152520506     0.000145361642        82.94211202 
+
+                q1                dq1            betxmax              dxmax 
+       98.27669995        1.126792995        412.7069375        1.014624836 
+
+             dxrms             xcomax             xcorms                 q2 
+       0.579295866     0.004118059699     0.001276729374        96.18588851 
+
+               dq2            betymax              dymax              dyrms 
+      0.8278700392        219.1933347                 -0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0        4.178714971 
+
+           synch_2            synch_3            synch_4            synch_5 
+    0.002076401708    6.969174667e-07                  0    6.321906995e-09 
+EMIT,DELTAP=0.;
+
+sec.s since start: 12   since last call: 11
+enter EMIT module
+ 
+ Global parameters for positrons, radiate = T:
+
+ C                26658.87208 m          f0              0.0112455042 MHz
+ T0               88.92442545 musecs     alfa         0.0001315180308 
+ eta          0.0001315180037            gamma(tr)        87.19816608 
+ Bcurrent                   0 A/bunch    Kbunch             1 
+ Npart                      0 /bunch     Energy                    98 GeV 
+ gamma             191781.231            beta                       1
+guess:          0                  0                  0
+     U0           2698.314437 [MeV/turn]
+ 
+                                                  M o d e   1         M o d e   2         M o d e   3
+ Fractional tunes            undamped              0.27669990          0.18588851          0.09987792
+                             damped                0.27673502          0.18588919          0.09971630
+ 
+ beta* [m]                   x                 0.71224578E+02      0.21086607E-35      0.12764192E-05
+                             y                 0.20409537E-29      0.35810067E+02      0.59566538E-29
+                             t                 0.13397251E-04      0.34808549E-27      0.65998123E+01
+ 
+ gamma* [1/m]                px                0.14272696E-01      0.27409204E-38      0.47340058E-08
+                             py                0.28202053E-33      0.28111619E-01      0.14431789E-30
+                             pt                0.44726164E-09      0.14760721E-30      0.15155965E+00
+ 
+ beta(max) [m]               x                 0.40892368E+03      0.24418419E-34      0.18839130E-01
+                             y                 0.13857795E-28      0.21600986E+03      0.61091068E-29
+                             t                 0.16167530E+00      0.27213657E-26      0.66621827E+01
+ 
+ gamma(max) [1/m]            px                0.41815033E+01      0.12006164E-35      0.10721173E-07
+                             py                0.14124774E-30      0.10440022E+02      0.14431789E-30
+                             pt                0.13446660E-03      0.56227313E-28      0.15156757E+00
+ 
+ Damping partition numbers                         1.00003311          0.99997175          1.99989051
+ Damping constants [1/s]                           0.15482097E+03      0.15481147E+03      0.30961475E+03
+ Damping times [s]                                 0.64590732E-02      0.64594695E-02      0.32298203E-02
+ Emittances [pi micro m]                       0.42776163E-01      0.28274287E-28      0.15654976E+02
+
+ RF system: 
+ Cavity                      length[m]        voltage[MV]                lag          freq[MHz]             harmon
+ rfc3.qs11.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc4.qs11.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc5.qs10.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc6.qs10.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc7.qs10.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc8.qs10.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc9.qs10.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc10.qs10.l2                2.127944                  2                0.5        352.2091916              31320
+ rfc11.qs10.l2                2.127944                  2                0.5        352.2091916              31320
+ rfc12.qs10.l2                2.127944                  2                0.5        352.2091916              31320
+ rfc13.qs9.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfc14.qs9.l2                 2.127944                  2                0.5        352.2091916              31320
+ rfsc.qs9.l2                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs8.l2                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs8.l2                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs7.l2                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs6.l2                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs5.l2                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs5.l2                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs4.l2                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs4.r2                    10.898                  0                0.5        352.2091916              31320
+ rfsc1.qs5.r2                   10.898                  0                0.5        352.2091916              31320
+ rfsc2.qs5.r2                   10.898                  0                0.5        352.2091916              31320
+ rfsc.qs6.r2                    10.898                  0                0.5        352.2091916              31320
+ rfsc.qs7.r2                    10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs8.r2                   10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs8.r2                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.r2                    10.898                 45                0.5        352.2091916              31320
+ rfc3.qs9.r2                  2.127944                  2                0.5        352.2091916              31320
+ rfc4.qs9.r2                  2.127944                  2                0.5        352.2091916              31320
+ rfc5.qs10.r2                 2.127944                  2                0.5        352.2091916              31320
+ rfc6.qs10.r2                 2.127944                  2                0.5        352.2091916              31320
+ rfc7.qs10.r2                 2.127944                  2                0.5        352.2091916              31320
+ rfc8.qs10.r2                 2.127944                  2                0.5        352.2091916              31320
+ rfc9.qs10.r2                 2.127944                  2                0.5        352.2091916              31320
+ rfc10.qs10.r2                2.127944                  2                0.5        352.2091916              31320
+ rfc11.qs10.r2                2.127944                  2                0.5        352.2091916              31320
+ rfc12.qs10.r2                2.127944                  2                0.5        352.2091916              31320
+ rfc13.qs11.r2                2.127944                  2                0.5        352.2091916              31320
+ rfc14.qs11.r2                2.127944                  2                0.5        352.2091916              31320
+ rfsc1.qs10.l4                  10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.l4                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs9.l4                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs9.l4                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs8.l4                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs7.l4                   10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs6.l4                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs6.l4                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs5.l4                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs5.r4                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs6.r4                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs6.r4                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs7.r4                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs8.r4                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs9.r4                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs9.r4                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.r4                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs10.r4                  10.898                 45                0.5        352.2091916              31320
+ rfc3.qs11.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc4.qs11.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc5.qs10.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc6.qs10.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc7.qs10.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc8.qs10.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc9.qs10.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc10.qs10.l6                2.127944                  2                0.5        352.2091916              31320
+ rfc11.qs10.l6                2.127944                  2                0.5        352.2091916              31320
+ rfc12.qs10.l6                2.127944                  2                0.5        352.2091916              31320
+ rfc13.qs9.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfc14.qs9.l6                 2.127944                  2                0.5        352.2091916              31320
+ rfsc.qs9.l6                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs8.l6                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs8.l6                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs7.l6                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs6.l6                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs5.l6                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs5.l6                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs4.l6                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs4.r6                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs5.r6                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs5.r6                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs6.r6                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs7.r6                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs8.r6                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs8.r6                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.r6                    10.898                 45                0.5        352.2091916              31320
+ rfc3.qs9.r6                  2.127944                  2                0.5        352.2091916              31320
+ rfc4.qs9.r6                  2.127944                  2                0.5        352.2091916              31320
+ rfc5.qs10.r6                 2.127944                  2                0.5        352.2091916              31320
+ rfc6.qs10.r6                 2.127944                  2                0.5        352.2091916              31320
+ rfc7.qs10.r6                 2.127944                  2                0.5        352.2091916              31320
+ rfc8.qs10.r6                 2.127944                  2                0.5        352.2091916              31320
+ rfc9.qs10.r6                 2.127944                  2                0.5        352.2091916              31320
+ rfc10.qs10.r6                2.127944                  2                0.5        352.2091916              31320
+ rfc11.qs10.r6                2.127944                  2                0.5        352.2091916              31320
+ rfc12.qs10.r6                2.127944                  2                0.5        352.2091916              31320
+ rfc13.qs11.r6                2.127944                  2                0.5        352.2091916              31320
+ rfc14.qs11.r6                2.127944                  2                0.5        352.2091916              31320
+ rfsc1.qs10.l8                  10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.l8                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs9.l8                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs9.l8                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs8.l8                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs7.l8                   10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs6.l8                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs6.l8                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs5.l8                    10.898                 45                0.5        352.2091916              31320
+ rfsc.qs5.r8                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs6.r8                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs6.r8                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs7.r8                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs8.r8                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs9.r8                   10.898                 45                0.5        352.2091916              31320
+ rfsc2.qs9.r8                   10.898                 45                0.5        352.2091916              31320
+ rfsc.qs9.r8                    10.898                 45                0.5        352.2091916              31320
+ rfsc1.qs10.r8                  10.898                 45                0.5        352.2091916              31320
+stop;
+
+
+  Number of warnings: 4
+0 in C and 4 in Fortran
+sec.s since start: 14   since last call: 2
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.29 finished normally +
+  +++++++++++++++++++++++++++++++++++

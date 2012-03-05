@@ -1,0 +1,286 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.46              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 16.02.2011      +
+  + Execution Time Stamp: 18.02.11 20.19.18 +
+  +++++++++++++++++++++++++++++++++++++++++++
+!TITLE,' Example 5 for for MAD-X with PTC_TRACK_RUN';
+
+
+
+ eg   :=  100;
+
+ bg   :=  eg/pmass;
+
+ en   := 3.75e-06;
+
+ epsx := en/bg;
+
+ epsy := en/bg;
+
+beam, particle = proton, energy =   eg        , 
+
+                         sigt=      0.077     , 
+
+                         sige=      1.1e-4    , 
+
+                         npart=     1.05e11   , 
+
+                         exn=4*en,  eyn=4*en  , 
+
+                         kbunch = 10,
+
+                         et = 0.002, bv = 1,
+
+                         ex=epsx,   ey=epsy;
+
+value,epsx,epsy;
+
+epsx =    3.518520049e-08 ;
+epsy =    3.518520049e-08 ;
+option,-echo;
+
+
+
+use,period=fivecell;
+
+
+
+acbh1=1e-5;
+
+acbh2=1e-5;
+
+acbh3=1e-5;
+
+acbh4=1e-5;
+
+acbh5=1e-5;
+
+
+
+acbv1=1e-5;
+
+acbv2=1e-5;
+
+acbv3=1e-5;
+
+acbv4=1e-5;
+
+acbv5=1e-5;
+
+
+
+twiss;
+
+enter Twiss module
+  
+iteration:   1 error:   1.773981E-03 deltap:   0.000000E+00
+orbit:   8.901561E-04  7.288680E-06  5.206029E-04 -6.735084E-06  0.000000E+00  0.000000E+00
+  
+iteration:   2 error:   1.726444E-06 deltap:   0.000000E+00
+orbit:   8.888853E-04  7.273764E-06  5.208283E-04 -6.742164E-06  0.000000E+00  0.000000E+00
+  
+iteration:   3 error:   2.860888E-12 deltap:   0.000000E+00
+orbit:   8.888853E-04  7.273764E-06  5.208283E-04 -6.742164E-06  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+             534.6                 -0    0.0004431387422        47.50399556 
+
+                q1                dq1            betxmax              dxmax 
+       1.254721497        1.051473519        177.9002342        2.176036847 
+
+             dxrms             xcomax             xcorms                 q2 
+        1.65937637    0.0008888852968     0.000715764725        1.256620566 
+
+               dq2            betymax              dymax              dyrms 
+       1.045025325        177.7730947      0.00175682577      0.00145410752 
+
+            ycomax             ycorms             deltap            synch_1 
+   0.0008876660578    0.0007134380476                  0                  0 
+
+           synch_2            synch_3            synch_4            synch_5 
+                 0                  0                  0                  0 
+
+
+ptc_create_universe;
+
+ Now PTC
+ptc_create_layout,model=2,method=6,nst=10,exact;
+
+ MAD-X Beam Parameters
+                  Energy : 0.100000E+03
+          Kinetic Energy : 0.990617E+02
+      Particle Rest Mass : 0.938272E+00
+                Momentum : 0.999956E+02
+ Setting MADx with 
+     energy           100.000000000000     
+     method                   6
+     Num. of steps           10
+     charge           1.00000000000000     
+  Length of machine:    534.600000000000     
+ The machine is a RING
+ ------------------------------------ PTC Survey ------------------------------------
+ Before start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ Before   end:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After  start:   0.000000000000000E+000  0.000000000000000E+000  0.000000000000000E+000
+ After    end:   -40.5807584671022       0.000000000000000E+000   532.533460531793     
+ptc_align;
+
+ptc_start, x= 3e-3, px=0, y= 3e-3, py=0;
+
+ptc_start, x= 6e-3, px=0, y= 6e-3, py=0;
+
+ptc_start, x= 9e-3, px=0, y= 9e-3, py=0;
+
+
+
+              !ptc_observe,place=cbv.1;
+
+ptc_observe,place=obv1;
+
+obs_points: 2 
+              !ptc_observe,place=cbv.2;
+
+ptc_observe,place=cbv.3;
+
+obs_points: 3 
+              !ptc_observe,place=cbv.4;
+
+ptc_observe,place=obv2;
+
+obs_points: 4 
+              !ptc_observe,place=cbv.5;
+
+
+
+ptc_track,icase=4,closed_orbit,dump, // deltap=0.0D0
+
+       // element_by_element, 
+
+       maxaper=0.05,0.001,0.05,0.001,0.9,0.09, 
+
+       turns=1000, ffile=1, norm_no=1; //norm_out, norm_out
+
+enter PTC_TRACK module
+obs_points ptc_track: 4 
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps     10
+  Real Pill Box Cavities 
+ This is a proton 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+  Radiation_PTC    =      F
+ after CALL UPDATE_STATES
+ 
+ ----------------------------------
+ Printing by <call print(default,6)>:
+ ************ State Summary ****************
+ MADTHICK=>KIND =   37  MATRIX-KICK-MATRIX     
+  Rectangular Bend: input arc length (rho alpha) 
+  Default integration method     6
+  Default integration steps     10
+  Real Pill Box Cavities 
+ This is a proton 
+       EXACT_MODEL =  TRUE 
+       TOTALPATH   =     0
+       RADIATION   =  FALSE
+       STOCHASTIC  =  FALSE
+       ENVELOPE    =  FALSE
+       NOCAVITY    =  TRUE 
+       TIME        =  TRUE 
+       FRINGE      =  FALSE
+       PARA_IN     =  FALSE
+       ONLY_4D     =  TRUE 
+       DELTA       =  FALSE
+       SPIN        =  FALSE
+       MODULATION   = FALSE
+ after call print(MYSTATE,6)
+ 
+   ================================================================
+   ptc_track: The current dimensionality of the problem is icase=           4
+   ================================================================
+ 
+  PARENT LAYOUT NAME :No name assigned
+  NUMBER OF ORIGINAL LAYOUT ELEMENTS :         148
+  NUMBER OF THIN OBJECTS :        1190
+  TOTAL IDEAL LENGTH OF STRUCTURE :   534.600000000005     
+  TOTAL INTEGRATION LENGTH OF STRUCTURE (mad8 style survey) :   534.600000000005     
+ ===== ptc_track ============================
+ Closed orbit:   8.888853134621065E-004  7.273763867977213E-006  5.208283491746091E-004 -6.742164350586647E-006
+ ============================================
+ 
+ Check of the symplectic condition on the linear part
+Deviation from symplecticity  0.3049258259017989E-11 %
+
+++++++ table: tracksumm
+
+    number       turn                  x                 px 
+         1          0              0.003                  0 
+         2          0              0.006                  0 
+         3          0              0.009                  0 
+         1       1000      0.00454378864    8.213864354e-05 
+         2       1000     0.007888197054    0.0001605371224 
+         3       1000     0.006247257794    0.0001852956583 
+
+                 y                 py                  t                 pt 
+             0.003                  0                  0                  0 
+             0.006                  0                  0                  0 
+             0.009                  0                  0                  0 
+   -0.003584496097    0.0001105159955                  0                  0 
+   -0.007456341516    0.0001922734388                  0                  0 
+    -0.01172271835    0.0001790053111                  0                  0 
+
+                 s                  e 
+                 0                100 
+                 0                100 
+                 0                100 
+                 0                100 
+                 0                100 
+                 0                100 
+
+*****  end of ptc_run  *****
+
+
+plot, file="fv9_5_START_obs1",ptc,table=track,haxis=x,vaxis=px,
+
+      particle=1,2,3,colour=1000, multiple, symbol=3;
+
+++++++ warning: Plot - potentially non-existing table: track
+plot, file="fv9_5_START_obs1",table=track,haxis=y,vaxis=py,
+
+      particle=1,2,3, colour=1000, multiple, symbol=3;
+
+++++++ warning: Plot - potentially non-existing table: track
+ptc_track_end;  // new !!!!
+
+ptc_end;
+
+  killing last layout 
+  NODE LAYOUT HAS BEEN KILLED 
+  killed last layout 
+stop;
+
+
+  Number of warnings: 2
+2 in C and 0 in Fortran
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.46 finished normally +
+  +++++++++++++++++++++++++++++++++++

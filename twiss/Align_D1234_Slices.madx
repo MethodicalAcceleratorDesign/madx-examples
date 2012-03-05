@@ -1,0 +1,26 @@
+! align all separation magnets
+
+! saved on 13/10/08 10:56:25 by T.Risselada
+
+ if (mylhcbeam == 1){
+ call, file = "align_D1_slices.b1.madx";
+ call, file = "align_D2_slices.b1.madx";
+ call, file = "align_D3_slices.b1.madx";
+ call, file = "align_D4_slices.b1.madx";
+ }
+
+ if (mylhcbeam == 2){
+ call, file = "align_D1_slices.b2.madx";
+ call, file = "align_D2_slices.b2.madx";
+ call, file = "align_D3_slices.b2.madx";
+ call, file = "align_D4_slices.b2.madx";
+ }
+
+ if (mylhcbeam == 4){
+ call, file = "align_D1_slices.b4.madx";
+ call, file = "align_D2_slices.b4.madx";
+ call, file = "align_D3_slices.b4.madx";
+ call, file = "align_D4_slices.b4.madx";
+ }
+
+return;

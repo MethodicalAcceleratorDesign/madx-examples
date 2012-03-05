@@ -1,0 +1,47 @@
+! apply measured errors to all MQML
+
+! written on 20/12/05 11:12:12 by T.Risselada
+
+ Rr = 0.017;  ON_MQML = 1;
+
+ exec, Efcomp_Measured_Quad(MQML.5R1 );
+ exec, Efcomp_Measured_Quad(MQML.6R1 );
+ exec, Efcomp_Measured_Quad(MQML.8R1 );
+ exec, Efcomp_Measured_Quad(MQML.10R1);
+ exec, Efcomp_Measured_Quad(MQML.10L2);
+ exec, Efcomp_Measured_Quad(MQML.8L2 );
+ exec, Efcomp_Measured_Quad(MQML.6L2 );
+
+ exec, Efcomp_Measured_Quad(MQML.6R2 );
+ exec, Efcomp_Measured_Quad(MQML.8R2 );
+ exec, Efcomp_Measured_Quad(MQML.10R2);
+ exec, Efcomp_Measured_Quad(MQML.10L4);
+ exec, Efcomp_Measured_Quad(MQML.8L4 );
+ exec, Efcomp_Measured_Quad(MQML.8R4 );
+ exec, Efcomp_Measured_Quad(MQML.10R4);
+ exec, Efcomp_Measured_Quad(MQML.10L5);
+ exec, Efcomp_Measured_Quad(MQML.8L5 );
+ exec, Efcomp_Measured_Quad(MQML.6L5 );
+ exec, Efcomp_Measured_Quad(MQML.5L5 );
+
+ exec, Efcomp_Measured_Quad(MQML.5R5 );
+ exec, Efcomp_Measured_Quad(MQML.6R5 );
+ exec, Efcomp_Measured_Quad(MQML.8R5 );
+ exec, Efcomp_Measured_Quad(MQML.10R5);
+ exec, Efcomp_Measured_Quad(MQML.10L6);
+ exec, Efcomp_Measured_Quad(MQML.8L6 );
+ exec, Efcomp_Measured_Quad(MQML.8R6 );
+ exec, Efcomp_Measured_Quad(MQML.10R6);
+ exec, Efcomp_Measured_Quad(MQML.10L8);
+ exec, Efcomp_Measured_Quad(MQML.8L8 );
+ exec, Efcomp_Measured_Quad(MQML.6L8 );
+
+ exec, Efcomp_Measured_Quad(MQML.6R8 );
+ exec, Efcomp_Measured_Quad(MQML.8R8 );
+ exec, Efcomp_Measured_Quad(MQML.10R8);
+ exec, Efcomp_Measured_Quad(MQML.10L1);
+ exec, Efcomp_Measured_Quad(MQML.8L1 );
+ exec, Efcomp_Measured_Quad(MQML.6L1 );
+ exec, Efcomp_Measured_Quad(MQML.5L1 );
+
+return;

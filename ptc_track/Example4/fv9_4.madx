@@ -1,0 +1,65 @@
+!TITLE, ' Example 4 for for MAD-X with PTC_TRACK_RUN';
+
+ eg   :=  100;
+ bg   :=  eg/pmass;
+ en   := 3.75e-06;
+ epsx := en/bg;
+ epsy := en/bg;
+beam, particle = proton, energy =   eg        , 
+                         sigt=      0.077     , 
+                         sige=      1.1e-4    , 
+                         npart=     1.05e11   , 
+                         exn=4*en,  eyn=4*en  , 
+                         kbunch = 10,
+                         et = 0.002, bv = 1,
+                         ex=epsx,   ey=epsy;
+value,epsx,epsy;
+option,-echo;
+call file=fv9.opt;  // string without blanks does not need ".."
+call file="fv9.seq";
+option,echo;
+
+use,period=fivecell;
+
+acbh1=1e-5;
+acbh2=1e-5;
+acbh3=1e-5;
+acbh4=1e-5;
+acbh5=1e-5;
+
+acbv1=1e-5;
+acbv2=1e-5;
+acbv3=1e-5;
+acbv4=1e-5;
+acbv5=1e-5;
+
+twiss;
+
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,nst=10,exact;
+ptc_align;
+ptc_start, x= 3e-3, px=0, y= 3e-3, py=0;
+ptc_start, x= 6e-3, px=0, y= 6e-3, py=0;
+ptc_start, x= 9e-3, px=0, y= 9e-3, py=0;
+
+              !ptc_observe,place=cbv.1;
+ptc_observe,place=obv1;
+              !ptc_observe,place=cbv.2;
+ptc_observe,place=cbv.3;
+              !ptc_observe,place=cbv.4;
+ptc_observe,place=obv2;
+              !ptc_observe,place=cbv.5;
+
+ptc_track,icase=4,closed_orbit,dump, // deltap=0.0D0
+       element_by_element,  
+       maxaper=0.05,0.001,0.05,0.001,0.9,0.09, 
+       turns=1000, ffile=1, norm_no=1; // norm_out, norm_out
+
+plot, file="fv9_4_START_obs1",ptc,table=track,haxis=x,vaxis=px,
+      particle=1,2,3,colour=1000, multiple, symbol=3;
+plot, file="fv9_4_START_obs1",table=track,haxis=y,vaxis=py,
+      particle=1,2,3, colour=1000, multiple, symbol=3;
+ptc_track_end;  // new !!!!
+ptc_end;
+stop;
+

@@ -1,0 +1,109 @@
+
+  +++++++++++++++++++++++++++++++++++++++++++
+  +              MAD-X 4.01.41              +
+  +    DEBUG Version - use at own risk!     +
+  + Code Modification Date: 26.01.2011      +
+  + Execution Time Stamp: 02.02.11 14.05.59 +
+  +++++++++++++++++++++++++++++++++++++++++++
+Title " LEP for survey comp";
+
+option,trace,rbarc=false;
+
+option,echo = false;
+
+sec.s since start: 0   since last call: 0
+sec.s since start: 0   since last call: 0
+sec.s since start: 0   since last call: 0
+++++++ info: ksrf redefined
+++++++ info: kssf3 redefined
+++++++ info: kssf2 redefined
+++++++ info: kssf1 redefined
+++++++ info: kssd1 redefined
+++++++ info: kssd2 redefined
+++++++ info: kssd1.2 redefined
+++++++ info: kssd1.4 redefined
+++++++ info: kssd1.6 redefined
+++++++ info: kssd1.8 redefined
+++++++ info: kssd2.2 redefined
+++++++ info: kssd2.4 redefined
+++++++ info: kssd2.6 redefined
+++++++ info: kssd2.8 redefined
+++++++ info: kssf1.2 redefined
+++++++ info: kssf1.4 redefined
+++++++ info: kssf1.6 redefined
+++++++ info: kssf1.8 redefined
+++++++ info: kssf2.2 redefined
+++++++ info: kssf2.4 redefined
+++++++ info: kssf2.6 redefined
+++++++ info: kssf2.8 redefined
+++++++ info: kssf3.2 redefined
+++++++ info: kssf3.4 redefined
+++++++ info: kssf3.6 redefined
+++++++ info: kssf3.8 redefined
+++++++ info: kssrf.2 redefined
+++++++ info: kssrf.4 redefined
+++++++ info: kssrf.6 redefined
+++++++ info: kssrf.8 redefined
+sec.s since start: 0   since last call: 0
+beam, particle = proton, energy = 450.0;
+
+sec.s since start: 0   since last call: 0
+use, period=lep;
+
+sec.s since start: 0   since last call: 0
+select,flag=twiss,column=name,s,betx,bety,re11,re12,re13,re14,re15,re16,
+
+re21,re22,re23,re24,re25,re26,
+
+re31,re32,re33,re34,re35,re36,
+
+re41,re42,re43,re44,re45,re46,
+
+re51,re52,re53,re54,re55,re56,
+
+re61,re62,re63,re64,re65,re66;
+
+sec.s since start: 0   since last call: 0
+twiss,chrom,centre,rmatrix,file=twiss_lep;
+
+sec.s since start: 0   since last call: 0
+enter Twiss module
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   1.130911E-11 deltap:   1.000000E-06
+orbit:   9.947551E-12  1.097996E-14  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+++++++ info: Zero value of SIGT replaced by 1.
+++++++ info: Zero value of SIGE replaced by 1/1000.
+  
+iteration:   1 error:   0.000000E+00 deltap:   0.000000E+00
+orbit:   0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00  0.000000E+00
+
+++++++ table: summ
+
+            length             orbit5               alfa            gammatr 
+       26658.87208                 -0    0.0001558927497        80.09161321 
+
+                q1                dq1            betxmax              dxmax 
+        98.2838839       0.9963274863        379.9104542        1.003006984 
+
+             dxrms             xcomax             xcorms                 q2 
+      0.6195052996                  0                  0        96.19481676 
+
+               dq2            betymax              dymax              dyrms 
+       1.007168066        207.2270196                  0                  0 
+
+            ycomax             ycorms             deltap            synch_1 
+                 0                  0                  0        4.178509842 
+
+           synch_2            synch_3            synch_4            synch_5 
+    0.002076401708    6.969174667e-07                  0    6.271901865e-09 
+stop;
+
+
+  Number of warnings: 0
+sec.s since start: 3   since last call: 3
+
+  +++++++++++++++++++++++++++++++++++
+  + MAD-X 4.01.41 finished normally +
+  +++++++++++++++++++++++++++++++++++
