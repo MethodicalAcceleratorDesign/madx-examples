@@ -16,7 +16,7 @@ beam_ebc1 : beam, energy=5, npart=bunchcharge,
 !!!
 
 k:=sqrt(pi);
-rfm1 : rfmultipole, l=0, rfm_freq=12, knl:={0, k, k}, ksl:={0, k, k, k, k }, pnl:={ 0, 0, 0,0,0,0,0,0,0 }, psl:={0,0,0,0,0,0,0,0};
+rfm1 : rfmultipole, l=0, freq=12, knl:={0, k, k}, ksl:={0, k, k, k, k }, pnl:={ 0, 0, 0,0,0,0,0,0,0 }, psl:={0,0,0,0,0,0,0,0};
 m1 : multipole, l=0.0, knl:={0, -k, -k}, ksl:={0, -k, -k, -k, -k};
 
 test_line : line=( m1, rfm1 );
@@ -27,7 +27,7 @@ test_line : line=( m1, rfm1 );
 
 use, period=test_line;
 value, rfm1->l;
-value, rfm1->rfm_freq;
+value, rfm1->freq;
 value, rfm1->knl;
 value, rfm1->pnl;
 
