@@ -1,8 +1,8 @@
 Title " LEP for survey comp";
 option,trace,rbarc=false;
 option,echo = false;
-call,file='lep.seq9';
-call,file="lep.opt9";
+call,file='../../../tests/share/LEP/lep.seq9';
+call,file="../../../tests/share/LEP/lep.opt9";
 option, echo = true;
 beam, particle = positron, energy = 98.0, radiate;
 use, period=lep;
