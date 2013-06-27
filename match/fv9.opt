@@ -12,8 +12,8 @@ dummy := ksf * ksd;
 
 mb: rbend, l=14.2, angle:=bang;
 mq: quadrupole, l=3.1;
-m0:multipole, kn:={0},ks:={0.0,0.0};
-//mm:multipole,lrad=dummy,kn={0,dummy,bang*3,1},ks={1.1,3*acbv1+5.,4,0};
+m0:multipole, knl:={0},ksl:={0.0,0.0};
+//mm:multipole,lrad=dummy,knl={0,dummy,bang*3,1},ksl={1.1,3*acbv1+5.,4,0};
 qf.1: mq, k1:=kqf;
 qf.2: mq, k1:=kqf;
 qf.3: mq, k1:=kqf;
