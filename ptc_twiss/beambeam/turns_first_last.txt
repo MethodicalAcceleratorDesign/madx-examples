@@ -1,0 +1,9 @@
+@ NAME             %16s "TURNS_FIRST_LAST"
+@ TYPE             %04s "USER"
+@ TITLE            %08s "no-title"
+@ ORIGIN           %19s "MAD-X 5.00.06 Linux"
+@ DATE             %08s "08/05/13"
+@ TIME             %08s "01.03.44"
+*         TURN_FIRST          TURN_LAST         TURNS_STEP 
+$                %le                %le                %le 
+                  1                 50                 50

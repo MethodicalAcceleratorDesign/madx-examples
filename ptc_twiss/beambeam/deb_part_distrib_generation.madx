@@ -1,0 +1,87 @@
+! This file "sis100_0_bb_mod_coords.madx" (D:\madx_linux_run\
+!                \20091020_sis100_beamloss_rerun\20091021_step_2_part_distrib) 
+! is copy "sis18_2_bb_mod_coords.madx" 
+! created using the file "bb_mod_01_coords.madx" from
+! the directory \20090325_bb_modulation\01_transverse_coord_generation\
+! Here the coordinates of the 1000 particles are generated
+
+option,bborbit=true; !!!!!!!
+
+option,-info,warn,echo;
+system, "date";
+
+arctangens (XX, YY): macro = {
+phi=0;
+if (XX=0 && YY>0) {phi=pi;}
+if (XX=0 && YY<0) {phi=-pi;}
+if (XX>0) {phi=atan(YY/XX);}
+if (XX<0) {phi=pi+atan(YY/XX);}
+phi_deg=phi*degrad;
+};
+
+! READ sequence of the lattice
+!CALL, FILE=ring_seq_bb_spch_thin_bareQx_4.35_dQ_0.1.madx;   ! <= read the lattice
+! It is read in MAIN script already
+
+! twiss parameters at the ring start
+! DONE in MAIN by CALLing : deb_twiss_at_start.madx; 
+
+! To initialize the MAD-X random generator: 
+!i_seed=134356456;  ! => in MAIN
+!EOPTION,SEED=i_seed;  ! => in MAIN
+
+create,table=transv_norm_coords, 
+       column=i_part, x_norm, px_norm, y_norm, py_norm;
+create,table=transv_coords, 
+       column=i_part, x,px,y,py;     
+
+create,table=bb_mod_z_pz_norm, column=i_part, z_norm, pz_norm;
+create,table=bb_mod_z, column=i_part, z_norm, phi_norm;
+
+! read the emittances from the lattice BEAM (were given for SpCh calculations)
+ex_m_rad=beam->ex;
+ey_m_rad=beam->ey;
+value, ex_m_rad, ey_m_rad;
+
+! N_part_generated=1000; ! => in MAIN
+i_part=1;
+
+while (i_part <= N_part_generated)
+{ 
+! tgauss(x) random number, gaussian distribution with unit standard deviation, 
+! truncated at x standard deviations; 
+
+x_norm =sigma_gauss_x*tgauss(sigma_trunc_x); 
+px_norm=sigma_gauss_x*tgauss(sigma_trunc_x); 
+y_norm =sigma_gauss_y*tgauss(sigma_trunc_y); 
+py_norm=sigma_gauss_y*tgauss(sigma_trunc_y); 
+
+z_norm =sigma_gauss_z*tgauss(sigma_trunc_z); 
+pz_norm=sigma_gauss_z*tgauss(sigma_trunc_z);
+
+fill,table=transv_norm_coords;
+
+x=sqrt(betax_start)*x_norm*sqrt(ex_m_rad);
+px=(-alfax_start*x_norm+px_norm)/sqrt(betax_start)*sqrt(ex_m_rad);
+
+y=sqrt(betay_start)*y_norm*sqrt(ey_m_rad);
+py=(-alfay_start*y_norm+py_norm)/sqrt(betay_start)*sqrt(ey_m_rad);
+
+fill,table=transv_coords;
+fill,table=bb_mod_z_pz_norm;
+
+exec, arctangens(z_norm ,pz_norm);
+phi_norm=phi;
+fill,table=bb_mod_z;
+
+i_part = i_part + 1; 
+};
+
+! write table into file
+write, table=transv_norm_coords, file=transv_norm_coords.txt;
+write, table=transv_coords, file=bb_mod_xy.dat;
+
+write, table=bb_mod_z_pz_norm, file=z_pz_norm.dat;
+write, table=bb_mod_z, file=bb_mod_z.dat;
+
+RETURN;

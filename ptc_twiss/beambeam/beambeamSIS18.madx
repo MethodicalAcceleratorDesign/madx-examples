@@ -1,0 +1,469 @@
+set,format="24.16e";
+option,bborbit=true; !!!!!!!
+option,bb_sxy_update=false; !!!!!!!
+option,bb_ultra_relati=true; !!!!!!!
+!option,-info,warn,-echo;
+
+TITLE,"2014 July, SIS-18 for MADX & BB-Spch based on VK PS debuncher example";
+
+CALL FILE="SIS18_seq_bb_spch_thin.madx";
+
+use, sequence=ring;
+
+vrf10 := 0.02;
+value, vrf10, v0;
+!stop;
+
+twiss, file=test_err0.twiss;
+!readtable, table=efield, file='../SIS18_phase-I/1_step/err_fin_mod.dat';
+¡seterr, table=efield;
+!twiss,file=test_err1.twiss;
+!stop;
+
+!correct,plane=x,clist=sis100_centered_xclist_thin.dat;
+
+select, flag=twiss, clear;
+select, flag=twiss; 
+twiss, table=twiss; 
+TWISS,save;
+
+!correct,plane=y,clist=sis100_centered_yclist_thin.dat;
+
+select, flag=twiss, clear;
+select, flag=twiss; 
+twiss, table=twiss; 
+TWISS,save,file=twiss_corr.dat;
+
+!call, file='../SIS100_phase-I/1_step/k2l.dat';
+
+select, flag=twiss, clear;
+select, flag=twiss; 
+twiss, table=twiss; 
+TWISS,save,file=twiss_end.dat;
+
+!----------------------------------------------------------------------------------
+
+!==========================================================================
+!CALL FILE=tracking_macro_20100324.madx;
+
+option,-info,warn, echo;
+
+!USE, PERIOD= ring;
+
+TWISS;
+write, table=summ, file=summ.dat;
+
+! default run parameters ------------------------------------------
+!
+generate_part_distrib=1; ! 1=generate new; =0 use early generated
+N_part_generated=1000;
+N_macro_part=1; 
+! To initialize the MAD-X random generator: 
+i_seed=12345678; 
+turn_first:=1; ! the first turn number for the current run
+turn_last:=10;  ! the last turn number for the current run
+coeff_for_t_pt:=0; ! regulate how to accept coords T & PT 
+                   ! usage: 0 - zeroing ; (default!)
+t_rms:=1.0; ! not Time! t*c [m] 
+pt_rms:=0.0e-6; ! Should be calculated outside as initial param !!!!!
+
+z_factor:=1; ! default =1 (for 4D!!! when coeff_for_t_pt:=0; ) 
+
+ap_max:=0.20; ! 
+
+N_spch:=0; ! FNAL -debunceher
+
+Npart_gain:=1; ! factor to increase intensity as 
+               ! N_ions_ini=Npart_gain*BEAM->NPART
+
+!END default run parameters --------------------------------------
+! take parameters
+ 
+generate_part_distrib=1; ! 1=generate new; =0 use early generated
+N_part_generated=4000; 
+i_seed=134356456; ! To initialize the MAD-X random generator 
+Qx_bare_start:=4.35; 
+Qy_bare_start:=3.2; ! as reference for tuning
+
+N_macro_part=1000; ! the number of tracking particles (<=N_part_generated)
+coeff_for_t_pt:=1; ! regulate how to accept coords T & PT 
+                   ! usage: 0 - zeroing ; (default!)
+                   !        1 - read and use table coordinates
+value, t_rms, dp_p_rms;
+pt_rms:=dp_p_rms; ! Should be calculated outside as initial param !!!!!
+ ap_max:=0.20; ! deb working
+n_spch :=2000;
+Npart_gain:=1; ! factor to increase intensity as Npart_gain*BEAM->NPART
+value,Bunch_length_rms,clight,beam->beta,t_rms,dp_p_rms,pt_rms,Npart_gain;
+
+
+
+!----------------------------------
+
+! turn_first, turn_last <--READ----------------------------------
+readmytable,file=turns_first_last.txt, table=turns_first_last_old; 
+                               ! column=column=turn_first, turn_last, 
+                               ! turns_step - calculated;
+turn_first=table(turns_first_last_old, turn_first, 1);
+turn_last=table(turns_first_last_old, turn_last, 1);
+!value, turn_first, turn_last, turns_step;
+!--------------------------------------------------------------
+
+Print, text='======================================='
+Print, text='The RUN parameters are the following:';
+value, generate_part_distrib;
+value, N_part_generated, N_macro_part;
+value, i_seed;
+value, Qx_bare_start, Qy_bare_start; 
+value, turn_first, turn_last;
+value, coeff_for_t_pt;
+value, t_rms, pt_rms;
+value, ap_max;
+value, turn_first, turn_last;
+value, Npart_gain;
+Print, text='=======================================';
+
+!stop;
+
+EOPTION,SEED=i_seed; ! To start the MAD-X random generator
+!===============================================================
+
+
+! variable parameters ========================================================
+
+!CALL, FILE = spcharge_match_bare_tune.madx; ! <= matching bare tunes, 
+!                              BEAM, NPART=0.0e12; & STOP; are inside
+! BARE TUNE (9.65, 9.73) at starting slow extraction
+! Qx_bare_start:=9.65; Qy_bare_start:=9.73; => input
+ 
+k1nl_f =     0.000140659829;
+k1nl_d =    -0.000427041202;
+
+! 9.6667, 9.73) at end of slow extraction 
+! k1nl_f =     0.001221463642 ;
+! k1nl_d =    -0.0009347508546;
+
+!================================================================================
+! variable parameters at start ==================================================
+option,info,warn,echo;
+
+! phase rotaion for tuning 
+! adjust starting tunes
+delmx:=0; delmy:=0; 
+
+deltap0=0.0;
+!deltap0=+0.005;
+!deltap0=-0.005;
+
+! SP-CH start =============================================
+! BEAM, NPART=0.0e12; ! Switch ON/OF SP-CH
+show, BEAM; !!!!!
+
+value, BEAM->NPART;
+value, BEAM->BCURRENT;
+
+! A beam-beam element requires the particle energy (ENERGY), 
+! the particle charge (CHARGE) and the number of particles 
+! per bunch (NPART) to be set by a BEAM command
+!===========================================================
+
+
+! Drive 3rd order resonance ==============================
+K2_strngth:=0.0; !2.0; 
+
+! node no.:434, node_name: SextRes comment: Scale=1.0
+ K2NL_SextRes_no434:=K2_strngth*1.0;
+ K2SL_SextRes_no434:=0.0;
+
+! node no.:454, node_name: SextRes comment: Scale=0.6
+ K2NL_SextRes_no454:=K2_strngth*0.6;
+ K2SL_SextRes_no454:=0.0;
+ 
+! node no.:469, node_name: SextRes comment: Scale=1.0
+ K2NL_SextRes_no469:=K2_strngth*1.0;
+ K2SL_SextRes_no469:=0.0;
+!===================================================================
+
+
+! twiss parameters at the ring start
+!USE, PERIOD=ring; TWISS;
+
+! Extract twiss-parameters for transfer from 
+! normalized to canonical coordinates    at start of ring 
+!                                     
+betax_start:=table(twiss,ring$start,betx);
+alfax_start:=table(twiss,ring$start,alfx); 
+gamax_start:=(1.0+alfax_start^2)/betax_start;
+dx_start:=table(twiss,ring$start,dx); 
+dpx_start:=table(twiss,ring$start,dpx); 
+value, betax_start, alfax_start, gamax_start, dx_start, dpx_start;
+
+betay_start:=table(twiss,ring$start,bety);
+alfay_start:=table(twiss,ring$start,alfy); 
+gamay_start:=(1.0+alfay_start^2)/betay_start;
+dy_start:=table(twiss,ring$start,dy); 
+dpy_start:=table(twiss,ring$start,dpy); 
+value, betay_start, alfay_start, gamay_start, dy_start, dpy_start;
+
+create,table=twiss_at_start,
+       column=betax_start, alfax_start, gamax_start, dx_start, dpx_start, 
+              betay_start, alfay_start, gamay_start, dy_start, dpy_start;
+fill, table=twiss_at_start;
+write, table=twiss_at_start, file=twiss_at_start.dat;
+
+
+! COLLIMATORS ++++++++++++++++++++++++++++++++++++++++++++++
+! sets for slow-extraction knife "aperture206": ------------
+Ax_206=17e-6;   !=17 mm mrad
+Ay_206=17e-6;   !=17 mm mrad
+betax_206=table(twiss,aperture206,betx);
+betay_206=table(twiss,aperture206,bety);
+x_rcoll_aperture206=sqrt(Ax_206*betax_206);
+y_rcoll_aperture206=sqrt(Ay_206*betay_206);
+
+Print, text='KNIFE Aperture206: --------------------------';
+value, x_rcoll_aperture206, y_rcoll_aperture206;
+show, aperture206;
+!-----------------------------------------------------------
+
+! sets for all other collimators: ---------------------
+value, x_rcoll_max, y_rcoll_max; 
+Ax_coll=35e-6;   !=35 mm mrad
+Ay_coll=35e-6;   !=35 mm mrad
+
+!Aperture106:
+betax_106=table(twiss,aperture106,betx);
+betay_106=table(twiss,aperture106,bety);
+x_rcoll_aperture106=sqrt(Ax_coll*betax_106);
+y_rcoll_aperture106=sqrt(Ay_coll*betay_106);
+Print, text="Aperture106 ------------------";
+value, x_rcoll_aperture106, y_rcoll_aperture106;
+show, aperture106;
+
+!Aperture102:
+betax_102=table(twiss,aperture102,betx);
+betay_102=table(twiss,aperture102,bety);
+x_rcoll_aperture102=sqrt(Ax_coll*betax_102);
+y_rcoll_aperture102=sqrt(Ay_coll*betay_102);
+Print, text="Aperture102: ------------------";
+value, x_rcoll_aperture102, y_rcoll_aperture102;
+show, aperture102;
+
+!Aperture606:
+betax_606=table(twiss,aperture606,betx);
+betay_606=table(twiss,aperture606,bety);
+x_rcoll_aperture606=sqrt(Ax_coll*betax_606);
+y_rcoll_aperture606=sqrt(Ay_coll*betay_606);
+Print, text="Aperture606: ------------------";
+value, x_rcoll_aperture606, y_rcoll_aperture606;
+show, aperture102;
+
+!Aperture505:
+betax_505=table(twiss,aperture505,betx);
+betay_505=table(twiss,aperture505,bety);
+x_rcoll_aperture505=sqrt(Ax_coll*betax_505);
+y_rcoll_aperture505=sqrt(Ay_coll*betay_505);
+Print, text="Aperture505: ------------------";
+value, x_rcoll_aperture505, y_rcoll_aperture505;
+show, aperture102;
+
+!Aperture402:
+betax_402=table(twiss,aperture402,betx);
+betay_402=table(twiss,aperture402,bety);
+x_rcoll_aperture402=sqrt(Ax_coll*betax_402);
+y_rcoll_aperture402=sqrt(Ay_coll*betay_402);
+Print, text="Aperture402: ------------------";
+value, x_rcoll_aperture402, y_rcoll_aperture402;
+show, aperture402;
+
+!Aperture305:
+betax_305=table(twiss,aperture305,betx);
+betay_305=table(twiss,aperture305,bety);
+x_rcoll_aperture305=sqrt(Ax_coll*betax_305);
+y_rcoll_aperture305=sqrt(Ay_coll*betay_305);
+Print, text="Aperture305: ------------------";
+value, x_rcoll_aperture305, y_rcoll_aperture305;
+show, aperture305;
+
+! END COLLIMATORS +++++++++++++++++++++++++++++++++++++++++++++++
+
+!frs2012: =======================================================================
+show,beam;
+NPART0= BEAM->NPART;
+NPART=0;
+!/*
+
+
+BEAM, MASS=BEAM->MASS, 
+      CHARGE=BEAM->CHARGE, ENERGY=BEAM->ENERGY, 
+      EX=BEAM->Ex, EY=BEAM->Ey, NPART=NPART, 
+      circ=BEAM->circ, freq0=BEAM->freq0;
+
+show, BEAM;
+
+gamma_particle=BEAM->gamma;
+beta_particle=BEAM->beta;
+value, gamma_particle, beta_particle;
+
+
+match,sequence=ring;
+!global,sequence=ring,Q1=6.253;
+!global,sequence=ring,Q2=6.304;
+global,sequence=ring,Q1=Qx_bare_start;
+global,sequence=ring,Q2=Qy_bare_start;
+vary,name=kqf,step=1.0e-6;
+vary,name=kqd,step=1.0e-6;
+!vary,name=qvalue,step=1.0e-6;
+lmdif,calls=500,tolerance=1.e-8;
+endmatch;
+!*/
+
+select,flag="spch_bb",pattern="RING\$START";
+select,flag="spch_bb",class="beambeam",column=name,keyword,s,
+                                      betx,bety,alfx,alfy,dx,dpx,dy,dpy;
+twiss,table="spch_bb",file="spch_bb_twiss_ini.dat";
+NPART=NPART0;
+
+BEAM, MASS=BEAM->MASS, 
+      CHARGE=BEAM->CHARGE, ENERGY=BEAM->ENERGY, 
+      EX=BEAM->Ex, EY=BEAM->Ey, NPART=NPART, 
+      circ=BEAM->circ, freq0=BEAM->freq0;
+
+show, BEAM;
+
+gamma_particle=BEAM->gamma;
+beta_particle=BEAM->beta;
+value, gamma_particle, beta_particle;
+
+
+
+twiss,table="spch_bb",file="spch_bb_twiss_ini.dat";
+!stop;
+!generate_part_distrib=1;
+!==================================================================
+! generate particle distributions =================================
+if (generate_part_distrib == 1) !----------------------------------
+{
+
+      ! gaussian distribution "sigma_gauss*tgauss(sigma_tranc)" with 
+      ! sigma_gauss standard deviation,  
+      !               truncated at sigma_tranc standard deviations
+      sigma_gauss_x:=1.0;        sigma_trunc_x:=3.0;  ! for GF 1.0 & 2.5
+      sigma_gauss_y:=1.0;        sigma_trunc_y:=3.0;  ! for GF 1.0 & 2.5
+      sigma_gauss_z:=1.0;        sigma_trunc_z:=3.0;  ! for GF 3.0 & 2.5
+      ! 
+      ! also TWISS at start saved there:
+      CALL, FILE=deb_part_distrib_generation.madx;
+} !END if (generate_part_distrib == 1) ----------------------------- 
+!=======================================================================
+!readtable, file="time_var_mul";
+!readtable, file="time_var_pha";
+readtable, file="spch_bb_twiss_ini.dat";
+emit;
+
+select,flag=twiss,clear;
+select, flag=twiss, column=name,s,beta11,beta22,beta33,alfa11,alfa22,alfa33,mu1,mu2,disp1,disp2,
+                          re11,re12,re13,re14,re15,re16,
+                          re21,re22,re23,re24,re25,re26,
+                          re31,re32,re33,re34,re35,re36,
+                          re41,re42,re43,re44,re45,re46,
+                          re51,re52,re53,re54,re55,re56,
+                          re61,re62,re63,re64,re65,re66;
+
+
+ptc_create_universe;
+  ptc_create_layout, model=1, method=6, nst=5, exact=true, closed_layout=true;
+
+
+!  ptc_printframes, file="SIS100.C", format=rootmacro;!this prints my visualisation with ROOT
+
+  !!!!!       T I M E   F A L S E,   T O T P A T H  F A L S E
+  ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+  
+  
+  ptc_twiss, table=twiss, icase=6, no=2, closed_orbit,writetmap;
+  renamefile,file="transfer.map",name="transfer.nobb.map"; 
+  write, table=twiss, file="SIS18.5d.ptc.twiss";
+  write, table=ptc_twiss_summary, file="SIS18.5d.ptc.summ.twiss";
+  
+ptc_end;
+
+select, flag=twiss, clear;
+select, flag=twiss, class=beambeam, column=name,s,beta11,beta22,disp1,disp2;
+
+write, table=twiss, file="SIS18.bb.twiss";
+q1_noBB = table(ptc_twiss_summary,q1);
+q2_noBB = table(ptc_twiss_summary,q2);
+
+
+emix=12.57e-06/4.;
+dpp=2.5e-4/3d0;
+bsizeDX := bb_disp*dpp;
+bsizeDX2 := bsizeDX*bsizeDX;
+
+bbsigmax := sqrt(emix*bb_betax + bsizeDX2);
+
+readmytable, table=bbtwiss, file="SIS18.bb.twiss";
+
+i_elem = 0;
+n_elem = table(bbtwiss, tablelength);
+value, n_elem;
+
+option, -info;
+
+!/*
+calcul(elem_name) : macro = {
+     bb_betax  = table(bbtwiss,  elem_name, beta11);
+     bb_disp = table(bbtwiss,  elem_name, disp1);
+     
+     value, bb_betax, bb_disp,bbsigmax;
+     
+     elem_name, sigx = bbsigmax;
+ }
+ 
+one_elem(j_elem) : macro = {
+     
+     exec,  calcul(tabstring(bbtwiss, name, j_elem));     
+ }
+
+
+while (i_elem < n_elem) { i_elem = i_elem + 1; exec,  one_elem($i_elem); }
+
+show, i_elem;
+!*/
+
+
+select,flag=twiss,clear;
+select, flag=twiss, column=name,s,beta11,beta22,beta33,alfa11,alfa22,alfa33,mu1,mu2,disp1,disp2,
+                          re11,re12,re13,re14,re15,re16,
+                          re21,re22,re23,re24,re25,re26,
+                          re31,re32,re33,re34,re35,re36,
+                          re41,re42,re43,re44,re45,re46,
+                          re51,re52,re53,re54,re55,re56,
+                          re61,re62,re63,re64,re65,re66;
+
+
+ptc_create_universe;
+  ptc_create_layout, model=2, method=6, nst=5, exact=true, closed_layout=true;
+
+  !!!!!       T I M E   F A L S E,   T O T P A T H  F A L S E
+  ptc_setswitch, debuglevel=0, exact_mis=true, time=true, totalpath=false;
+  
+  
+  ptc_twiss, table=twiss, icase=6, no=2, closed_orbit, writetmap, slice_magnets;
+  write, table=twiss, file="SIS18.bb.ptc.twiss";
+  write, table=ptc_twiss_summary, file="SIS18.bb.ptc.summ.twiss";
+  
+  q1_withBB = table(ptc_twiss_summary,q1);
+  q2_withBB = table(ptc_twiss_summary,q2);
+  
+  
+  
+ptc_end;
+
+
+value, q1_noBB, q2_noBB;
+value, q1_withBB, q2_withBB;
+
+
+stop;
