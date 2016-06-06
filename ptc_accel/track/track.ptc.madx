@@ -37,7 +37,7 @@ ctfcell  : line=( quad_l2,ds_ql,quad_l1,cell_q1,ds_trip ,cell_mrk,
                   ds_trip,cell_q3,quad_l1,ds_ql,quad_l2);
 
 
-ctf   : line=(2*ctfcell);
+ctf   : line=(1*ctfcell);
 
 ! calculate Twiss parameters for regular cell structure
 beam, PARTICLE=ELECTRON, ENERGY=0.02d0;
@@ -66,6 +66,8 @@ while (tno < nt0)
  {
 
    t0 = 0.000277777*(tno-(nt0-1)/2.0);
+
+   t0 = 0.005*(tno-(nt0-1)/2.0);
    
    xpos = 0;
    nxpos = 20;
@@ -84,6 +86,10 @@ PTC_OBSERVE, place=ctf$end;
 ptc_trackline, turns=1, onetable;
 
 plot, table=trackone, haxis=t,vaxis=e, colour=1000, multiple, symbol=3;
+plot, table=trackone, haxis=t,vaxis=pt, colour=1000, multiple, symbol=3;
+
+plot, table=trackone, haxis=t,vaxis=e, colour=1000, multiple, symbol=4, noline=true;
+plot, table=trackone, haxis=x,vaxis=e, colour=1000, multiple, symbol=4, noline=true;
 
 plot, table=trackone, haxis=t,vaxis=e, vmin=0.047,vmax=0.049, colour=1000, multiple, symbol=4, noline=true;
 plot, table=trackone, haxis=x,vaxis=e, vmin=0.047,vmax=0.049, colour=1000, multiple, symbol=4, noline=true;
